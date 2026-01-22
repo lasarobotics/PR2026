@@ -19,8 +19,6 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
 
-<<<<<<< HEAD
-=======
   public static class ClimbConstants {
     public static final PositionVoltage UP_SET_POINT = new PositionVoltage(0.0); // TODO (in rotations)
     public static final PositionVoltage BACK_SET_POINT = new PositionVoltage(0.0); // TODO
@@ -28,7 +26,6 @@ public final class Constants {
     public static final int CLIMB_MOTOR_ID = 0; // TODO
   }
 
->>>>>>> main
   public static class FuelManagerConstants {
     public static final int SHOOT_MOTOR_ID = 0; // TODO
     public static final int INTAKE_MOTOR_ID = 0; //TODO
