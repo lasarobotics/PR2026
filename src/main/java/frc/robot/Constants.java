@@ -16,4 +16,10 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
+
+  public static class FuelManagerConstants {
+    public static final int shootMotorId = 0; // TODO
+    public static final int intakeMotorId = 0; //TODO
+    public static final int middleMotorId = 0; // TODO
+  }
 }
