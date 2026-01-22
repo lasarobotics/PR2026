@@ -20,7 +20,7 @@ public final class Constants {
   }
 
   public static class ClimbConstants {
-    public static final PositionVoltage UP_SET_POINT = new PositionVoltage(0.0); // TODO (in rotations)
+    public static final PositionVoltage UP_SET_POINT = new PositionVoltage(0.0); // TODO
     public static final PositionVoltage BACK_SET_POINT = new PositionVoltage(0.0); // TODO
     public static final PositionVoltage FORWARD_SET_POINT = new PositionVoltage(0.0); // TODO
     public static final int CLIMB_MOTOR_ID = 0; // TODO
@@ -34,5 +34,9 @@ public final class Constants {
     public static double INTAKE_MOTOR_SPEED = 0; // TODO
     public static double MIDDLE_MOTOR_INTAKE_SPEED = 0; // TODO
     public static double MIDDLE_MOTOR_SHOOT_SPEED = 0; // TODO
+  }
+
+  public static class DriveConstants {
+    // TODO
   }
 }
