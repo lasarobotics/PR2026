@@ -16,4 +16,14 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
+
+  public static class FuelManagerConstants {
+    public static final int SHOOT_MOTOR_ID = 0; // TODO
+    public static final int INTAKE_MOTOR_ID = 0; //TODO
+    public static final int MIDDLE_MOTOR_ID = 0; // TODO
+    public static double SHOOT_MOTOR_SPEED = 0; // TODO
+    public static double INTAKE_MOTOR_SPEED = 0; // TODO
+    public static double MIDDLE_MOTOR_INTAKE_SPEED = 0; // TODO
+    public static double MIDDLE_MOTOR_SHOOT_SPEED = 0; // TODO
+  }
 }
