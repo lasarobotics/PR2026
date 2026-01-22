@@ -57,7 +57,6 @@ public class FuelManager extends StateMachine implements AutoCloseable {
             public void initialize() {
                 getInstance().m_shootMotor.set(Constants.FuelManagerConstants.SHOOT_MOTOR_SPEED);
                 getInstance().m_middleMotor.set(Constants.FuelManagerConstants.MIDDLE_MOTOR_SHOOT_SPEED);
-                getInstance().m_intakeMotor.set(Constants.FuelManagerConstants.INTAKE_SPEED);
             }
             @Override
             public SystemState nextState() {
