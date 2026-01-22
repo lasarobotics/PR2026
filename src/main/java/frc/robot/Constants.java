@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.controls.PositionVoltage;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -15,6 +17,13 @@ package frc.robot;
 public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
+  }
+
+  public static class ClimbConstants {
+    public static final PositionVoltage UP_SET_POINT = new PositionVoltage(0.0); // TODO (in rotations)
+    public static final PositionVoltage BACK_SET_POINT = new PositionVoltage(0.0); // TODO
+    public static final PositionVoltage FORWARD_SET_POINT = new PositionVoltage(0.0); // TODO
+    public static final int CLIMB_MOTOR_ID = 0; // TODO
   }
 
   public static class FuelManagerConstants {
