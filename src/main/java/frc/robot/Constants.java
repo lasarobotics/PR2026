@@ -4,7 +4,34 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Centimeter;
+import static edu.wpi.first.units.Units.Centimeters;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+
+import java.util.Arrays;
+import java.util.List;
+
 import com.ctre.phoenix6.controls.PositionVoltage;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.LinearAcceleration;
+import edu.wpi.first.units.measure.LinearVelocity;
+import frc.robot.generated.TunerConstants;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -37,6 +64,67 @@ public final class Constants {
   }
 
   public static class DriveConstants {
-    // TODO
+    // MAX LINEAR SPEED
+    public static final LinearVelocity MAX_SPEED = TunerConstants.kSpeedAt12Volts;
+
+    // MAX LINEAR ACCELERATION
+    public static final LinearAcceleration MAX_ACCELERATION =
+        MetersPerSecondPerSecond.of(3);
+
+    // MAX TURN SPEED
+    public static final AngularVelocity MAX_ANGULAR_RATE =
+        RotationsPerSecond.of(0.75);
+
+    // MAX TURN ACCELERATION
+    public static final AngularAcceleration MAX_ANGULAR_ACCELERATION =
+        RotationsPerSecondPerSecond.of(1);
+
+    // NOT NEEDED RIGHT NOW (WAS IN HEADHONCHO PH2025)
+    // public static final double SLOW_SPEED_SCALAR = 0.3;
+    // public static final double FAST_SPEED_SCALAR = 1.0;
+
+    // TrapezoidProfile.Constraints(MAX_VELOCITY_PER_SECOND, MAX_ACCELERATION_PER_SECOND_SQUARED)
+    public static final TrapezoidProfile.Constraints TURN_CONSTRAINTS =
+        new TrapezoidProfile.Constraints(
+            MAX_ANGULAR_RATE.in(RadiansPerSecond),
+            MAX_ANGULAR_ACCELERATION.in(RadiansPerSecondPerSecond));
+    public static final TrapezoidProfile.Constraints DRIVE_CONSTRAINTS =
+        new TrapezoidProfile.Constraints(
+            MAX_SPEED.in(MetersPerSecond) * 0.85,
+            MAX_ACCELERATION.in(MetersPerSecondPerSecond) * 0.6);
+
+    public static final TrapezoidProfile.Constraints TURN_CONSTRAINTS_SLOW =
+    new TrapezoidProfile.Constraints(
+        MAX_ANGULAR_RATE.in(RadiansPerSecond),
+        MAX_ANGULAR_ACCELERATION.in(RadiansPerSecondPerSecond));
+    public static final TrapezoidProfile.Constraints DRIVE_CONSTRAINTS_SLOW =
+        new TrapezoidProfile.Constraints(
+            MAX_SPEED.in(MetersPerSecond) * 0.25,
+            MAX_ACCELERATION.in(MetersPerSecondPerSecond) * 0.2);
+
+    // TODO TODO TODO
+    public static final double AUTO_SHOOT_MAX_DISTANCE = Meters.of(0.0).in(Meters);
+    // TODO: ADD MORE
+    // TODO TODO TODO
+
+    // TODO TODO TODO REVISE
+    public static final double TURN_P = 0.01;
+    public static final double TURN_I = 0;
+    public static final double TURN_D = 0;
+    // TODO TODO TODO
+
+
+    // TODO TODO TODO GET REAL POSITIONS
+    public static List<Pose2d> AUTO_ALIGN_LOCATIONS_RED_TOWER =
+        Arrays.asList(
+
+        );
+
+    public static List<Pose2d> AUTO_ALIGN_LOCATIONS_BLUE_TOWER =
+        Arrays.asList(
+
+        );
+            
+    // TODO TODO TODO
   }
 }
