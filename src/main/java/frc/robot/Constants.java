@@ -105,6 +105,7 @@ public final class Constants {
     // TODO TODO TODO
     public static final double AUTO_SHOOT_MAX_DISTANCE = Meters.of(0.0).in(Meters);
     // TODO: ADD MORE
+
     // TODO TODO TODO
 
     // TODO TODO TODO REVISE
@@ -113,18 +114,15 @@ public final class Constants {
     public static final double TURN_D = 0;
     // TODO TODO TODO
 
+    public static final Translation2d HUB_TRANSLATION_COORDINATES = new Translation2d(0,0);
 
-    // TODO TODO TODO GET REAL POSITIONS
-    public static List<Pose2d> AUTO_ALIGN_LOCATIONS_RED_TOWER =
-        Arrays.asList(
+    // TODO FIND REAL POSSIBLE POSITIONS
+    public static final Translation2d[] RED_TOWER_COORDINATES = {
+      new Translation2d(0,0),
+    };
 
-        );
-
-    public static List<Pose2d> AUTO_ALIGN_LOCATIONS_BLUE_TOWER =
-        Arrays.asList(
-
-        );
-            
-    // TODO TODO TODO
+    public static final Translation2d[] BLUE_TOWER_COORDINATES = {
+      new Translation2d(0,0),
+    };
   }
 }
