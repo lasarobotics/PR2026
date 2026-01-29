@@ -5,8 +5,8 @@ import java.util.function.DoubleSupplier;
 import org.lasarobotics.fsm.StateMachine;
 import org.lasarobotics.fsm.SystemState;
 
-import com.ctre.phoenix6.mechanisms.swerve.LegacySwerveModule.DriveRequestType;
-import com.ctre.phoenix6.mechanisms.swerve.LegacySwerveModule.SteerRequestType;
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -75,7 +75,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
 
         s_drive =
             new SwerveRequest.FieldCentric()
-                .withDeadband(Constants.Drive.MAX_SPEED.times(DriveSubsystem.DEADBAND_SCALAR))
+                .withDeadband(Constants.Drive.MAX_SPEED.times(Constants.Drive.DEADBAND_SCALAR))
                 .withRotationalDeadband(Constants.Drive.MAX_ANGULAR_RATE.times(0.1)) // Add a
                 .withDriveRequestType(DriveRequestType.Velocity)
                 .withSteerRequestType(SteerRequestType.MotionMagicExpo)

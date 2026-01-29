@@ -65,6 +65,7 @@ public final class Constants {
         RotationsPerSecondPerSecond.of(1); // TODO
     // measure
 
+    public static final double DEADBAND_SCALAR = 0.1;
     public static final double SLOW_SPEED_SCALAR = 0.3;
     public static final double FAST_SPEED_SCALAR = 1.0; // Modified for SMART Camps
 
