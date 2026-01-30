@@ -1,5 +1,6 @@
 package frc.robot.subsystems.drive;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import org.lasarobotics.fsm.StateMachine;
@@ -97,22 +98,33 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 SwerveDriveState currentState = s_drivetrain.getState();
                 Translation2d currentPoseTranslation2d = currentState.Pose.getTranslation();
                 double currentAngle = currentState.Pose.getRotation().getRadians();
-                Translation2d towerTranslation2d = new Translation2d(0,0);
-                int shortestDistanceIndex;
+                Translation2d towerTranslation2d;
+                int shortestDistanceIndex = 0;
                 if (DriverStation.getAlliance().get() == Alliance.Blue) {
                     for (int i = 1; i < Constants.DriveConstants.BLUE_TOWER_COORDINATES.length; i++) {
                         Translation2d lastTranslation = Constants.DriveConstants.BLUE_TOWER_COORDINATES[i-1];
                         Translation2d currentTranslation = Constants.DriveConstants.BLUE_TOWER_COORDINATES[i];
-                        // TODO
-                        //if (currentPoseTranslation2d.minus(currentTranslation) < new Translation2d(0,0)) {
-                        //}
+                        if (currentPoseTranslation2d.getDistance(currentTranslation) < currentPoseTranslation2d.getDistance(lastTranslation)) {
+                            shortestDistanceIndex = i;
+                        }
                     }
+                    towerTranslation2d = Constants.DriveConstants.BLUE_TOWER_COORDINATES[shortestDistanceIndex];
                 } else {
-
+                    for (int i = 1; i < Constants.DriveConstants.RED_TOWER_COORDINATES.length; i++) {
+                        Translation2d lastTranslation = Constants.DriveConstants.RED_TOWER_COORDINATES[i-1];
+                        Translation2d currentTranslation = Constants.DriveConstants.RED_TOWER_COORDINATES[i];
+                        if (currentPoseTranslation2d.getDistance(currentTranslation) < currentPoseTranslation2d.getDistance(lastTranslation)) {
+                            shortestDistanceIndex = i;
+                        }
+                    }
+                    towerTranslation2d = Constants.DriveConstants.RED_TOWER_COORDINATES[shortestDistanceIndex];
                 }
                 Translation2d translationDiff = currentPoseTranslation2d.minus(towerTranslation2d);
                 double angleGoal = Math.atan2(translationDiff.getY(), translationDiff.getX());
-                double pidOutput = s_autoAimController.calculate(currentAngle, angleGoal);
+                double pidOutputHeading = s_climbAutoAlignController.calculate(currentAngle, angleGoal);
+                // TODO
+                // CALCULATE FOR THE DISTANCE AS WELL
+                // double pidOutputDirection = s_climbAutoMoveController.calculate(translationDiff, 0);
             }
 
             @Override
@@ -139,12 +151,23 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
 
     private static ProfiledPIDController s_autoAimController;
     private static ProfiledPIDController s_climbAutoAlignController;
+    private static ProfiledPIDController s_climbAutoMoveController;
+
+    private BooleanSupplier m_climbAlignButton;
+    private BooleanSupplier m_autoAimButton;
 
     public DriveSubsystem() {
         super(DriveStates.DRIVER_CONTROL);
         s_drivetrain = TunerConstants.createDrivetrain();
 
     }
+
+    public void configureBindings(
+        BooleanSupplier climbAlignButton,
+        BooleanSupplier autoAimButton) {
+            m_climbAlignButton = climbAlignButton;
+            m_autoAimButton = autoAimButton;
+        }
 
     @Override
     public void periodic() {

@@ -119,6 +119,7 @@ public final class Constants {
     // TODO FIND REAL POSSIBLE POSITIONS
     public static final Translation2d[] RED_TOWER_COORDINATES = {
       new Translation2d(0,0),
+      new Translation2d(0,0),
     };
 
     public static final Translation2d[] BLUE_TOWER_COORDINATES = {
