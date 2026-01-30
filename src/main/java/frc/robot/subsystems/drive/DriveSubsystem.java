@@ -1,5 +1,6 @@
 package frc.robot.subsystems.drive;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import org.lasarobotics.fsm.StateMachine;
@@ -16,13 +17,6 @@ import frc.robot.generated.TunerConstants;
 
 public class DriveSubsystem extends StateMachine implements AutoCloseable {
 
-    public class TO_BE_DECIDED {
-        // THIS IS A CLASS TO SET VARIABLE TYPES THAT ARE TO BE DECIDED
-        // THIS IS A CLASS TO SET VARIABLE TYPES THAT ARE TO BE DECIDED
-        // THIS IS A CLASS TO SET VARIABLE TYPES THAT ARE TO BE DECIDED
-        // THIS IS A CLASS TO SET VARIABLE TYPES THAT ARE TO BE DECIDED
-        // THIS IS A CLASS TO SET VARIABLE TYPES THAT ARE TO BE DECIDED
-    }
 
     public enum DriveStates implements SystemState {
         NOTHING {
@@ -37,37 +31,39 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 if (!DriverStation.isAutonomous()) {
                     return DRIVER_CONTROL;
                 }
-                if (s_shouldAutoAlign) {
-                    return AUTO_ALIGN;
-                }
-                return this;
+                return AUTO;
             }
         },
         DRIVER_CONTROL {
             @Override
             public SystemState nextState() {
                 // TODO
-                return this;
+                if(getInstance().m_autoAIMButton.getAsBoolean()){
+                    return AUTO_AIM;
+                }
+                return DRIVER_CONTROL;
             }
         },
-        AUTO_ALIGN {
+        AUTO_AIM {
             @Override
             public SystemState nextState() {
                 // TODO
-                return this;
+                if(getInstance().m_autoAIMButton.getAsBoolean()){
+                    return AUTO_AIM;
+                }
+                return DRIVER_CONTROL;
             }
         }
     }
-
-    private static boolean s_shouldAutoAlign = false;
+    private static DriveSubsystem s_driveSubsystemInstance;
     private static CommandSwerveDrivetrain s_drivetrain;
     private static SwerveRequest.FieldCentric s_drive;
       private static DoubleSupplier s_driveRequest = () -> 0;
     private static DoubleSupplier s_strafeRequest = () -> 0;
     private static DoubleSupplier s_rotateRequest = () -> 0;
- 
+    private BooleanSupplier m_autoAIMButton;
 
-    private static boolean s_isAligned;
+    private static boolean s_isAIMed;
 
     public DriveSubsystem() {
         super(DriveStates.DRIVER_CONTROL);
@@ -75,8 +71,8 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
 
         s_drive =
             new SwerveRequest.FieldCentric()
-                .withDeadband(Constants.Drive.MAX_SPEED.times(Constants.Drive.DEADBAND_SCALAR))
-                .withRotationalDeadband(Constants.Drive.MAX_ANGULAR_RATE.times(0.1)) // Add a
+                .withDeadband(Constants.DriveConstants.MAX_SPEED.times(Constants.DriveConstants.DEADBAND_SCALAR))
+                .withRotationalDeadband(Constants.DriveConstants.MAX_ANGULAR_RATE.times(0.1)) // Add a
                 .withDriveRequestType(DriveRequestType.Velocity)
                 .withSteerRequestType(SteerRequestType.MotionMagicExpo)
                 .withForwardPerspective(ForwardPerspectiveValue.OperatorPerspective);
@@ -87,6 +83,15 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
 
     }
 
+    public static DriveSubsystem getInstance(){
+        if(s_driveSubsystemInstance == null){
+            s_driveSubsystemInstance = new DriveSubsystem();
+        }
+        return s_driveSubsystemInstance;
+    }
+    public void configureBindings(BooleanSupplier autoAIMButton){
+        m_autoAIMButton = autoAIMButton;
+    }
     @Override
     public void close() {
 

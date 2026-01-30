@@ -55,7 +55,7 @@ public final class Constants {
   }
 
   
-  public static class Drive {
+  public static class DriveConstants {
     public static final LinearVelocity MAX_SPEED = TunerConstants.kSpeedAt12Volts;
     public static final LinearAcceleration MAX_ACCELERATION =
         MetersPerSecondPerSecond.of(3); // TODO measure
