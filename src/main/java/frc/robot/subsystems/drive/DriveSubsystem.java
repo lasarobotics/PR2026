@@ -128,7 +128,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
 
     @Override
     public void periodic() {
-        Logger.recordOutput("SmartDashboard/Pose", s_drivetrain.getState().Pose);
+        Logger.recordOutput("Pose", s_drivetrain.getState().Pose);
     }
 
     public static DriveSubsystem getInstance(){
