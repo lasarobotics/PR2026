@@ -52,6 +52,7 @@ public class Robot extends LoggedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     m_robotContainer.DRIVE_SUBSYSTEM.periodic();
+    m_robotContainer.FUEL_MANAGER.periodic();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
