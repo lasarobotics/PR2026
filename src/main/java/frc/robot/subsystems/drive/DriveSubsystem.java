@@ -105,9 +105,9 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
     private static DriveSubsystem s_driveSubsystemInstance;
     private static CommandSwerveDrivetrain s_drivetrain;
     private static SwerveRequest.FieldCentric s_drive;
-      private static DoubleSupplier s_driveRequest = () -> 0;
-    private static DoubleSupplier s_strafeRequest = () -> 0;
-    private static DoubleSupplier s_rotateRequest = () -> 0;
+      private static DoubleSupplier s_driveRequest;
+    private static DoubleSupplier s_strafeRequest;
+    private static DoubleSupplier s_rotateRequest;
     private BooleanSupplier m_autoAIMButton;
     private static Translation2d s_hubPos;
     private static PIDController rotationPIDController = new PIDController(Constants.DriveConstants.TURN_P,Constants.DriveConstants.TURN_I,Constants.DriveConstants.TURN_D);

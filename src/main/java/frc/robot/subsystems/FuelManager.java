@@ -98,8 +98,8 @@ public class FuelManager extends StateMachine implements AutoCloseable {
 
     @Override
     public void periodic(){
-        Logger.recordOutput(getName() + "/Intake Button", m_intakeButton);
-        Logger.recordOutput(getName() + "/Shoot Button", m_shootButton);
+        Logger.recordOutput(getName() + "/Intake Button", m_intakeButton.getAsBoolean());
+        Logger.recordOutput(getName() + "/Shoot Button", m_shootButton.getAsBoolean());
         Logger.recordOutput(getName() + "/Current State", getState().toString());
     }
 
