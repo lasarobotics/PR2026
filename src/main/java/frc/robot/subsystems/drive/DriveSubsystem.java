@@ -129,6 +129,8 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
     @Override
     public void periodic() {
         Logger.recordOutput("Pose", s_drivetrain.getState().Pose);
+        Logger.recordOutput("leftJoystickX", s_strafeRequest);
+        Logger.recordOutput("leftJoystickY", s_driveRequest);
     }
 
     public static DriveSubsystem getInstance(){
