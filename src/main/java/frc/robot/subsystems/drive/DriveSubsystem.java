@@ -5,6 +5,7 @@ import java.util.function.DoubleSupplier;
 
 import org.lasarobotics.fsm.StateMachine;
 import org.lasarobotics.fsm.SystemState;
+import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
@@ -136,7 +137,6 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
         CLIMB_ALIGN {
             @Override
             public void initialize() {
-                s_climbAutoMoveController.enableContinuousInput(-Math.PI, Math.PI);
                 s_climbAutoMoveController.setConstraints(Constants.DriveConstants.DRIVE_CONSTRAINTS);
                 s_climbAutoAlignController.enableContinuousInput(-Math.PI, Math.PI);
                 s_climbAutoAlignController.setConstraints(Constants.DriveConstants.TURN_CONSTRAINTS);
@@ -244,7 +244,8 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
 
     @Override
     public void periodic() {
-
+        Logger.recordOutput(getName() + "/buttons/climb", s_climbAlignButton.getAsBoolean());
+        Logger.recordOutput(getName() + "/buttons/aim", s_autoAimButton.getAsBoolean());
     }
 
     @Override

@@ -76,7 +76,7 @@ public class FuelManager extends StateMachine implements AutoCloseable {
     private BooleanSupplier m_intakeButton;
     private BooleanSupplier m_shootButton;
 
-    private FuelManager(){
+    public FuelManager(){
         super(FuelManagerStates.REST);
 
         m_intakeMotor = new TalonFX(Constants.FuelManagerConstants.INTAKE_MOTOR_ID);

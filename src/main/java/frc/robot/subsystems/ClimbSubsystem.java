@@ -88,7 +88,7 @@ public class ClimbSubsystem extends StateMachine implements AutoCloseable {
         return s_climbInstance;
     }
 
-    private ClimbSubsystem() {
+    public ClimbSubsystem() {
         super(ClimbStates.UP);
         m_climbMotor = new TalonFX(Constants.ClimbConstants.CLIMB_MOTOR_ID);
     }
@@ -105,9 +105,9 @@ public class ClimbSubsystem extends StateMachine implements AutoCloseable {
 
     @Override
     public void periodic() {
-        Logger.recordOutput(getName() + "/buttons/Up", m_upButton);
-        Logger.recordOutput(getName() + "/buttons/Back", m_backButton);
-        Logger.recordOutput(getName() + "/buttons/Forward", m_forwardButton);
+        Logger.recordOutput(getName() + "/buttons/Up", m_upButton.getAsBoolean());
+        Logger.recordOutput(getName() + "/buttons/Back", m_backButton.getAsBoolean());
+        Logger.recordOutput(getName() + "/buttons/Forward", m_forwardButton.getAsBoolean());
         Logger.recordOutput(getName() + "/state", getState().toString());
     }
 
