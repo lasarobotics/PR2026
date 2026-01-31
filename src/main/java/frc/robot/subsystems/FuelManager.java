@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 import org.lasarobotics.fsm.StateMachine;
 import org.lasarobotics.fsm.SystemState;
@@ -47,7 +48,7 @@ public class FuelManager extends StateMachine implements AutoCloseable {
             @Override
             public SystemState nextState() {
                 if (getInstance().m_intakeButton.getAsBoolean()){
-                    return this;
+                    return INTAKE;
                 }
                 return REST;
             }
@@ -62,7 +63,7 @@ public class FuelManager extends StateMachine implements AutoCloseable {
             @Override
             public SystemState nextState() {
                 if (getInstance().m_shootButton.getAsBoolean()){
-                    return this;
+                    return SHOOT;
                 }
                 return REST;
             }
@@ -100,7 +101,8 @@ public class FuelManager extends StateMachine implements AutoCloseable {
     public void periodic(){
         Logger.recordOutput(getName() + "/Intake Button", m_intakeButton.getAsBoolean());
         Logger.recordOutput(getName() + "/Shoot Button", m_shootButton.getAsBoolean());
-        Logger.recordOutput(getName() + "/Current State", getState().toString());
+        Logger.recordOutput(getName() + "/Current State", getInstance().getState().toString());
+        Logger.recordOutput(getName() + "/Intake Motor Speed", (DoubleSupplier) m_intakeMotor.getVelocity());
     }
 
     @Override
