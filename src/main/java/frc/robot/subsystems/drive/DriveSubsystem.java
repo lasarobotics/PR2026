@@ -63,7 +63,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
             @Override
             public SystemState nextState() {
                 // TODO
-                if(getInstance().m_autoAIMButton.getAsBoolean()){
+                if(s_autoAIMButton.getAsBoolean()){
                     return AUTO_AIM;
                 }
                 return DRIVER_CONTROL;
@@ -95,7 +95,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
             @Override
             public SystemState nextState() {
                 // TODO
-                if(getInstance().m_autoAIMButton.getAsBoolean()){
+                if(s_autoAIMButton.getAsBoolean()){
                     return AUTO_AIM;
                 }
                 return DRIVER_CONTROL;
@@ -108,7 +108,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
       private static DoubleSupplier s_driveRequest;
     private static DoubleSupplier s_strafeRequest;
     private static DoubleSupplier s_rotateRequest;
-    private BooleanSupplier m_autoAIMButton;
+    private static BooleanSupplier s_autoAIMButton;
     private static Translation2d s_hubPos;
     private static PIDController rotationPIDController = new PIDController(Constants.DriveConstants.TURN_P,Constants.DriveConstants.TURN_I,Constants.DriveConstants.TURN_D);
 
@@ -131,6 +131,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
         Logger.recordOutput("Pose", s_drivetrain.getState().Pose);
         Logger.recordOutput("leftJoystickX", s_strafeRequest);
         Logger.recordOutput("leftJoystickY", s_driveRequest);
+        Logger.recordOutput("AutoAIMButton", s_autoAIMButton);
     }
 
     public static DriveSubsystem getInstance(){
@@ -153,7 +154,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
         return Constants.HubConstants.BLUE_HUB_POS;
     }
     public void configureBindings(BooleanSupplier autoAIMButton, DoubleSupplier strafeRequest,DoubleSupplier driveRequest,DoubleSupplier rotateRequest){
-        m_autoAIMButton = autoAIMButton;
+        s_autoAIMButton = autoAIMButton;
         s_strafeRequest = strafeRequest;
         s_driveRequest = driveRequest;
         s_rotateRequest = rotateRequest;
