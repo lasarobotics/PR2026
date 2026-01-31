@@ -5,10 +5,12 @@ import java.util.function.DoubleSupplier;
 
 import org.lasarobotics.fsm.StateMachine;
 import org.lasarobotics.fsm.SystemState;
-import org.opencv.core.Mat;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -42,10 +44,10 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 if (!DriverStation.isAutonomous()) {
                     return DRIVER_CONTROL;
                 }
-                if (s_shouldAimAlign) {
+                if (s_autoAimButton.getAsBoolean()) {
                     return AUTO_AIM;
                 }
-                if (s_shouldClimbAlign) {
+                if (s_climbAlignButton.getAsBoolean()) {
                     return CLIMB_ALIGN;
                 }
                 return this;
@@ -53,8 +55,27 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
         },
         DRIVER_CONTROL {
             @Override
+            public void execute() {
+                s_drivetrain.setControl(s_drive
+                .withVelocityX(Constants.DriveConstants.MAX_SPEED
+                    .times(-s_strafeRequest.getAsDouble())
+                    .times(Constants.DriveConstants.s_driveSpeedScaler))
+                .withVelocityY(Constants.DriveConstants.MAX_SPEED
+                    .times(-s_driveRequest.getAsDouble())
+                    .times(Constants.DriveConstants.s_driveSpeedScaler))
+                .withRotationalRate(Constants.DriveConstants.MAX_ANGULAR_RATE
+                    .times(-s_rotateRequest.getAsDouble())
+                    .times(Constants.DriveConstants.s_driveSpeedScaler)));
+            }
+
+            @Override
             public SystemState nextState() {
-                // TODO
+                if (s_autoAimButton.getAsBoolean()) {
+                    return AUTO_AIM;
+                }
+                if (s_climbAlignButton.getAsBoolean()) {
+                    return CLIMB_ALIGN;
+                }
                 return this;
             }
         },
@@ -63,34 +84,62 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
             public void initialize() {
                 s_autoAimController.enableContinuousInput(-Math.PI, Math.PI);
                 s_autoAimController.setConstraints(Constants.DriveConstants.TURN_CONSTRAINTS);
+                s_autoAimMoveController.setConstraints(Constants.DriveConstants.DRIVE_CONSTRAINTS);
             }
 
-            @Override
+            @Override 
             public void execute() {
-
                 SwerveDriveState currentState = s_drivetrain.getState();
                 Translation2d currentPoseTranslation2d = currentState.Pose.getTranslation();
                 double currentAngle = currentState.Pose.getRotation().getRadians();
-                Translation2d hubTranslation2d = Constants.DriveConstants.HUB_TRANSLATION_COORDINATES;
+                Translation2d hubTranslation2d;
+                if (DriverStation.getAlliance().get() == Alliance.Blue) {
+                    hubTranslation2d = Constants.DriveConstants.HUB_TRANSLATION_COORDINATES_BLUE;
+                } else {
+                    hubTranslation2d = Constants.DriveConstants.HUB_TRANSLATION_COORDINATES_RED;
+                }
                 Translation2d translationDiff = currentPoseTranslation2d.minus(hubTranslation2d);
                 double angleGoal = Math.atan2(translationDiff.getY(), translationDiff.getX());
-                double pidOutput = s_autoAimController.calculate(currentAngle, angleGoal);
+                double pidOutputAngle = s_autoAimController.calculate(currentAngle, angleGoal);
+                double distancePID = 0;
+                if (currentPoseTranslation2d.getDistance(hubTranslation2d) > Constants.DriveConstants.AUTO_SHOOT_MAX_DISTANCE) {
+                    double currentDistance = currentPoseTranslation2d.getDistance(hubTranslation2d);
+                    double distanceToMove = currentDistance - Constants.DriveConstants.AUTO_SHOOT_MAX_DISTANCE;
+                    distancePID = s_autoAimMoveController.calculate(currentDistance, currentDistance-distanceToMove);
+                }
 
-                // TODO 
-                // Create turning logic
+                s_drivetrain.setControl(s_drive
+                .withVelocityX(distancePID * translationDiff.getAngle().getCos())
+                .withVelocityY(distancePID * translationDiff.getAngle().getSin())
+                .withRotationalRate(pidOutputAngle));
 
             }
 
             @Override
             public SystemState nextState() {
-                // TODO
+                if (DriverStation.isAutonomous()) {
+                    return AUTO;
+                }
+                if (Math.abs(s_strafeRequest.getAsDouble()) > Constants.DriveConstants.DEADBAND_SCALAR
+                        || Math.abs(s_driveRequest.getAsDouble()) > Constants.DriveConstants.DEADBAND_SCALAR
+                        || Math.abs(s_rotateRequest.getAsDouble()) > Constants.DriveConstants.DEADBAND_SCALAR) {
+                    if (!DriverStation.isAutonomous()) {
+                        return DRIVER_CONTROL;
+                    }
+                }
+                if (s_climbAlignButton.getAsBoolean()) {
+                    return CLIMB_ALIGN;
+                }
                 return this;
             }
         },
         CLIMB_ALIGN {
             @Override
             public void initialize() {
-                // TODO
+                s_climbAutoMoveController.enableContinuousInput(-Math.PI, Math.PI);
+                s_climbAutoMoveController.setConstraints(Constants.DriveConstants.DRIVE_CONSTRAINTS);
+                s_climbAutoAlignController.enableContinuousInput(-Math.PI, Math.PI);
+                s_climbAutoAlignController.setConstraints(Constants.DriveConstants.TURN_CONSTRAINTS);
             }
 
             @Override
@@ -122,52 +171,76 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 Translation2d translationDiff = currentPoseTranslation2d.minus(towerTranslation2d);
                 double angleGoal = Math.atan2(translationDiff.getY(), translationDiff.getX());
                 double pidOutputHeading = s_climbAutoAlignController.calculate(currentAngle, angleGoal);
-                // TODO
-                // CALCULATE FOR THE DISTANCE AS WELL
-                // double pidOutputDirection = s_climbAutoMoveController.calculate(translationDiff, 0);
+                double pidDistance = currentPoseTranslation2d.getDistance(towerTranslation2d);
+                double pidOutputDirection = s_climbAutoMoveController.calculate(pidDistance, 0);
+                s_drivetrain.setControl(s_drive
+                .withVelocityX(pidOutputDirection * translationDiff.getAngle().getCos())
+                .withVelocityY(pidOutputDirection * translationDiff.getAngle().getSin())
+                .withRotationalRate(pidOutputHeading));
             }
 
             @Override
             public SystemState nextState() {
-                // TODO
+                if (DriverStation.isAutonomous()) {
+                    return AUTO;
+                }
+                if (Math.abs(s_strafeRequest.getAsDouble()) > Constants.DriveConstants.DEADBAND_SCALAR
+                        || Math.abs(s_driveRequest.getAsDouble()) > Constants.DriveConstants.DEADBAND_SCALAR
+                        || Math.abs(s_rotateRequest.getAsDouble()) > Constants.DriveConstants.DEADBAND_SCALAR) {
+                    if (!DriverStation.isAutonomous()) {
+                        return DRIVER_CONTROL;
+                    }
+                }
+                if (s_autoAimButton.getAsBoolean()) {
+                    return AUTO_AIM;
+                }
                 return this;
             }
         },
     }
 
-    private static boolean s_shouldAimAlign = false;
-    private static boolean s_shouldClimbAlign = false;
     private static CommandSwerveDrivetrain s_drivetrain;
     private static SwerveRequest.FieldCentric s_drive;
     private static SwerveRequest.RobotCentric s_driveRobotCentric;
-    private static FieldCentricWithPose s_autoDrive;
-
-    private static boolean s_isAutoAimed;
-    private static boolean s_isClimbAligned;
 
     private static DoubleSupplier s_driveRequest = () -> 0;
     private static DoubleSupplier s_strafeRequest = () -> 0;
     private static DoubleSupplier s_rotateRequest = () -> 0;
 
     private static ProfiledPIDController s_autoAimController;
+    private static ProfiledPIDController s_autoAimMoveController;
     private static ProfiledPIDController s_climbAutoAlignController;
     private static ProfiledPIDController s_climbAutoMoveController;
 
-    private BooleanSupplier m_climbAlignButton;
-    private BooleanSupplier m_autoAimButton;
+    private static BooleanSupplier s_climbAlignButton;
+    private static BooleanSupplier s_autoAimButton;
 
     public DriveSubsystem() {
         super(DriveStates.DRIVER_CONTROL);
         s_drivetrain = TunerConstants.createDrivetrain();
 
+        s_drive = new SwerveRequest.FieldCentric()
+        .withDeadband(Constants.DriveConstants.MAX_SPEED.times(Constants.DriveConstants.DEADBAND_SCALAR))
+            .withRotationalDeadband(Constants.DriveConstants.MAX_ANGULAR_RATE.times(0.1))
+            .withDriveRequestType(DriveRequestType.Velocity)
+            .withSteerRequestType(SteerRequestType.MotionMagicExpo)
+            // TODO specify OperatorPerspective in SwerveDrivetrain obj
+            .withForwardPerspective(ForwardPerspectiveValue.OperatorPerspective);
     }
 
-    public void configureBindings(
+    public void bindControls(
+        DoubleSupplier driveRequest, 
+        DoubleSupplier strafeRequest, 
+        DoubleSupplier rotateRequest,
         BooleanSupplier climbAlignButton,
         BooleanSupplier autoAimButton) {
-            m_climbAlignButton = climbAlignButton;
-            m_autoAimButton = autoAimButton;
-        }
+        
+        s_driveRequest = driveRequest;
+        s_strafeRequest = strafeRequest;
+        s_rotateRequest = rotateRequest;
+        s_climbAlignButton = climbAlignButton;
+        s_autoAimButton = autoAimButton;
+    }
 
     @Override
     public void periodic() {
@@ -176,6 +249,6 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
 
     @Override
     public void close() {
-
+        s_drivetrain.close();
     }
 }
