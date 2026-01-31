@@ -148,8 +148,11 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
         }
         return Constants.HubConstants.BLUE_HUB_POS;
     }
-    public void configureBindings(BooleanSupplier autoAIMButton){
+    public void configureBindings(BooleanSupplier autoAIMButton, DoubleSupplier strafeRequest,DoubleSupplier driveRequest,DoubleSupplier rotateRequest){
         m_autoAIMButton = autoAIMButton;
+        s_strafeRequest = strafeRequest;
+        s_driveRequest = driveRequest;
+        s_rotateRequest = rotateRequest;
     }
     @Override
     public void close() {
