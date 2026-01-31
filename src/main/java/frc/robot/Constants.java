@@ -17,6 +17,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
 import com.ctre.phoenix6.controls.PositionVoltage;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -67,7 +68,7 @@ public final class Constants {
 
     public static final double DEADBAND_SCALAR = 0.1;
     public static final double SLOW_SPEED_SCALAR = 0.3;
-    public static final double FAST_SPEED_SCALAR = 1.0; // Modified for SMART Camps
+    public static final double FAST_SPEED_SCALAR = 0.6; // TODO
 
     public static final TrapezoidProfile.Constraints TURN_CONSTRAINTS =
         new TrapezoidProfile.Constraints(
@@ -95,5 +96,9 @@ public final class Constants {
     public static final double TURN_P = 0.01;
     public static final double TURN_I = 0;
     public static final double TURN_D = 0;
+ }
+ public static class HubConstants{
+  public static final Translation2d BLUE_HUB_POS = new Translation2d(4.62,6.7);
+  public static final Translation2d RED_HUB_POS = new Translation2d(12,6.7);
  }
 }

@@ -1,5 +1,6 @@
 package frc.robot.subsystems.drive;
 
+import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
@@ -11,7 +12,10 @@ import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants;
 import frc.robot.generated.TunerConstants;
 
@@ -35,6 +39,24 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
             }
         },
         DRIVER_CONTROL {
+
+            @Override
+            public void execute(){
+                s_drivetrain.setControl(
+            s_drive
+                .withVelocityX(
+                    Constants.DriveConstants.MAX_SPEED
+                        .times(-Math.pow(s_strafeRequest.getAsDouble(), 1))
+                        .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
+                .withVelocityY(
+                    Constants.DriveConstants.MAX_SPEED
+                        .times(-Math.pow(s_driveRequest.getAsDouble(), 1))
+                        .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
+                .withRotationalRate(
+                    Constants.DriveConstants.MAX_ANGULAR_RATE
+                        .times(-s_rotateRequest.getAsDouble())
+                        .times(Constants.DriveConstants.FAST_SPEED_SCALAR)));
+            }
             @Override
             public SystemState nextState() {
                 // TODO
@@ -45,6 +67,30 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
             }
         },
         AUTO_AIM {
+            @Override 
+            public void execute(){
+                Pose2d currentPose2d = s_drivetrain.getState().Pose;
+                Translation2d currentTranslation2d = currentPose2d.getTranslation();
+                double currentRotation = currentPose2d.getRotation().getRadians();
+                Translation2d translationDiff = currentTranslation2d.minus(s_hubPos);
+                double desiredAngle = Math.atan(translationDiff.getY()/translationDiff.getX());
+                double neededAngle = desiredAngle - currentRotation;
+                s_drivetrain.setControl(
+            s_drive
+                .withVelocityX(
+                    Constants.DriveConstants.MAX_SPEED
+                        .times(-Math.pow(s_strafeRequest.getAsDouble(), 1))
+                        .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
+                .withVelocityY(
+                    Constants.DriveConstants.MAX_SPEED
+                        .times(-Math.pow(s_driveRequest.getAsDouble(), 1))
+                        .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
+                .withRotationalRate(
+                    Constants.DriveConstants.MAX_ANGULAR_RATE
+                        .times(neededAngle)
+                        .times(Constants.DriveConstants.FAST_SPEED_SCALAR)));
+                
+            }
             @Override
             public SystemState nextState() {
                 // TODO
@@ -62,8 +108,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
     private static DoubleSupplier s_strafeRequest = () -> 0;
     private static DoubleSupplier s_rotateRequest = () -> 0;
     private BooleanSupplier m_autoAIMButton;
-
-    private static boolean s_isAIMed;
+    private static Translation2d s_hubPos;
 
     public DriveSubsystem() {
         super(DriveStates.DRIVER_CONTROL);
@@ -76,6 +121,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 .withDriveRequestType(DriveRequestType.Velocity)
                 .withSteerRequestType(SteerRequestType.MotionMagicExpo)
                 .withForwardPerspective(ForwardPerspectiveValue.OperatorPerspective);
+        s_hubPos = getHubPos();
     }
 
     @Override
@@ -88,6 +134,19 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
             s_driveSubsystemInstance = new DriveSubsystem();
         }
         return s_driveSubsystemInstance;
+    }
+
+    public static Translation2d getHubPos(){
+        Optional<Alliance> ally = DriverStation.getAlliance();
+        if (ally.isPresent()) {
+            if (ally.get() == Alliance.Red) {
+                return Constants.HubConstants.RED_HUB_POS;
+            }
+            if (ally.get() == Alliance.Blue) {
+            return Constants.HubConstants.BLUE_HUB_POS;
+            }
+        }
+        return Constants.HubConstants.BLUE_HUB_POS;
     }
     public void configureBindings(BooleanSupplier autoAIMButton){
         m_autoAIMButton = autoAIMButton;
