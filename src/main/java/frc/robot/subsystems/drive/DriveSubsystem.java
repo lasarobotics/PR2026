@@ -6,6 +6,7 @@ import java.util.function.DoubleSupplier;
 
 import org.lasarobotics.fsm.StateMachine;
 import org.lasarobotics.fsm.SystemState;
+import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
@@ -127,7 +128,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
 
     @Override
     public void periodic() {
-
+        Logger.recordOutput("SmartDashboard/Pose", s_drivetrain.getState().Pose);
     }
 
     public static DriveSubsystem getInstance(){

@@ -23,10 +23,10 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final FuelManager FUEL_MANAGER = FuelManager.getInstance();
-  private final ClimbSubsystem CLIMB_SUBSYSTEM = ClimbSubsystem.getInstance();
+  public final FuelManager FUEL_MANAGER = FuelManager.getInstance();
+  public final ClimbSubsystem CLIMB_SUBSYSTEM = ClimbSubsystem.getInstance();
   //private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
-  private final DriveSubsystem DRIVE_SUBSYSTEM = DriveSubsystem.getInstance();
+  public final DriveSubsystem DRIVE_SUBSYSTEM = DriveSubsystem.getInstance();
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController PRIMARY_CONTROLLER =
