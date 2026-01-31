@@ -11,6 +11,8 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
+
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -74,21 +76,19 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 double currentRotation = currentPose2d.getRotation().getRadians();
                 Translation2d translationDiff = currentTranslation2d.minus(s_hubPos);
                 double desiredAngle = Math.atan(translationDiff.getY()/translationDiff.getX());
-                double neededAngle = desiredAngle - currentRotation;
+                double pidOutputAngle = rotationPIDController.calculate(currentRotation,desiredAngle);
                 s_drivetrain.setControl(
-            s_drive
-                .withVelocityX(
-                    Constants.DriveConstants.MAX_SPEED
-                        .times(-Math.pow(s_strafeRequest.getAsDouble(), 1))
-                        .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
-                .withVelocityY(
-                    Constants.DriveConstants.MAX_SPEED
-                        .times(-Math.pow(s_driveRequest.getAsDouble(), 1))
-                        .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
-                .withRotationalRate(
-                    Constants.DriveConstants.MAX_ANGULAR_RATE
-                        .times(neededAngle)
-                        .times(Constants.DriveConstants.FAST_SPEED_SCALAR)));
+                s_drive
+                    .withVelocityX(
+                        Constants.DriveConstants.MAX_SPEED
+                            .times(-Math.pow(s_strafeRequest.getAsDouble(), 1))
+                            .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
+                    .withVelocityY(
+                        Constants.DriveConstants.MAX_SPEED
+                            .times(-Math.pow(s_driveRequest.getAsDouble(), 1))
+                            .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
+                    .withRotationalRate(
+                        pidOutputAngle));
                 
             }
             @Override
@@ -109,6 +109,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
     private static DoubleSupplier s_rotateRequest = () -> 0;
     private BooleanSupplier m_autoAIMButton;
     private static Translation2d s_hubPos;
+    private static PIDController rotationPIDController = new PIDController(Constants.DriveConstants.TURN_P,Constants.DriveConstants.TURN_I,Constants.DriveConstants.TURN_D);
 
     public DriveSubsystem() {
         super(DriveStates.DRIVER_CONTROL);
