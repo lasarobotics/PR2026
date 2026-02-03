@@ -7,6 +7,7 @@ import org.lasarobotics.fsm.SystemState;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import frc.robot.Constants;
 
@@ -91,6 +92,7 @@ public class ClimbSubsystem extends StateMachine implements AutoCloseable {
     public ClimbSubsystem() {
         super(ClimbStates.UP);
         m_climbMotor = new TalonFX(Constants.ClimbConstants.CLIMB_MOTOR_ID);
+        m_climbMotor.setNeutralMode(NeutralModeValue.Brake);
     }
 
     public void configureBindings (
@@ -105,10 +107,10 @@ public class ClimbSubsystem extends StateMachine implements AutoCloseable {
 
     @Override
     public void periodic() {
-        Logger.recordOutput(getName() + "/buttons/Up", m_upButton.getAsBoolean());
-        Logger.recordOutput(getName() + "/buttons/Back", m_backButton.getAsBoolean());
-        Logger.recordOutput(getName() + "/buttons/Forward", m_forwardButton.getAsBoolean());
-        Logger.recordOutput(getName() + "/state", getState().toString());
+        // Logger.recordOutput(getName() + "/buttons/Up", m_upButton.getAsBoolean());
+        // Logger.recordOutput(getName() + "/buttons/Back", m_backButton.getAsBoolean());
+        // Logger.recordOutput(getName() + "/buttons/Forward", m_forwardButton.getAsBoolean());
+        // Logger.recordOutput(getName() + "/state", getState().toString());
     }
 
     @Override

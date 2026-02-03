@@ -31,27 +31,11 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
         },
         AUTO {
             @Override
-            public void initialize() {
-                // TODO
-            }
-
-            @Override
-            public void execute() {
-                // TODO
-            }
-
-            @Override
             public SystemState nextState() {
                 if (!DriverStation.isAutonomous()) {
                     return DRIVER_CONTROL;
                 }
-                if (s_autoAimButton.getAsBoolean()) {
-                    return AUTO_AIM;
-                }
-                if (s_climbAlignButton.getAsBoolean()) {
-                    return CLIMB_ALIGN;
-                }
-                return this;
+                return AUTO;
             }
         },
         DRIVER_CONTROL {
@@ -228,16 +212,9 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
             .withForwardPerspective(ForwardPerspectiveValue.OperatorPerspective);
     }
 
-    public void bindControls(
-        DoubleSupplier driveRequest, 
-        DoubleSupplier strafeRequest, 
-        DoubleSupplier rotateRequest,
+    public void configureBindings(
         BooleanSupplier climbAlignButton,
         BooleanSupplier autoAimButton) {
-        
-        s_driveRequest = driveRequest;
-        s_strafeRequest = strafeRequest;
-        s_rotateRequest = rotateRequest;
         s_climbAlignButton = climbAlignButton;
         s_autoAimButton = autoAimButton;
     }

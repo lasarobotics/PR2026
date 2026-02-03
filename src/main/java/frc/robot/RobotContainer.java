@@ -10,6 +10,7 @@ import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.FuelManager;
+import frc.robot.subsystems.drive.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -25,7 +26,7 @@ public class RobotContainer {
   private final FuelManager FUEL_MANAGER = FuelManager.getInstance();
   private final ClimbSubsystem CLIMB_SUBSYSTEM = ClimbSubsystem.getInstance();
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
-
+  private final DriveSubsystem DRIVE_SUBSYSTEM = new DriveSubsystem();
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController PRIMARY_CONTROLLER =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
@@ -46,9 +47,9 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    FUEL_MANAGER.configureBindings(PRIMARY_CONTROLLER.rightTrigger(),PRIMARY_CONTROLLER.b());
-    CLIMB_SUBSYSTEM.configureBindings(PRIMARY_CONTROLLER.y(),PRIMARY_CONTROLLER.a(),PRIMARY_CONTROLLER.b());
-    
+    // FUEL_MANAGER.configureBindings(PRIMARY_CONTROLLER.rightTrigger(),PRIMARY_CONTROLLER.b());
+    // CLIMB_SUBSYSTEM.configureBindings(PRIMARY_CONTROLLER.y(),PRIMARY_CONTROLLER.a(),PRIMARY_CONTROLLER.b());
+    DRIVE_SUBSYSTEM.configureBindings(PRIMARY_CONTROLLER.a(), PRIMARY_CONTROLLER.b());
   }
 
   /**
