@@ -93,7 +93,7 @@ public final class Constants {
     public static final double AUTO_ALIGN_TOLERANCE_TURN =
         Radians.of(0.075).plus(Degrees.of(7.5)).in(Radians);
 
-    public static final double TURN_P = 0.01;
+    public static final double TURN_P = 0.08;
     public static final double TURN_I = 0;
     public static final double TURN_D = 0;
  }

@@ -17,6 +17,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants;
@@ -45,21 +46,26 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
 
             @Override
             public void execute(){
-                s_drivetrain.setControl(
-            s_drive
-                .withVelocityX(
-                    Constants.DriveConstants.MAX_SPEED
-                        .times(-Math.pow(s_strafeRequest.getAsDouble(), 1))
-                        .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
-                .withVelocityY(
-                    Constants.DriveConstants.MAX_SPEED
-                        .times(-Math.pow(s_driveRequest.getAsDouble(), 1))
-                        .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
-                .withRotationalRate(
-                    Constants.DriveConstants.MAX_ANGULAR_RATE
+                AngularVelocity rotationRate = Constants.DriveConstants.MAX_ANGULAR_RATE
                         .times(-s_rotateRequest.getAsDouble())
-                        .times(Constants.DriveConstants.FAST_SPEED_SCALAR)));
+                        .times(Constants.DriveConstants.FAST_SPEED_SCALAR);
+                s_drivetrain.setControl(
+                    s_drive
+                        .withVelocityX(
+                            Constants.DriveConstants.MAX_SPEED
+                                .times(-Math.pow(s_strafeRequest.getAsDouble(), 1))
+                                .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
+                        .withVelocityY(
+                            Constants.DriveConstants.MAX_SPEED
+                                .times(-Math.pow(s_driveRequest.getAsDouble(), 1))
+                                .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
+                        .withRotationalRate(
+                            rotationRate)
+                );
+
+                Logger.recordOutput("controlRotationRate", rotationRate);
             }
+
             @Override
             public SystemState nextState() {
                 // TODO
@@ -78,23 +84,28 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 Translation2d translationDiff = currentTranslation2d.minus(s_hubPos);
                 double desiredAngle = Math.atan(translationDiff.getY()/translationDiff.getX());
                 double pidOutputAngle = rotationPIDController.calculate(currentRotation,desiredAngle);
+
                 s_drivetrain.setControl(
-                s_drive
-                    .withVelocityX(
-                        Constants.DriveConstants.MAX_SPEED
-                            .times(-Math.pow(s_strafeRequest.getAsDouble(), 1))
-                            .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
-                    .withVelocityY(
-                        Constants.DriveConstants.MAX_SPEED
-                            .times(-Math.pow(s_driveRequest.getAsDouble(), 1))
-                            .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
-                    .withRotationalRate(
-                        pidOutputAngle));
-                Logger.recordOutput("TrabslationDiff", translationDiff);
+                    s_drive
+                        .withVelocityX(
+                            Constants.DriveConstants.MAX_SPEED
+                                .times(-Math.pow(s_strafeRequest.getAsDouble(), 1))
+                                .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
+                        .withVelocityY(
+                            Constants.DriveConstants.MAX_SPEED
+                                .times(-Math.pow(s_driveRequest.getAsDouble(), 1))
+                                .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
+                        .withRotationalRate(
+                            Constants.DriveConstants.MAX_ANGULAR_RATE
+                                .times(pidOutputAngle)
+                        )
+                );
+
+                Logger.recordOutput("TranslationDiff", translationDiff);
                 Logger.recordOutput("DesiredAngle", desiredAngle);
-                Logger.recordOutput("PIDROTATE", pidOutputAngle);
-                Logger.recordOutput("neededAngle",desiredAngle - currentRotation );
+                Logger.recordOutput("PidOutput", Constants.DriveConstants.MAX_ANGULAR_RATE.times(pidOutputAngle));
             }
+
             @Override
             public SystemState nextState() {
                 // TODO
@@ -108,7 +119,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
     private static DriveSubsystem s_driveSubsystemInstance;
     private static CommandSwerveDrivetrain s_drivetrain;
     private static SwerveRequest.FieldCentric s_drive;
-      private static DoubleSupplier s_driveRequest;
+    private static DoubleSupplier s_driveRequest;
     private static DoubleSupplier s_strafeRequest;
     private static DoubleSupplier s_rotateRequest;
     private static BooleanSupplier s_autoAIMButton;
@@ -125,7 +136,9 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 .withDriveRequestType(DriveRequestType.Velocity)
                 .withSteerRequestType(SteerRequestType.MotionMagicExpo)
                 .withForwardPerspective(ForwardPerspectiveValue.OperatorPerspective);
-        setAllianceVals();
+        
+        rotationPIDController = new PIDController(3, 0.0, 0.5);
+        rotationPIDController.enableContinuousInput(-Math.PI, Math.PI);
     }
 
     @Override
