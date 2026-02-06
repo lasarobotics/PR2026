@@ -132,6 +132,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
         Logger.recordOutput("leftJoystickY", s_driveRequest);
         Logger.recordOutput("AutoAIMButton", s_autoAIMButton);
         Logger.recordOutput("CurrentState", s_driveSubsystemInstance.getState().toString());
+        Logger.recordOutput("HubPos", s_hubPos);
     }
 
     public static DriveSubsystem getInstance(){
