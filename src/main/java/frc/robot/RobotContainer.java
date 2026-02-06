@@ -48,8 +48,13 @@ public class RobotContainer {
    */
   private void configureBindings() {
     // FUEL_MANAGER.configureBindings(PRIMARY_CONTROLLER.rightTrigger(),PRIMARY_CONTROLLER.b());
-    // CLIMB_SUBSYSTEM.configureBindings(PRIMARY_CONTROLLER.y(),PRIMARY_CONTROLLER.a(),PRIMARY_CONTROLLER.b());
-    DRIVE_SUBSYSTEM.configureBindings(PRIMARY_CONTROLLER.a(), PRIMARY_CONTROLLER.b());
+    CLIMB_SUBSYSTEM.configureBindings(PRIMARY_CONTROLLER.y(),PRIMARY_CONTROLLER.leftTrigger(),PRIMARY_CONTROLLER.rightTrigger());
+    DRIVE_SUBSYSTEM.configureBindings
+      (PRIMARY_CONTROLLER.a(),
+      PRIMARY_CONTROLLER.b(),
+      () -> PRIMARY_CONTROLLER.getLeftX(),
+      () -> PRIMARY_CONTROLLER.getLeftY(),
+      () -> PRIMARY_CONTROLLER.getRightX());
   }
 
   /**

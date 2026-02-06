@@ -214,15 +214,22 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
 
     public void configureBindings(
         BooleanSupplier climbAlignButton,
-        BooleanSupplier autoAimButton) {
+        BooleanSupplier autoAimButton,
+        DoubleSupplier strafeRequest,
+        DoubleSupplier driveRequest,
+        DoubleSupplier rotateRequest) {
         s_climbAlignButton = climbAlignButton;
         s_autoAimButton = autoAimButton;
+        s_strafeRequest = strafeRequest;
+        s_driveRequest = driveRequest;
+        s_rotateRequest = rotateRequest;
     }
 
     @Override
     public void periodic() {
         Logger.recordOutput(getName() + "/buttons/climb", s_climbAlignButton.getAsBoolean());
         Logger.recordOutput(getName() + "/buttons/aim", s_autoAimButton.getAsBoolean());
+        Logger.recordOutput(getName() + "/Pose", s_drivetrain.getState().Pose);
     }
 
     @Override

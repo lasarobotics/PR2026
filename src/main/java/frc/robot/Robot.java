@@ -39,8 +39,8 @@ public class Robot extends LoggedRobot {
     Logger.start();
     m_robotContainer = new RobotContainer();
     m_driveSubsystem = new DriveSubsystem();
-    m_climbSubsystem = new ClimbSubsystem();
-    m_fuelManager = new FuelManager();
+    m_climbSubsystem = ClimbSubsystem.getInstance();
+    m_fuelManager = FuelManager.getInstance();
   }
 
   /**
@@ -57,7 +57,7 @@ public class Robot extends LoggedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     m_driveSubsystem.periodic();
-    // m_climbSubsystem.periodic();
+    m_climbSubsystem.periodic();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
