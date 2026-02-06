@@ -115,7 +115,6 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
     public DriveSubsystem() {
         super(DriveStates.DRIVER_CONTROL);
         s_drivetrain = TunerConstants.createDrivetrain();
-
         s_drive =
             new SwerveRequest.FieldCentric()
                 .withDeadband(Constants.DriveConstants.MAX_SPEED.times(Constants.DriveConstants.DEADBAND_SCALAR))
@@ -123,7 +122,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 .withDriveRequestType(DriveRequestType.Velocity)
                 .withSteerRequestType(SteerRequestType.MotionMagicExpo)
                 .withForwardPerspective(ForwardPerspectiveValue.OperatorPerspective);
-        s_hubPos = getHubPos();
+        setAllianceVals();
     }
 
     @Override
@@ -142,17 +141,22 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
         return s_driveSubsystemInstance;
     }
 
-    public static Translation2d getHubPos(){
+    public static void setAllianceVals(){
         Optional<Alliance> ally = DriverStation.getAlliance();
         if (ally.isPresent()) {
             if (ally.get() == Alliance.Red) {
-                return Constants.HubConstants.RED_HUB_POS;
+                 s_drivetrain.setOperatorPerspectiveForward(
+                CommandSwerveDrivetrain.kRedAlliancePerspectiveRotation);
+                s_hubPos = Constants.HubConstants.RED_HUB_POS;
             }
             if (ally.get() == Alliance.Blue) {
-            return Constants.HubConstants.BLUE_HUB_POS;
+                s_drivetrain.setOperatorPerspectiveForward(
+                CommandSwerveDrivetrain.kBlueAlliancePerspectiveRotation);
+             s_hubPos = Constants.HubConstants.BLUE_HUB_POS;
             }
         }
-        return Constants.HubConstants.BLUE_HUB_POS;
+        s_hubPos = Constants.HubConstants.BLUE_HUB_POS;
+
     }
     public void configureBindings(BooleanSupplier autoAIMButton, DoubleSupplier strafeRequest,DoubleSupplier driveRequest,DoubleSupplier rotateRequest){
         s_autoAIMButton = autoAIMButton;

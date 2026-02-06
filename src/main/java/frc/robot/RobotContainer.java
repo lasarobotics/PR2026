@@ -6,9 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.ClimbSubsystem;
-import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.FuelManager;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -27,7 +25,6 @@ public class RobotContainer {
   public final ClimbSubsystem CLIMB_SUBSYSTEM = ClimbSubsystem.getInstance();
   //private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   public final DriveSubsystem DRIVE_SUBSYSTEM = DriveSubsystem.getInstance();
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController PRIMARY_CONTROLLER =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
@@ -48,8 +45,8 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    FUEL_MANAGER.configureBindings(PRIMARY_CONTROLLER.rightTrigger(),PRIMARY_CONTROLLER.b());
-    CLIMB_SUBSYSTEM.configureBindings(PRIMARY_CONTROLLER.y(),PRIMARY_CONTROLLER.a(),PRIMARY_CONTROLLER.b());
+    FUEL_MANAGER.configureBindings(PRIMARY_CONTROLLER.leftTrigger(),PRIMARY_CONTROLLER.rightTrigger());
+    CLIMB_SUBSYSTEM.configureBindings(PRIMARY_CONTROLLER.y(),PRIMARY_CONTROLLER.x(),PRIMARY_CONTROLLER.b());
     DRIVE_SUBSYSTEM.configureBindings(
       PRIMARY_CONTROLLER.a(),
       () -> PRIMARY_CONTROLLER.getLeftX(), // drive x
@@ -64,9 +61,9 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
 
-  public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    // TODO
-    return Autos.exampleAuto(m_exampleSubsystem);
-  }
+  // public Command getAutonomousCommand() {
+  //   // An example command will be run in autonomous
+  //   // TODO
+
+  // }
 }
