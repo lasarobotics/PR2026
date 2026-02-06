@@ -90,7 +90,10 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                             .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
                     .withRotationalRate(
                         pidOutputAngle));
-                
+                Logger.recordOutput("TrabslationDiff", translationDiff);
+                Logger.recordOutput("DesiredAngle", desiredAngle);
+                Logger.recordOutput("PIDROTATE", pidOutputAngle);
+                Logger.recordOutput("neededAngle",desiredAngle - currentRotation );
             }
             @Override
             public SystemState nextState() {
@@ -127,6 +130,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
 
     @Override
     public void periodic() {
+        setAllianceVals();
         Logger.recordOutput("Pose", s_drivetrain.getState().Pose);
         Logger.recordOutput("leftJoystickX", s_strafeRequest);
         Logger.recordOutput("leftJoystickY", s_driveRequest);
