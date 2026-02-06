@@ -81,8 +81,8 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 Pose2d currentPose2d = s_drivetrain.getState().Pose;
                 Translation2d currentTranslation2d = currentPose2d.getTranslation();
                 double currentRotation = currentPose2d.getRotation().getRadians();
-                Translation2d translationDiff = currentTranslation2d.minus(s_hubPos);
-                double desiredAngle = Math.atan(translationDiff.getY()/translationDiff.getX());
+                Translation2d translationDiff = s_hubPos.minus(currentTranslation2d);
+                double desiredAngle = Math.atan2(translationDiff.getY(),translationDiff.getX()); 
                 double pidOutputAngle = rotationPIDController.calculate(currentRotation,desiredAngle);
 
                 s_drivetrain.setControl(

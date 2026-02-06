@@ -98,7 +98,7 @@ public final class Constants {
     public static final double TURN_D = 0;
  }
  public static class HubConstants{
-  public static final Translation2d BLUE_HUB_POS = new Translation2d(4.62,6.7);
-  public static final Translation2d RED_HUB_POS = new Translation2d(12,6.7);
+  public static final Translation2d BLUE_HUB_POS = new Translation2d(4.7,3);
+  public static final Translation2d RED_HUB_POS = new Translation2d(4.7,3);
  }
 }
