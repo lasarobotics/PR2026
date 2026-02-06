@@ -67,6 +67,16 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
         AUTO_AIM {
             @Override
             public void initialize() {
+                s_autoAimController = new ProfiledPIDController(
+                    Constants.DriveConstants.TURN_P,
+                    Constants.DriveConstants.TURN_I,
+                    Constants.DriveConstants.TURN_D,
+                    Constants.DriveConstants.TURN_CONSTRAINTS);
+                s_autoAimMoveController = new ProfiledPIDController(
+                    Constants.DriveConstants.DRIVE_P,
+                    Constants.DriveConstants.DRIVE_I,
+                    Constants.DriveConstants.DRIVE_D,
+                    Constants.DriveConstants.DRIVE_CONSTRAINTS);
                 s_autoAimController.enableContinuousInput(-Math.PI, Math.PI);
                 s_autoAimController.setConstraints(Constants.DriveConstants.TURN_CONSTRAINTS);
                 s_autoAimMoveController.setConstraints(Constants.DriveConstants.DRIVE_CONSTRAINTS);
@@ -77,6 +87,9 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 SwerveDriveState currentState = s_drivetrain.getState();
                 Translation2d currentPoseTranslation2d = currentState.Pose.getTranslation();
                 double currentAngle = currentState.Pose.getRotation().getRadians();
+
+                Logger.recordOutput("/Auto_Aim/currentAngle", currentAngle);
+
                 Translation2d hubTranslation2d;
                 if (DriverStation.getAlliance().get() == Alliance.Blue) {
                     hubTranslation2d = Constants.DriveConstants.HUB_TRANSLATION_COORDINATES_BLUE;
@@ -85,18 +98,28 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 }
                 Translation2d translationDiff = currentPoseTranslation2d.minus(hubTranslation2d);
                 double angleGoal = Math.atan2(translationDiff.getY(), translationDiff.getX());
-                double pidOutputAngle = s_autoAimController.calculate(currentAngle, angleGoal);
+
+                Logger.recordOutput("/Auto_Aim/angleGoal", angleGoal);
+
+                s_autoAimController.reset(0);
+                s_autoAimMoveController.reset(0);
+                double pidOutputHeading = s_autoAimController.calculate(currentAngle, angleGoal);
+
+                Logger.recordOutput("/Auto_Aim/pidAngle", pidOutputHeading);
+
                 double distancePID = 0;
                 if (currentPoseTranslation2d.getDistance(hubTranslation2d) > Constants.DriveConstants.AUTO_SHOOT_MAX_DISTANCE) {
                     double currentDistance = currentPoseTranslation2d.getDistance(hubTranslation2d);
                     double distanceToMove = currentDistance - Constants.DriveConstants.AUTO_SHOOT_MAX_DISTANCE;
                     distancePID = s_autoAimMoveController.calculate(currentDistance, currentDistance-distanceToMove);
+
+                    Logger.recordOutput("/Auto_Aim/pidDistance", distancePID);
                 }
 
                 s_drivetrain.setControl(s_drive
                 .withVelocityX(distancePID * translationDiff.getAngle().getCos())
                 .withVelocityY(distancePID * translationDiff.getAngle().getSin())
-                .withRotationalRate(pidOutputAngle));
+                .withRotationalRate(pidOutputHeading));
 
             }
 
@@ -121,16 +144,30 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
         CLIMB_ALIGN {
             @Override
             public void initialize() {
+                s_climbAutoAlignController = new ProfiledPIDController(
+                    Constants.DriveConstants.TURN_P,
+                    Constants.DriveConstants.TURN_I,
+                    Constants.DriveConstants.TURN_D,
+                    Constants.DriveConstants.TURN_CONSTRAINTS);
+                s_climbAutoMoveController = new ProfiledPIDController(
+                    Constants.DriveConstants.DRIVE_P,
+                    Constants.DriveConstants.DRIVE_I,
+                    Constants.DriveConstants.DRIVE_D,
+                    Constants.DriveConstants.DRIVE_CONSTRAINTS);
                 s_climbAutoMoveController.setConstraints(Constants.DriveConstants.DRIVE_CONSTRAINTS);
                 s_climbAutoAlignController.enableContinuousInput(-Math.PI, Math.PI);
                 s_climbAutoAlignController.setConstraints(Constants.DriveConstants.TURN_CONSTRAINTS);
             }
 
             @Override
+
             public void execute() {
                 SwerveDriveState currentState = s_drivetrain.getState();
                 Translation2d currentPoseTranslation2d = currentState.Pose.getTranslation();
                 double currentAngle = currentState.Pose.getRotation().getRadians();
+
+                Logger.recordOutput("/Climb_Align/currentAngle", currentAngle);
+
                 Translation2d towerTranslation2d;
                 int shortestDistanceIndex = 0;
                 if (DriverStation.getAlliance().get() == Alliance.Blue) {
@@ -154,9 +191,20 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 }
                 Translation2d translationDiff = currentPoseTranslation2d.minus(towerTranslation2d);
                 double angleGoal = Math.atan2(translationDiff.getY(), translationDiff.getX());
+
+                Logger.recordOutput("/Climb_Align/angleGoal", angleGoal);
+
+                s_climbAutoAlignController.reset(0);
+                s_climbAutoMoveController.reset(0);
                 double pidOutputHeading = s_climbAutoAlignController.calculate(currentAngle, angleGoal);
+
+                 Logger.recordOutput("/Climb_Align/pidHeading", pidOutputHeading);
+
                 double pidDistance = currentPoseTranslation2d.getDistance(towerTranslation2d);
                 double pidOutputDirection = s_climbAutoMoveController.calculate(pidDistance, 0);
+
+                Logger.recordOutput("/Climb_Align/pidDistance", pidOutputDirection);
+
                 s_drivetrain.setControl(s_drive
                 .withVelocityX(pidOutputDirection * translationDiff.getAngle().getCos())
                 .withVelocityY(pidOutputDirection * translationDiff.getAngle().getSin())
