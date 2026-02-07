@@ -66,10 +66,6 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 {
                     return AUTO_AIM;
                 }
-                if (DriverStation.isAutonomous())
-                {
-                    return AUTO;
-                }
                 return DRIVER_CONTROL;
             }
         },
@@ -101,10 +97,6 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 // TODO
                 if(getInstance().s_autoAimButton.getAsBoolean()){
                     return AUTO_AIM;
-                }
-                if (DriverStation.isAutonomous())
-                {
-                    return AUTO;
                 }
                 return DRIVER_CONTROL;
             }
