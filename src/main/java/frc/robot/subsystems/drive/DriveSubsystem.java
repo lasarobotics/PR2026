@@ -47,11 +47,11 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
             getInstance().s_drive
                 .withVelocityX(
                     Constants.DriveConstants.MAX_SPEED
-                        .times(-Math.pow(getInstance().s_strafeRequest.getAsDouble(), 1))
+                        .times(-Math.pow(getInstance().s_driveRequest.getAsDouble(), 1))
                         .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
                 .withVelocityY(
                     Constants.DriveConstants.MAX_SPEED
-                        .times(-Math.pow(getInstance().s_driveRequest.getAsDouble(), 1))
+                        .times(-Math.pow(getInstance().s_strafeRequest.getAsDouble(), 1))
                         .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
                 .withRotationalRate(
                     Constants.DriveConstants.MAX_ANGULAR_RATE
@@ -79,14 +79,14 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 double desiredAngle = Math.atan(translationDiff.getY()/translationDiff.getX());
                 double pidOutputAngle = getInstance().rotationPIDController.calculate(currentRotation, desiredAngle);
                 getInstance().s_drivetrain.setControl(
-                getInstance().s_drive
-                    .withVelocityX(
-                        Constants.DriveConstants.MAX_SPEED
-                            .times(-Math.pow(getInstance().s_strafeRequest.getAsDouble(), 1))
+                    getInstance().s_drive
+                        .withVelocityX(
+                            Constants.DriveConstants.MAX_SPEED
+                                .times(-Math.pow(getInstance().s_driveRequest.getAsDouble(), 1))
                             .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
                     .withVelocityY(
                         Constants.DriveConstants.MAX_SPEED
-                            .times(-Math.pow(getInstance().s_driveRequest.getAsDouble(), 1))
+                            .times(-Math.pow(getInstance().s_strafeRequest.getAsDouble(), 1))
                             .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
                     .withRotationalRate(
                         pidOutputAngle));
