@@ -76,7 +76,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 Pose2d currentPose2d = getInstance().s_drivetrain.getState().Pose;
                 Translation2d currentTranslation2d = currentPose2d.getTranslation();
                 double currentRotation = currentPose2d.getRotation().getRadians();
-                Translation2d translationDiff = getInstance().s_hubPos.minus(currentTranslation2d);
+                Translation2d translationDiff = Constants.HubConstants.HUB_POS.minus(currentTranslation2d);
                 double desiredAngle = Math.atan2(translationDiff.getY(), translationDiff.getX());
                 double pidOutputAngle = getInstance().rotationPIDController.calculate(currentRotation, desiredAngle);
 
@@ -109,7 +109,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 Pose2d currentPose2d = getInstance().s_drivetrain.getState().Pose;
                 Translation2d currentTranslation2d = currentPose2d.getTranslation();
                 double currentRotation = currentPose2d.getRotation().getRadians();
-                Translation2d translationDiff = getInstance().s_hubPos.minus(currentTranslation2d);
+                Translation2d translationDiff = Constants.HubConstants.HUB_POS.minus(currentTranslation2d);
                 double desiredAngle = Math.atan2(translationDiff.getY(), translationDiff.getX());
                 double pidOutputAngle = getInstance().rotationPIDController.calculate(currentRotation, desiredAngle);
 
@@ -144,8 +144,8 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
     private DoubleSupplier s_strafeRequest;
     private DoubleSupplier s_rotateRequest;
     private BooleanSupplier s_autoAimButton;
-    private Translation2d s_hubPos;
     private PIDController rotationPIDController;
+    private PIDController translationPidController;
 
     public DriveSubsystem() {
         super(DriveStates.DRIVER_CONTROL);
@@ -159,16 +159,18 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 .withSteerRequestType(SteerRequestType.MotionMagicExpo)
                 .withForwardPerspective(ForwardPerspectiveValue.OperatorPerspective);
 
-        rotationPIDController = new PIDController(3, 0.0, 0.5);
+        rotationPIDController = new PIDController(Constants.DriveConstants.TURN_P, Constants.DriveConstants.TURN_I, Constants.DriveConstants.TURN_D);
         rotationPIDController.enableContinuousInput(-Math.PI, Math.PI);
+        translationPidController = new PIDController(Constants.DriveConstants.TRANSLATION_P, Constants.DriveConstants.TRANSLATION_I, Constants.DriveConstants.TRANSLATION_D);
 
-        setAllianceVals();
+
+        setPerspective();
     }
 
     @Override
     public void periodic() {
 
-        setAllianceVals();
+        setPerspective();
 
         Logger.recordOutput("Pose", s_drivetrain.getState().Pose);
         Logger.recordOutput("leftJoystickX", s_strafeRequest);
@@ -183,16 +185,14 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
         return s_driveSubsystemInstance;
     }
 
-    public static void setAllianceVals(){
+    public static void setPerspective(){
         Optional<Alliance> ally = DriverStation.getAlliance();
         if (ally.isPresent()) {
             if (ally.get() == Alliance.Red) {
                 getInstance().s_drivetrain.setOperatorPerspectiveForward(CommandSwerveDrivetrain.kRedAlliancePerspectiveRotation);
-                getInstance().s_hubPos = Constants.HubConstants.RED_HUB_POS;
             }
             if (ally.get() == Alliance.Blue) {
                 getInstance().s_drivetrain.setOperatorPerspectiveForward(CommandSwerveDrivetrain.kBlueAlliancePerspectiveRotation);
-                getInstance().s_hubPos = Constants.HubConstants.BLUE_HUB_POS;
             }
         }
     }
