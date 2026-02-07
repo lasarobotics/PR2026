@@ -110,19 +110,19 @@ public final class Constants {
     public static final double s_driveSpeedScaler = .8;
 
     // TODO TODO TODO REVISE
-    public static final double TURN_P = 0.01;
-    public static final double TURN_I = 0;
-    public static final double TURN_D = 0;
+    public static final double TURN_P = 3;
+    public static final double TURN_I = 0.1;
+    public static final double TURN_D = 0.1;
     // TODO TODO TODO
 
     // TODO TODO TODO REVISE
-    public static final double DRIVE_P = 0.01;
-    public static final double DRIVE_I = 0;
-    public static final double DRIVE_D = 0;
+    public static final double DRIVE_P = 3;
+    public static final double DRIVE_I = 0.1;
+    public static final double DRIVE_D = 0.1;
     // TODO TODO TODO
 
-    public static final Translation2d HUB_TRANSLATION_COORDINATES_BLUE = new Translation2d(0,0);
-    public static final Translation2d HUB_TRANSLATION_COORDINATES_RED = new Translation2d(0,0);
+    public static final Translation2d HUB_TRANSLATION_COORDINATES_BLUE = new Translation2d(1.183,1);
+    public static final Translation2d HUB_TRANSLATION_COORDINATES_RED = new Translation2d(1.183,1);
 
     public static final double DEADBAND_SCALAR = .085;
 

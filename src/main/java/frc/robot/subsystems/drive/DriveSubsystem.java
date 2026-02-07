@@ -119,7 +119,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 s_drivetrain.setControl(s_drive
                 .withVelocityX(distancePID * translationDiff.getAngle().getCos())
                 .withVelocityY(distancePID * translationDiff.getAngle().getSin())
-                .withRotationalRate(pidOutputHeading));
+                .withRotationalRate(Constants.DriveConstants.MAX_ANGULAR_RATE.times(pidOutputHeading)));
 
             }
 
@@ -208,7 +208,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 s_drivetrain.setControl(s_drive
                 .withVelocityX(pidOutputDirection * translationDiff.getAngle().getCos())
                 .withVelocityY(pidOutputDirection * translationDiff.getAngle().getSin())
-                .withRotationalRate(pidOutputHeading));
+                .withRotationalRate(Constants.DriveConstants.MAX_ANGULAR_RATE.times(pidOutputHeading)));
             }
 
             @Override
