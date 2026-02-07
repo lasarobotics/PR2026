@@ -44,7 +44,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
             @Override
             public void execute(){
                 getInstance().m_drivetrain.setControl(
-                    getInstance().s_drive
+                    getInstance().m_drive
                         .withVelocityX(
                             Constants.DriveConstants.MAX_SPEED
                                 .times(-Math.pow(getInstance().m_driveRequest.getAsDouble(), 1))
@@ -80,7 +80,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 double pidOutputAngle = getInstance().rotationPIDController.calculate(currentRotation, desiredAngle);
 
                 getInstance().m_drivetrain.setControl(
-                    getInstance().s_drive
+                    getInstance().m_drive
                         .withVelocityX(
                             Constants.DriveConstants.MAX_SPEED
                                 .times(-Math.pow(getInstance().m_driveRequest.getAsDouble(), 1))
@@ -113,7 +113,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 double pidOutputAngle = getInstance().rotationPIDController.calculate(currentRotation, desiredAngle);
 
                 getInstance().m_drivetrain.setControl(
-                    getInstance().s_drive
+                    getInstance().m_drive
                         .withVelocityX(
                             Constants.DriveConstants.MAX_SPEED
                                 .times(-Math.pow(getInstance().m_strafeRequest.getAsDouble(), 1))
@@ -138,7 +138,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
     }
     private static DriveSubsystem s_driveSubsystemInstance;
     private CommandSwerveDrivetrain m_drivetrain;
-    private SwerveRequest.FieldCentric s_drive;
+    private SwerveRequest.FieldCentric m_drive;
     private DoubleSupplier m_driveRequest;
     private DoubleSupplier m_strafeRequest;
     private DoubleSupplier m_rotateRequest;
@@ -150,7 +150,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
         super(DriveStates.DRIVER_CONTROL);
         m_drivetrain = TunerConstants.createDrivetrain();
 
-        s_drive =
+        m_drive =
             new SwerveRequest.FieldCentric()
                 .withDeadband(Constants.DriveConstants.MAX_SPEED.times(Constants.DriveConstants.DEADBAND_SCALAR))
                 .withRotationalDeadband(Constants.DriveConstants.MAX_ANGULAR_RATE.times(0.1)) // Add a
