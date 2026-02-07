@@ -57,7 +57,7 @@ public class FuelManager extends StateMachine implements AutoCloseable {
             @Override
             public void initialize() {
                 getInstance().m_shootMotor.set(Constants.FuelManagerConstants.SHOOT_MOTOR_SPEED);
-                getInstance().m_middleMotor.set(Constants.FuelManagerConstants.MIDDLE_MOTOR_SHOOT_SPEED);
+                getInstance().m_middleMotor.set(Constants.FuelManagerConstants.MIDDLE_MOTOR_SHOOT_SPEED); // TODO add vraible speed
                 getInstance().m_intakeMotor.set(Constants.FuelManagerConstants.INTAKE_MOTOR_SPEED);
             }
             @Override
@@ -67,8 +67,24 @@ public class FuelManager extends StateMachine implements AutoCloseable {
                 }
                 return REST;
             }
-        }
+        
+        },
+        STATIC_SHOOT {
+            @Override
+            public void initialize() {
+                getInstance().m_shootMotor.set(Constants.FuelManagerConstants.SHOOT_MOTOR_SPEED);
+                getInstance().m_middleMotor.set(Constants.FuelManagerConstants.MIDDLE_MOTOR_SHOOT_SPEED);
+                getInstance().m_intakeMotor.set(Constants.FuelManagerConstants.INTAKE_MOTOR_SPEED);
+            }
+            @Override
+            public SystemState nextState() {
+                if (getInstance().m_staticShootButton.getAsBoolean()){
+                    return STATIC_SHOOT;
+                }
+                return REST;
+            }
     }
+}
     
     private static FuelManager s_FuelManagerInstance;
     private final TalonFX m_intakeMotor;
@@ -76,6 +92,7 @@ public class FuelManager extends StateMachine implements AutoCloseable {
     private final TalonFX m_middleMotor;
     private BooleanSupplier m_intakeButton;
     private BooleanSupplier m_shootButton;
+    private BooleanSupplier m_staticShootButton;
 
     private FuelManager(){
         super(FuelManagerStates.REST);
@@ -92,9 +109,10 @@ public class FuelManager extends StateMachine implements AutoCloseable {
         return s_FuelManagerInstance;
     }
 
-    public void configureBindings(BooleanSupplier intakeButton, BooleanSupplier shootButton){
+    public void configureBindings(BooleanSupplier intakeButton, BooleanSupplier shootButton, BooleanSupplier staticShootButton){
         m_intakeButton = intakeButton;
         m_shootButton = shootButton;
+        m_staticShootButton = staticShootButton;
     }
 
     @Override
