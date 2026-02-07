@@ -49,6 +49,7 @@ public class RobotContainer {
     CLIMB_SUBSYSTEM.configureBindings(PRIMARY_CONTROLLER.povUp(),PRIMARY_CONTROLLER.povLeft(),PRIMARY_CONTROLLER.povRight());
     DRIVE_SUBSYSTEM.configureBindings(
       PRIMARY_CONTROLLER.a(),
+      PRIMARY_CONTROLLER.povDown(),
       () -> PRIMARY_CONTROLLER.getLeftY(), // drive x
       () -> PRIMARY_CONTROLLER.getLeftX(), // drive y
       () -> PRIMARY_CONTROLLER.getRightX()); // rotate x

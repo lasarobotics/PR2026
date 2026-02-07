@@ -53,6 +53,7 @@ public final class Constants {
     public static double INTAKE_MOTOR_SPEED = 0; // TODO
     public static double MIDDLE_MOTOR_INTAKE_SPEED = 0; // TODO
     public static double MIDDLE_MOTOR_SHOOT_SPEED = 0; // TODO
+    public static final Translation2d CLIMB_POS = new Translation2d(4.7,3);
   }
 
   
@@ -93,12 +94,12 @@ public final class Constants {
     public static final double AUTO_ALIGN_TOLERANCE_TURN =
         Radians.of(0.075).plus(Degrees.of(7.5)).in(Radians);
 
-    public static final double TURN_P = 0.08;
-    public static final double TURN_I = 0;
-    public static final double TURN_D = 0;
+    public static final double TURN_P = 7;
+    public static final double TURN_I = 0.65;
+    public static final double TURN_D = 0.2;
  }
  public static class HubConstants{
-  public static final Translation2d BLUE_HUB_POS = new Translation2d(4.7,3);
-  public static final Translation2d RED_HUB_POS = new Translation2d(4.7,3);
+  public static final Translation2d HUB_POS = new Translation2d(4.7,3);
+
  }
 }
