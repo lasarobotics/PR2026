@@ -48,17 +48,17 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
             @Override
             public void execute(){
                 AngularVelocity rotationRate = Constants.DriveConstants.MAX_ANGULAR_RATE
-                        .times(-s_rotateRequest.getAsDouble())
+                        .times(-getInstance().m_rotateRequest.getAsDouble())
                         .times(Constants.DriveConstants.FAST_SPEED_SCALAR);
-                s_drivetrain.setControl(
-                    s_drive
+                getInstance().m_drivetrain.setControl(
+                    getInstance().m_drive
                         .withVelocityX(
                             Constants.DriveConstants.MAX_SPEED
-                                .times(-Math.pow(s_strafeRequest.getAsDouble(), 1))
+                                .times(-Math.pow(getInstance().m_strafeRequest.getAsDouble(), 1))
                                 .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
                         .withVelocityY(
                             Constants.DriveConstants.MAX_SPEED
-                                .times(-Math.pow(s_driveRequest.getAsDouble(), 1))
+                                .times(-Math.pow(getInstance().m_driveRequest.getAsDouble(), 1))
                                 .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
                         .withRotationalRate(
                             rotationRate)
@@ -70,10 +70,10 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
             @Override
             public SystemState nextState() {
                 // TODO
-                if(s_autoAIMButton.getAsBoolean()){
+                if(getInstance().m_autoAIMButton.getAsBoolean()){
                     return AUTO_AIM;
                 }
-                if(s_climbAlignButton.getAsBoolean()){
+                if(getInstance().m_climbAlignButton.getAsBoolean()){
                     return CLIMB_ALIGN;
                 }
                 return DRIVER_CONTROL;
@@ -82,22 +82,22 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
         AUTO_AIM {
             @Override 
             public void execute(){
-                Pose2d currentPose2d = s_drivetrain.getState().Pose;
+                Pose2d currentPose2d = getInstance().m_drivetrain.getState().Pose;
                 Translation2d currentTranslation2d = currentPose2d.getTranslation();
                 double currentRotation = currentPose2d.getRotation().getRadians();
                 Translation2d translationDiff = Constants.HubConstants.HUB_POS.minus(currentTranslation2d);
                 double desiredAngle = Math.atan2(translationDiff.getY(),translationDiff.getX()); 
-                double pidOutputAngle = rotationPIDController.calculate(currentRotation,desiredAngle);
+                double pidOutputAngle = getInstance().rotationPIDController.calculate(currentRotation,desiredAngle);
 
-                s_drivetrain.setControl(
-                    s_drive
+                getInstance().m_drivetrain.setControl(
+                    getInstance().m_drive
                         .withVelocityX(
                             Constants.DriveConstants.MAX_SPEED
-                                .times(-Math.pow(s_strafeRequest.getAsDouble(), 1))
+                                .times(-Math.pow(getInstance().m_strafeRequest.getAsDouble(), 1))
                                 .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
                         .withVelocityY(
                             Constants.DriveConstants.MAX_SPEED
-                                .times(-Math.pow(s_driveRequest.getAsDouble(), 1))
+                                .times(-Math.pow(getInstance().m_driveRequest.getAsDouble(), 1))
                                 .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
                         .withRotationalRate(
                             Constants.DriveConstants.MAX_ANGULAR_RATE
@@ -113,7 +113,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
             @Override
             public SystemState nextState() {
                 // TODO
-                if(s_autoAIMButton.getAsBoolean()){
+                if(getInstance().m_autoAIMButton.getAsBoolean()){
                     return AUTO_AIM;
                 }
                 return DRIVER_CONTROL;
@@ -122,17 +122,17 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
         CLIMB_ALIGN {
             @Override 
             public void execute(){
-                Pose2d currentPose2d = s_drivetrain.getState().Pose;
+                Pose2d currentPose2d = getInstance().m_drivetrain.getState().Pose;
                 Translation2d currentTranslation2d = currentPose2d.getTranslation();
                 double currentRotation = currentPose2d.getRotation().getRadians();
                 Translation2d translationDiff = Constants.ClimbConstants.CLIMB_POS.minus(currentTranslation2d);
                 double angleCos = translationDiff.getAngle().getCos();
                 double angleSin = translationDiff.getAngle().getSin();
                 double desiredAngle = 0;
-                double pidOutputAngle = rotationPIDController.calculate(currentRotation, desiredAngle);
-                double pidOutput = translationPIDController.calculate(translationDiff.getNorm(), 0);
-                s_drivetrain.setControl(
-                    s_drive
+                double pidOutputAngle = getInstance().rotationPIDController.calculate(currentRotation, desiredAngle);
+                double pidOutput = getInstance().translationPIDController.calculate(translationDiff.getNorm(), 0);
+                getInstance().m_drivetrain.setControl(
+                    getInstance().m_drive
                         .withVelocityX(
                             pidOutput * angleCos)
                         .withVelocityY(
@@ -149,28 +149,28 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
             @Override
             public SystemState nextState() {
                 // TODO
-                if(s_climbAlignButton.getAsBoolean()){
+                if(getInstance().m_climbAlignButton.getAsBoolean()){
                     return CLIMB_ALIGN;
                 }
                 return DRIVER_CONTROL;
             }
         }
     }
-    private static DriveSubsystem s_driveSubsystemInstance;
-    private static CommandSwerveDrivetrain s_drivetrain;
-    private static SwerveRequest.FieldCentric s_drive;
-    private static DoubleSupplier s_driveRequest;
-    private static DoubleSupplier s_strafeRequest;
-    private static DoubleSupplier s_rotateRequest;
-    private static BooleanSupplier s_autoAIMButton;
-    private static BooleanSupplier s_climbAlignButton;
-    private static PIDController rotationPIDController;
-    private static PIDController translationPIDController;
+    private static DriveSubsystem m_driveSubsystemInstance;
+    private CommandSwerveDrivetrain m_drivetrain;
+    private SwerveRequest.FieldCentric m_drive;
+    private DoubleSupplier m_driveRequest;
+    private DoubleSupplier m_strafeRequest;
+    private DoubleSupplier m_rotateRequest;
+    private BooleanSupplier m_autoAIMButton;
+    private BooleanSupplier m_climbAlignButton;
+    private PIDController rotationPIDController;
+    private PIDController translationPIDController;
 
     public DriveSubsystem() {
         super(DriveStates.DRIVER_CONTROL);
-        s_drivetrain = TunerConstants.createDrivetrain();
-        s_drive =
+        m_drivetrain = TunerConstants.createDrivetrain();
+        m_drive =
             new SwerveRequest.FieldCentric()
                 .withDeadband(Constants.DriveConstants.MAX_SPEED.times(Constants.DriveConstants.DEADBAND_SCALAR))
                 .withRotationalDeadband(Constants.DriveConstants.MAX_ANGULAR_RATE.times(0.1)) // Add a
@@ -187,42 +187,42 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
     @Override
     public void periodic() {
         setPerspective();
-        Logger.recordOutput(getName() + "/Pose", s_drivetrain.getState().Pose);
-        Logger.recordOutput(getName() +"/leftJoystickX", s_strafeRequest);
-        Logger.recordOutput(getName() +"/leftJoystickY", s_driveRequest);
-        Logger.recordOutput(getName() +"/AutoAIMButton", s_autoAIMButton);
-        Logger.recordOutput(getName() +"/CurrentState", s_driveSubsystemInstance.getState().toString());
+        Logger.recordOutput(getName() + "/Pose", m_drivetrain.getState().Pose);
+        Logger.recordOutput(getName() +"/leftJoystickX", m_strafeRequest);
+        Logger.recordOutput(getName() +"/leftJoystickY", m_driveRequest);
+        Logger.recordOutput(getName() +"/AutoAIMButton", m_autoAIMButton);
+        Logger.recordOutput(getName() +"/CurrentState", m_driveSubsystemInstance.getState().toString());
         Logger.recordOutput(getName() +"/HubPos", Constants.HubConstants.HUB_POS);
-        Logger.recordOutput(getName() +"/ClimbAlignButton", s_climbAlignButton);
+        Logger.recordOutput(getName() +"/ClimbAlignButton", m_climbAlignButton);
     }
 
     public static DriveSubsystem getInstance(){
-        if(s_driveSubsystemInstance == null){
-            s_driveSubsystemInstance = new DriveSubsystem();
+        if(m_driveSubsystemInstance == null){
+            m_driveSubsystemInstance = new DriveSubsystem();
         }
-        return s_driveSubsystemInstance;
+        return m_driveSubsystemInstance;
     }
 
-    public static void setPerspective(){
+    public void setPerspective(){
         Optional<Alliance> ally = DriverStation.getAlliance();
         if (ally.isPresent()) {
             if (ally.get() == Alliance.Red) {
-                 s_drivetrain.setOperatorPerspectiveForward(
+                 m_drivetrain.setOperatorPerspectiveForward(
                 CommandSwerveDrivetrain.kRedAlliancePerspectiveRotation);
             }
             if (ally.get() == Alliance.Blue) {
-                s_drivetrain.setOperatorPerspectiveForward(
+                m_drivetrain.setOperatorPerspectiveForward(
                 CommandSwerveDrivetrain.kBlueAlliancePerspectiveRotation);
             }
         }
 
     }
     public void configureBindings(BooleanSupplier autoAIMButton, BooleanSupplier climbAlignButton, DoubleSupplier strafeRequest,DoubleSupplier driveRequest,DoubleSupplier rotateRequest){
-        s_autoAIMButton = autoAIMButton;
-        s_climbAlignButton = climbAlignButton;
-        s_strafeRequest = strafeRequest;
-        s_driveRequest = driveRequest;
-        s_rotateRequest = rotateRequest;
+        m_autoAIMButton = autoAIMButton;
+        m_climbAlignButton = climbAlignButton;
+        m_strafeRequest = strafeRequest;
+        m_driveRequest = driveRequest;
+        m_rotateRequest = rotateRequest;
     }
     @Override
     public void close() {
