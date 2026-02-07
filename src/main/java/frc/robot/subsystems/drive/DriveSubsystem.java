@@ -13,7 +13,8 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -67,19 +68,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
         AUTO_AIM {
             @Override
             public void initialize() {
-                s_autoAimController = new ProfiledPIDController(
-                    Constants.DriveConstants.TURN_P,
-                    Constants.DriveConstants.TURN_I,
-                    Constants.DriveConstants.TURN_D,
-                    Constants.DriveConstants.TURN_CONSTRAINTS);
-                s_autoAimMoveController = new ProfiledPIDController(
-                    Constants.DriveConstants.DRIVE_P,
-                    Constants.DriveConstants.DRIVE_I,
-                    Constants.DriveConstants.DRIVE_D,
-                    Constants.DriveConstants.DRIVE_CONSTRAINTS);
                 s_autoAimController.enableContinuousInput(-Math.PI, Math.PI);
-                s_autoAimController.setConstraints(Constants.DriveConstants.TURN_CONSTRAINTS);
-                s_autoAimMoveController.setConstraints(Constants.DriveConstants.DRIVE_CONSTRAINTS);
             }
 
             @Override 
@@ -101,24 +90,23 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
 
                 Logger.recordOutput("/Auto_Aim/angleGoal", angleGoal);
 
-                s_autoAimController.reset(0);
-                s_autoAimMoveController.reset(0);
                 double pidOutputHeading = s_autoAimController.calculate(currentAngle, angleGoal);
 
                 Logger.recordOutput("/Auto_Aim/pidAngle", pidOutputHeading);
-
+                var directionOfTravel = new Rotation2d();
+                var outputVelocity = 0.0;
                 double distancePID = 0;
                 if (currentPoseTranslation2d.getDistance(hubTranslation2d) > Constants.DriveConstants.AUTO_SHOOT_MAX_DISTANCE) {
                     double currentDistance = currentPoseTranslation2d.getDistance(hubTranslation2d);
-                    double distanceToMove = currentDistance - Constants.DriveConstants.AUTO_SHOOT_MAX_DISTANCE;
-                    distancePID = s_autoAimMoveController.calculate(currentDistance, currentDistance-distanceToMove);
-
+                    Translation2d newPosition = hubTranslation2d.minus(currentPoseTranslation2d);
+                    directionOfTravel = newPosition.getAngle();
+                    outputVelocity = Math.abs(s_autoAimMoveController.calculate(currentDistance, 0.0)) + 0.2;
                     Logger.recordOutput("/Auto_Aim/pidDistance", distancePID);
                 }
 
                 s_drivetrain.setControl(s_drive
-                .withVelocityX(distancePID * translationDiff.getAngle().getCos())
-                .withVelocityY(distancePID * translationDiff.getAngle().getSin())
+                .withVelocityX(outputVelocity * directionOfTravel.getCos())
+                .withVelocityY(outputVelocity * directionOfTravel.getSin())
                 .withRotationalRate(Constants.DriveConstants.MAX_ANGULAR_RATE.times(pidOutputHeading)));
 
             }
@@ -144,19 +132,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
         CLIMB_ALIGN {
             @Override
             public void initialize() {
-                s_climbAutoAlignController = new ProfiledPIDController(
-                    Constants.DriveConstants.TURN_P,
-                    Constants.DriveConstants.TURN_I,
-                    Constants.DriveConstants.TURN_D,
-                    Constants.DriveConstants.TURN_CONSTRAINTS);
-                s_climbAutoMoveController = new ProfiledPIDController(
-                    Constants.DriveConstants.DRIVE_P,
-                    Constants.DriveConstants.DRIVE_I,
-                    Constants.DriveConstants.DRIVE_D,
-                    Constants.DriveConstants.DRIVE_CONSTRAINTS);
-                s_climbAutoMoveController.setConstraints(Constants.DriveConstants.DRIVE_CONSTRAINTS);
                 s_climbAutoAlignController.enableContinuousInput(-Math.PI, Math.PI);
-                s_climbAutoAlignController.setConstraints(Constants.DriveConstants.TURN_CONSTRAINTS);
             }
 
             @Override
@@ -194,14 +170,11 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
 
                 Logger.recordOutput("/Climb_Align/angleGoal", angleGoal);
 
-                s_climbAutoAlignController.reset(0);
-                s_climbAutoMoveController.reset(0);
                 double pidOutputHeading = s_climbAutoAlignController.calculate(currentAngle, angleGoal);
 
                  Logger.recordOutput("/Climb_Align/pidHeading", pidOutputHeading);
 
-                double pidDistance = currentPoseTranslation2d.getDistance(towerTranslation2d);
-                double pidOutputDirection = s_climbAutoMoveController.calculate(pidDistance, 0);
+                double pidOutputDirection = s_climbAutoMoveController.calculate(translationDiff.getNorm(), 0);
 
                 Logger.recordOutput("/Climb_Align/pidDistance", pidOutputDirection);
 
@@ -235,14 +208,14 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
     private static SwerveRequest.FieldCentric s_drive;
     private static SwerveRequest.RobotCentric s_driveRobotCentric;
 
-    private static DoubleSupplier s_driveRequest = () -> 0;
-    private static DoubleSupplier s_strafeRequest = () -> 0;
-    private static DoubleSupplier s_rotateRequest = () -> 0;
+    private static DoubleSupplier s_driveRequest;
+    private static DoubleSupplier s_strafeRequest;
+    private static DoubleSupplier s_rotateRequest ;
 
-    private static ProfiledPIDController s_autoAimController;
-    private static ProfiledPIDController s_autoAimMoveController;
-    private static ProfiledPIDController s_climbAutoAlignController;
-    private static ProfiledPIDController s_climbAutoMoveController;
+    private static PIDController s_autoAimController;
+    private static PIDController s_autoAimMoveController;
+    private static PIDController s_climbAutoAlignController;
+    private static PIDController s_climbAutoMoveController;
 
     private static BooleanSupplier s_climbAlignButton;
     private static BooleanSupplier s_autoAimButton;
@@ -258,6 +231,23 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
             .withSteerRequestType(SteerRequestType.MotionMagicExpo)
             // TODO specify OperatorPerspective in SwerveDrivetrain obj
             .withForwardPerspective(ForwardPerspectiveValue.OperatorPerspective);
+        
+        s_autoAimController = new PIDController(
+            Constants.DriveConstants.TURN_P,
+            Constants.DriveConstants.TURN_I,
+            Constants.DriveConstants.TURN_D);
+        s_autoAimMoveController = new PIDController(
+            Constants.DriveConstants.DRIVE_P,
+            Constants.DriveConstants.DRIVE_I,
+            Constants.DriveConstants.DRIVE_D);
+        s_climbAutoAlignController = new PIDController(
+            Constants.DriveConstants.TURN_P,
+            Constants.DriveConstants.TURN_I,
+            Constants.DriveConstants.TURN_D);
+        s_climbAutoMoveController = new PIDController(
+            Constants.DriveConstants.DRIVE_P,
+            Constants.DriveConstants.DRIVE_I,
+            Constants.DriveConstants.DRIVE_D);
     }
 
     public void configureBindings(
@@ -278,6 +268,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
         Logger.recordOutput(getName() + "/buttons/climb", s_climbAlignButton.getAsBoolean());
         Logger.recordOutput(getName() + "/buttons/aim", s_autoAimButton.getAsBoolean());
         Logger.recordOutput(getName() + "/Pose", s_drivetrain.getState().Pose);
+        // Logger.recordOutput(getName(), null);
     }
 
     @Override

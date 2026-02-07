@@ -110,21 +110,21 @@ public final class Constants {
     public static final double s_driveSpeedScaler = .8;
 
     // TODO TODO TODO REVISE
-    public static final double TURN_P = 3;
-    public static final double TURN_I = 0.1;
-    public static final double TURN_D = 0.1;
+    public static final double TURN_P = 7;
+    public static final double TURN_I = .65;
+    public static final double TURN_D = 0.2;
     // TODO TODO TODO
 
     // TODO TODO TODO REVISE
-    public static final double DRIVE_P = 3;
-    public static final double DRIVE_I = 0.1;
-    public static final double DRIVE_D = 0.1;
+    public static final double DRIVE_P = 7;
+    public static final double DRIVE_I = 0.65;
+    public static final double DRIVE_D = 0.2;
     // TODO TODO TODO
 
-    public static final Translation2d HUB_TRANSLATION_COORDINATES_BLUE = new Translation2d(1.183,1);
-    public static final Translation2d HUB_TRANSLATION_COORDINATES_RED = new Translation2d(1.183,1);
+    public static final Translation2d HUB_TRANSLATION_COORDINATES_BLUE = new Translation2d(1,1);
+    public static final Translation2d HUB_TRANSLATION_COORDINATES_RED = new Translation2d(1,1);
 
-    public static final double DEADBAND_SCALAR = .085;
+    public static final double DEADBAND_SCALAR = .1;
 
     // TODO FIND REAL POSSIBLE POSITIONS
     public static final Translation2d[] RED_TOWER_COORDINATES = {
