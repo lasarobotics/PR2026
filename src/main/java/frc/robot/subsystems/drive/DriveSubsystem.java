@@ -115,7 +115,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 return DRIVER_CONTROL;
             }
         },
-        AUTO_AIM {
+        CLIMB_ALIGN {
             @Override 
             public void execute(){
                 Pose2d currentPose2d = s_drivetrain.getState().Pose;
@@ -178,7 +178,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 .withSteerRequestType(SteerRequestType.MotionMagicExpo)
                 .withForwardPerspective(ForwardPerspectiveValue.OperatorPerspective);
         
-        rotationPIDController = new PIDController(3, 0.0, 0.5);
+        rotationPIDController = new PIDController(7, 0.65, 0.2);
         rotationPIDController.enableContinuousInput(-Math.PI, Math.PI);
         translationPIDController = new PIDController(getErrorCount(), getMaxRetries(), getErrorCount());
 

@@ -55,6 +55,7 @@ public class Robot extends LoggedRobot {
     CommandScheduler.getInstance().run();
     m_robotContainer.DRIVE_SUBSYSTEM.periodic();
     m_robotContainer.FUEL_MANAGER.periodic();
+    m_robotContainer.CLIMB_SUBSYSTEM.periodic();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
