@@ -36,6 +36,9 @@ public class FuelManager extends StateMachine implements AutoCloseable {
                 if (getInstance().m_shootButton.getAsBoolean()){
                     return SHOOT;
                 }
+                if (getInstance().m_staticShootButton.getAsBoolean()){
+                    return STATIC_SHOOT;
+                }
                 return REST;
             }
         },

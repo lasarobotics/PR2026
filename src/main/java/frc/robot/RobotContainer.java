@@ -46,7 +46,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     FUEL_MANAGER.configureBindings(PRIMARY_CONTROLLER.leftTrigger(),PRIMARY_CONTROLLER.rightBumper(), PRIMARY_CONTROLLER.leftBumper());
-    CLIMB_SUBSYSTEM.configureBindings(PRIMARY_CONTROLLER.y(),PRIMARY_CONTROLLER.x(),PRIMARY_CONTROLLER.b());
+    CLIMB_SUBSYSTEM.configureBindings(PRIMARY_CONTROLLER.getHID().povUp(null),PRIMARY_CONTROLLER.getHID().povLeft(null),PRIMARY_CONTROLLER.getHID().povRight(null));
     DRIVE_SUBSYSTEM.configureBindings(
       PRIMARY_CONTROLLER.a(),
       () -> PRIMARY_CONTROLLER.getLeftY(), // drive x

@@ -114,6 +114,46 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 }
                 return DRIVER_CONTROL;
             }
+        },
+        AUTO_AIM {
+            @Override 
+            public void execute(){
+                Pose2d currentPose2d = s_drivetrain.getState().Pose;
+                Translation2d currentTranslation2d = currentPose2d.getTranslation();
+                double currentRotation = currentPose2d.getRotation().getRadians();
+                Translation2d translationDiff = s_hubPos.minus(currentTranslation2d);
+                double desiredAngle = Math.atan2(translationDiff.getY(),translationDiff.getX()); 
+                double pidOutputAngle = rotationPIDController.calculate(currentRotation,desiredAngle);
+
+                s_drivetrain.setControl(
+                    s_drive
+                        .withVelocityX(
+                            Constants.DriveConstants.MAX_SPEED
+                                .times(-Math.pow(s_strafeRequest.getAsDouble(), 1))
+                                .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
+                        .withVelocityY(
+                            Constants.DriveConstants.MAX_SPEED
+                                .times(-Math.pow(s_driveRequest.getAsDouble(), 1))
+                                .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
+                        .withRotationalRate(
+                            Constants.DriveConstants.MAX_ANGULAR_RATE
+                                .times(pidOutputAngle)
+                        )
+                );
+
+                Logger.recordOutput("TranslationDiff", translationDiff);
+                Logger.recordOutput("DesiredAngle", desiredAngle);
+                Logger.recordOutput("PidOutput", Constants.DriveConstants.MAX_ANGULAR_RATE.times(pidOutputAngle));
+            }
+
+            @Override
+            public SystemState nextState() {
+                // TODO
+                if(s_autoAIMButton.getAsBoolean()){
+                    return AUTO_AIM;
+                }
+                return DRIVER_CONTROL;
+            }
         }
     }
     private static DriveSubsystem s_driveSubsystemInstance;
@@ -124,7 +164,8 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
     private static DoubleSupplier s_rotateRequest;
     private static BooleanSupplier s_autoAIMButton;
     private static Translation2d s_hubPos;
-    private static PIDController rotationPIDController = new PIDController(Constants.DriveConstants.TURN_P,Constants.DriveConstants.TURN_I,Constants.DriveConstants.TURN_D);
+    private static PIDController rotationPIDController;
+    private static PIDController translationPIDController;
 
     public DriveSubsystem() {
         super(DriveStates.DRIVER_CONTROL);
@@ -139,6 +180,8 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
         
         rotationPIDController = new PIDController(3, 0.0, 0.5);
         rotationPIDController.enableContinuousInput(-Math.PI, Math.PI);
+        translationPIDController = new PIDController(getErrorCount(), getMaxRetries(), getErrorCount());
+
     }
 
     @Override
