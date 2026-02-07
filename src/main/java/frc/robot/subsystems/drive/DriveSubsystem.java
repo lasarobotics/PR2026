@@ -125,24 +125,20 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 Pose2d currentPose2d = s_drivetrain.getState().Pose;
                 Translation2d currentTranslation2d = currentPose2d.getTranslation();
                 double currentRotation = currentPose2d.getRotation().getRadians();
-                Translation2d translationDiff = Constants.HubConstants.HUB_POS.minus(currentTranslation2d);
-                double desiredAngle = Math.atan2(translationDiff.getY(),translationDiff.getX()); 
-                double pidOutputAngle = rotationPIDController.calculate(currentRotation,desiredAngle);
-
+                Translation2d translationDiff = Constants.ClimbConstants.CLIMB_POS.minus(currentTranslation2d);
+                double angleCos = translationDiff.getAngle().getCos();
+                double angleSin = translationDiff.getAngle().getSin();
+                double desiredAngle = 0;
+                double pidOutputAngle = rotationPIDController.calculate(currentRotation, desiredAngle);
+                double pidOutput = translationPIDController.calculate(translationDiff.getNorm(), 0);
                 s_drivetrain.setControl(
                     s_drive
                         .withVelocityX(
-                            Constants.DriveConstants.MAX_SPEED
-                                .times(-Math.pow(s_strafeRequest.getAsDouble(), 1))
-                                .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
+                            pidOutput * angleCos)
                         .withVelocityY(
-                            Constants.DriveConstants.MAX_SPEED
-                                .times(-Math.pow(s_driveRequest.getAsDouble(), 1))
-                                .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
+                            pidOutput * angleSin)
                         .withRotationalRate(
-                            Constants.DriveConstants.MAX_ANGULAR_RATE
-                                .times(pidOutputAngle)
-                        )
+                                (pidOutputAngle))
                 );
 
                 Logger.recordOutput("TranslationDiff", translationDiff);
@@ -182,9 +178,9 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 .withSteerRequestType(SteerRequestType.MotionMagicExpo)
                 .withForwardPerspective(ForwardPerspectiveValue.OperatorPerspective);
         
-        rotationPIDController = new PIDController(7, 0.65, 0.2);
+        rotationPIDController = new PIDController(Constants.DriveConstants.TURN_P,Constants.DriveConstants.TURN_I,Constants.DriveConstants.TURN_D   );
         rotationPIDController.enableContinuousInput(-Math.PI, Math.PI);
-        translationPIDController = new PIDController(getErrorCount(), getMaxRetries(), getErrorCount());
+        translationPIDController = new PIDController(3,7,0);
 
     }
 

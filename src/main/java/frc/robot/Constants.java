@@ -43,8 +43,8 @@ public final class Constants {
     public static final PositionVoltage BACK_SET_POINT = new PositionVoltage(0.0); // TODO
     public static final PositionVoltage FORWARD_SET_POINT = new PositionVoltage(0.0); // TODO
     public static final int CLIMB_MOTOR_ID = 0; // TODO
+    public static final Translation2d CLIMB_POS = new Translation2d(4.7,3);
   }
-
   public static class FuelManagerConstants {
     public static final int SHOOT_MOTOR_ID = 0; // TODO
     public static final int INTAKE_MOTOR_ID = 0; //TODO
@@ -53,10 +53,7 @@ public final class Constants {
     public static double INTAKE_MOTOR_SPEED = 0; // TODO
     public static double MIDDLE_MOTOR_INTAKE_SPEED = 0; // TODO
     public static double MIDDLE_MOTOR_SHOOT_SPEED = 0; // TODO
-    public static final Translation2d CLIMB_POS = new Translation2d(4.7,3);
   }
-
-  
   public static class DriveConstants {
     public static final LinearVelocity MAX_SPEED = TunerConstants.kSpeedAt12Volts;
     public static final LinearAcceleration MAX_ACCELERATION =
