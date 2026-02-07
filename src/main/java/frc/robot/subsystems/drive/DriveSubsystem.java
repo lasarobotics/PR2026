@@ -110,7 +110,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
     private DoubleSupplier s_rotateRequest;
     private BooleanSupplier s_autoAimButton;
     private Translation2d s_hubPos;
-    private PIDController rotationPIDController = new PIDController(Constants.DriveConstants.TURN_P,Constants.DriveConstants.TURN_I,Constants.DriveConstants.TURN_D);
+    private PIDController rotationPIDController;
 
     public DriveSubsystem() {
         super(DriveStates.DRIVER_CONTROL);
@@ -123,6 +123,10 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 .withDriveRequestType(DriveRequestType.Velocity)
                 .withSteerRequestType(SteerRequestType.MotionMagicExpo)
                 .withForwardPerspective(ForwardPerspectiveValue.OperatorPerspective);
+
+        rotationPIDController = new PIDController(3, 0.0, 0.5);
+        rotationPIDController.enableContinuousInput(-Math.PI, Math.PI);
+
         s_hubPos = getHubPos();
     }
 
