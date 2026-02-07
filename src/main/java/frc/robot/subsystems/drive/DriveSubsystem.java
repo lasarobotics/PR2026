@@ -44,19 +44,19 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
             @Override
             public void execute(){
                 getInstance().s_drivetrain.setControl(
-            getInstance().s_drive
-                .withVelocityX(
-                    Constants.DriveConstants.MAX_SPEED
-                        .times(-Math.pow(getInstance().s_driveRequest.getAsDouble(), 1))
-                        .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
-                .withVelocityY(
-                    Constants.DriveConstants.MAX_SPEED
-                        .times(-Math.pow(getInstance().s_strafeRequest.getAsDouble(), 1))
-                        .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
-                .withRotationalRate(
-                    Constants.DriveConstants.MAX_ANGULAR_RATE
-                        .times(-getInstance().s_rotateRequest.getAsDouble())
-                        .times(Constants.DriveConstants.FAST_SPEED_SCALAR)));
+                    getInstance().s_drive
+                        .withVelocityX(
+                            Constants.DriveConstants.MAX_SPEED
+                                .times(-Math.pow(getInstance().s_driveRequest.getAsDouble(), 1))
+                                .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
+                        .withVelocityY(
+                            Constants.DriveConstants.MAX_SPEED
+                                .times(-Math.pow(getInstance().s_strafeRequest.getAsDouble(), 1))
+                                .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
+                        .withRotationalRate(
+                            Constants.DriveConstants.MAX_ANGULAR_RATE
+                                .times(-getInstance().s_rotateRequest.getAsDouble())
+                                .times(Constants.DriveConstants.FAST_SPEED_SCALAR)));
             }
 
             @Override
@@ -83,11 +83,11 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                     getInstance().s_drive
                         .withVelocityX(
                             Constants.DriveConstants.MAX_SPEED
-                                .times(-Math.pow(getInstance().s_strafeRequest.getAsDouble(), 1))
+                                .times(-Math.pow(getInstance().s_driveRequest.getAsDouble(), 1))
                                 .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
                         .withVelocityY(
                             Constants.DriveConstants.MAX_SPEED
-                                .times(-Math.pow(getInstance().s_driveRequest.getAsDouble(), 1))
+                                .times(-Math.pow(getInstance().s_strafeRequest.getAsDouble(), 1))
                                 .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
                         .withRotationalRate(
                             pidOutputAngle)
