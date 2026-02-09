@@ -56,10 +56,10 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
 
             @Override
             public SystemState nextState() {
-                if (s_autoAimButton.getAsBoolean()) {
+                if (getInstance().m_autoAimButton.getAsBoolean()) {
                     return AUTO_AIM;
                 }
-                if (s_climbAlignButton.getAsBoolean()) {
+                if (getInstance().m_climbAlignButton.getAsBoolean()) {
                     return CLIMB_ALIGN;
                 }
                 return this;
@@ -68,7 +68,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
         AUTO_AIM {
             @Override
             public void initialize() {
-                s_autoAimController.enableContinuousInput(-Math.PI, Math.PI);
+                getInstance().m_autoAimController.enableContinuousInput(-Math.PI, Math.PI);
             }
 
             @Override 
@@ -90,7 +90,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
 
                 Logger.recordOutput("/Auto_Aim/angleGoal", angleGoal);
 
-                double pidOutputHeading = s_autoAimController.calculate(currentAngle, angleGoal);
+                double pidOutputHeading = getInstance().m_autoAimController.calculate(currentAngle, angleGoal);
 
                 Logger.recordOutput("/Auto_Aim/pidAngle", pidOutputHeading);
                 var directionOfTravel = new Rotation2d();
@@ -100,7 +100,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                     double currentDistance = currentPoseTranslation2d.getDistance(hubTranslation2d);
                     Translation2d newPosition = hubTranslation2d.minus(currentPoseTranslation2d);
                     directionOfTravel = newPosition.getAngle();
-                    outputVelocity = Math.abs(s_autoAimMoveController.calculate(currentDistance, 0.0)) + 0.2;
+                    outputVelocity = Math.abs(getInstance().m_autoAimMoveController.calculate(currentDistance, 0.0)) + 0.2;
                     Logger.recordOutput("/Auto_Aim/pidDistance", distancePID);
                 }
 
@@ -123,7 +123,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                         return DRIVER_CONTROL;
                     }
                 }
-                if (s_climbAlignButton.getAsBoolean()) {
+                if (getInstance().m_climbAlignButton.getAsBoolean()) {
                     return CLIMB_ALIGN;
                 }
                 return this;
@@ -132,7 +132,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
         CLIMB_ALIGN {
             @Override
             public void initialize() {
-                s_climbAutoAlignController.enableContinuousInput(-Math.PI, Math.PI);
+                getInstance().m_climbAutoAlignController.enableContinuousInput(-Math.PI, Math.PI);
             }
 
             @Override
@@ -170,11 +170,11 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
 
                 Logger.recordOutput("/Climb_Align/angleGoal", angleGoal);
 
-                double pidOutputHeading = s_climbAutoAlignController.calculate(currentAngle, angleGoal);
+                double pidOutputHeading = getInstance().m_climbAutoAlignController.calculate(currentAngle, angleGoal);
 
                  Logger.recordOutput("/Climb_Align/pidHeading", pidOutputHeading);
 
-                double pidOutputDirection = s_climbAutoMoveController.calculate(translationDiff.getNorm(), 0);
+                double pidOutputDirection = getInstance().m_climbAutoMoveController.calculate(translationDiff.getNorm(), 0);
 
                 Logger.recordOutput("/Climb_Align/pidDistance", pidOutputDirection);
 
@@ -196,7 +196,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                         return DRIVER_CONTROL;
                     }
                 }
-                if (s_autoAimButton.getAsBoolean()) {
+                if (getInstance().m_autoAimButton.getAsBoolean()) {
                     return AUTO_AIM;
                 }
                 return this;
@@ -212,16 +212,19 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
     private static DoubleSupplier s_strafeRequest;
     private static DoubleSupplier s_rotateRequest ;
 
-    private static PIDController s_autoAimController;
-    private static PIDController s_autoAimMoveController;
-    private static PIDController s_climbAutoAlignController;
-    private static PIDController s_climbAutoMoveController;
+    private PIDController m_autoAimController;
+    private PIDController m_autoAimMoveController;
+    private PIDController m_climbAutoAlignController;
+    private PIDController m_climbAutoMoveController;
 
-    private static BooleanSupplier s_climbAlignButton;
-    private static BooleanSupplier s_autoAimButton;
+    private BooleanSupplier m_climbAlignButton;
+    private BooleanSupplier m_autoAimButton;
+
+    private static DriveSubsystem s_driveInstance;
 
     public DriveSubsystem() {
         super(DriveStates.DRIVER_CONTROL);
+        s_driveInstance = getInstance();
         s_drivetrain = TunerConstants.createDrivetrain();
 
         s_drive = new SwerveRequest.FieldCentric()
@@ -232,22 +235,29 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
             // TODO specify OperatorPerspective in SwerveDrivetrain obj
             .withForwardPerspective(ForwardPerspectiveValue.OperatorPerspective);
         
-        s_autoAimController = new PIDController(
+        getInstance().m_autoAimController = new PIDController(
             Constants.DriveConstants.TURN_P,
             Constants.DriveConstants.TURN_I,
             Constants.DriveConstants.TURN_D);
-        s_autoAimMoveController = new PIDController(
+        getInstance().m_autoAimMoveController = new PIDController(
             Constants.DriveConstants.DRIVE_P,
             Constants.DriveConstants.DRIVE_I,
             Constants.DriveConstants.DRIVE_D);
-        s_climbAutoAlignController = new PIDController(
+        getInstance().m_climbAutoAlignController = new PIDController(
             Constants.DriveConstants.TURN_P,
             Constants.DriveConstants.TURN_I,
             Constants.DriveConstants.TURN_D);
-        s_climbAutoMoveController = new PIDController(
+        getInstance().m_climbAutoMoveController = new PIDController(
             Constants.DriveConstants.DRIVE_P,
             Constants.DriveConstants.DRIVE_I,
             Constants.DriveConstants.DRIVE_D);
+    }
+
+    public static DriveSubsystem getInstance() {
+        if (s_driveInstance == null) {
+            s_driveInstance = new DriveSubsystem();
+        }
+        return s_driveInstance;
     }
 
     public void configureBindings(
@@ -256,8 +266,8 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
         DoubleSupplier strafeRequest,
         DoubleSupplier driveRequest,
         DoubleSupplier rotateRequest) {
-        s_climbAlignButton = climbAlignButton;
-        s_autoAimButton = autoAimButton;
+        getInstance().m_climbAlignButton = climbAlignButton;
+        getInstance().m_autoAimButton = autoAimButton;
         s_strafeRequest = strafeRequest;
         s_driveRequest = driveRequest;
         s_rotateRequest = rotateRequest;
@@ -265,8 +275,8 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
 
     @Override
     public void periodic() {
-        Logger.recordOutput(getName() + "/buttons/climb", s_climbAlignButton.getAsBoolean());
-        Logger.recordOutput(getName() + "/buttons/aim", s_autoAimButton.getAsBoolean());
+        Logger.recordOutput(getName() + "/buttons/climb", m_climbAlignButton.getAsBoolean());
+        Logger.recordOutput(getName() + "/buttons/aim", m_autoAimButton.getAsBoolean());
         Logger.recordOutput(getName() + "/Pose", s_drivetrain.getState().Pose);
         // Logger.recordOutput(getName(), null);
     }
