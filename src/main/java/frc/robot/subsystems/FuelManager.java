@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 import org.lasarobotics.fsm.StateMachine;
 import org.lasarobotics.fsm.SystemState;
@@ -35,6 +36,9 @@ public class FuelManager extends StateMachine implements AutoCloseable {
                 if (getInstance().m_shootButton.getAsBoolean()){
                     return SHOOT;
                 }
+                if (getInstance().m_staticShootButton.getAsBoolean()){
+                    return STATIC_SHOOT;
+                }
                 return REST;
             }
         },
@@ -47,7 +51,7 @@ public class FuelManager extends StateMachine implements AutoCloseable {
             @Override
             public SystemState nextState() {
                 if (getInstance().m_intakeButton.getAsBoolean()){
-                    return this;
+                    return INTAKE;
                 }
                 return REST;
             }
@@ -56,18 +60,34 @@ public class FuelManager extends StateMachine implements AutoCloseable {
             @Override
             public void initialize() {
                 getInstance().m_shootMotor.set(Constants.FuelManagerConstants.SHOOT_MOTOR_SPEED);
-                getInstance().m_middleMotor.set(Constants.FuelManagerConstants.MIDDLE_MOTOR_SHOOT_SPEED);
+                getInstance().m_middleMotor.set(Constants.FuelManagerConstants.MIDDLE_MOTOR_SHOOT_SPEED); // TODO add vraible speed
                 getInstance().m_intakeMotor.set(Constants.FuelManagerConstants.INTAKE_MOTOR_SPEED);
             }
             @Override
             public SystemState nextState() {
                 if (getInstance().m_shootButton.getAsBoolean()){
-                    return this;
+                    return SHOOT;
                 }
                 return REST;
             }
-        }
+        
+        },
+        STATIC_SHOOT {
+            @Override
+            public void initialize() {
+                getInstance().m_shootMotor.set(Constants.FuelManagerConstants.SHOOT_MOTOR_SPEED);
+                getInstance().m_middleMotor.set(Constants.FuelManagerConstants.MIDDLE_MOTOR_SHOOT_SPEED);
+                getInstance().m_intakeMotor.set(Constants.FuelManagerConstants.INTAKE_MOTOR_SPEED);
+            }
+            @Override
+            public SystemState nextState() {
+                if (getInstance().m_staticShootButton.getAsBoolean()){
+                    return STATIC_SHOOT;
+                }
+                return REST;
+            }
     }
+}
     
     private static FuelManager s_FuelManagerInstance;
     private final TalonFX m_intakeMotor;
@@ -75,6 +95,7 @@ public class FuelManager extends StateMachine implements AutoCloseable {
     private final TalonFX m_middleMotor;
     private BooleanSupplier m_intakeButton;
     private BooleanSupplier m_shootButton;
+    private BooleanSupplier m_staticShootButton;
 
     private FuelManager(){
         super(FuelManagerStates.REST);
@@ -91,16 +112,18 @@ public class FuelManager extends StateMachine implements AutoCloseable {
         return s_FuelManagerInstance;
     }
 
-    public void configureBindings(BooleanSupplier intakeButton, BooleanSupplier shootButton){
+    public void configureBindings(BooleanSupplier intakeButton, BooleanSupplier shootButton, BooleanSupplier staticShootButton){
         m_intakeButton = intakeButton;
         m_shootButton = shootButton;
+        m_staticShootButton = staticShootButton;
     }
 
     @Override
     public void periodic(){
-        Logger.recordOutput(getName() + "/Intake Button", m_intakeButton);
-        Logger.recordOutput(getName() + "/Shoot Button", m_shootButton);
-        Logger.recordOutput(getName() + "/Current State", getState().toString());
+        Logger.recordOutput(getName() + "/Intake Button", m_intakeButton.getAsBoolean());
+        Logger.recordOutput(getName() + "/Shoot Button", m_shootButton.getAsBoolean());
+        Logger.recordOutput(getName() + "/Current State", getInstance().getState().toString());
+        Logger.recordOutput(getName() + "/Intake Motor Speed", m_intakeMotor.getVelocity().getValueAsDouble());
     }
 
     @Override

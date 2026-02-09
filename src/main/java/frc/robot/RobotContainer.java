@@ -6,10 +6,9 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.ClimbSubsystem;
-import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.FuelManager;
+import frc.robot.subsystems.drive.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -22,10 +21,10 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final FuelManager FUEL_MANAGER = FuelManager.getInstance();
-  private final ClimbSubsystem CLIMB_SUBSYSTEM = ClimbSubsystem.getInstance();
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
-
+  public final FuelManager FUEL_MANAGER = FuelManager.getInstance();
+  public final ClimbSubsystem CLIMB_SUBSYSTEM = ClimbSubsystem.getInstance();
+  //private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+  public final DriveSubsystem DRIVE_SUBSYSTEM = DriveSubsystem.getInstance();
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController PRIMARY_CONTROLLER =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
@@ -46,8 +45,14 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    FUEL_MANAGER.configureBindings(PRIMARY_CONTROLLER.rightTrigger(),PRIMARY_CONTROLLER.b());
-    CLIMB_SUBSYSTEM.configureBindings(PRIMARY_CONTROLLER.y(),PRIMARY_CONTROLLER.a(),PRIMARY_CONTROLLER.b());
+    FUEL_MANAGER.configureBindings(PRIMARY_CONTROLLER.leftTrigger(),PRIMARY_CONTROLLER.rightBumper(), PRIMARY_CONTROLLER.leftBumper());
+    CLIMB_SUBSYSTEM.configureBindings(PRIMARY_CONTROLLER.povUp(),PRIMARY_CONTROLLER.povLeft(),PRIMARY_CONTROLLER.povRight());
+    DRIVE_SUBSYSTEM.configureBindings(
+      PRIMARY_CONTROLLER.a(),
+      PRIMARY_CONTROLLER.povDown(),
+      () -> PRIMARY_CONTROLLER.getLeftY(), // drive x
+      () -> PRIMARY_CONTROLLER.getLeftX(), // drive y
+      () -> PRIMARY_CONTROLLER.getRightX()); // rotate x
     
   }
 
@@ -57,9 +62,9 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
 
-  public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    // TODO
-    return Autos.exampleAuto(m_exampleSubsystem);
-  }
+  // public Command getAutonomousCommand() {
+  //   // An example command will be run in autonomous
+  //   // TODO
+
+  // }
 }
