@@ -52,7 +52,8 @@ public class RobotContainer {
       PRIMARY_CONTROLLER.povDown(),
       () -> PRIMARY_CONTROLLER.getLeftY(), // drive x
       () -> PRIMARY_CONTROLLER.getLeftX(), // drive y
-      () -> PRIMARY_CONTROLLER.getRightX()); // rotate x
+      () -> PRIMARY_CONTROLLER.getRightX(),// rotate x
+      PRIMARY_CONTROLLER.start()); // reset pose
     
   }
 

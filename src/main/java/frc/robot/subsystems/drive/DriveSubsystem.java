@@ -69,7 +69,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
             @Override
             public SystemState nextState() {
                 // TODO
-                if(getInstance().m_autoAIMButton.getAsBoolean()){
+                if(getInstance().m_autoAimButton.getAsBoolean()){
                     return AUTO_AIM;
                 }
                 if(getInstance().m_climbAlignButton.getAsBoolean()){
@@ -112,7 +112,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
             @Override
             public SystemState nextState() {
                 // TODO
-                if(getInstance().m_autoAIMButton.getAsBoolean()){
+                if(getInstance().m_autoAimButton.getAsBoolean()){
                     return AUTO_AIM;
                 }
                 return DRIVER_CONTROL;
@@ -161,7 +161,8 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
     private static DoubleSupplier s_driveRequest;
     private static DoubleSupplier s_strafeRequest;
     private static DoubleSupplier s_rotateRequest;
-    private BooleanSupplier m_autoAIMButton;
+    private BooleanSupplier m_resetPoseButton;
+    private BooleanSupplier m_autoAimButton;
     private BooleanSupplier m_climbAlignButton;
     private PIDController m_rotationPIDController;
     private PIDController m_translationPIDController;
@@ -189,10 +190,16 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
         Logger.recordOutput(getName() + "/Pose", s_drivetrain.getState().Pose);
         Logger.recordOutput(getName() +"/leftJoystickX", s_strafeRequest);
         Logger.recordOutput(getName() +"/leftJoystickY", s_driveRequest);
-        Logger.recordOutput(getName() +"/AutoAIMButton", m_autoAIMButton);
+        Logger.recordOutput(getName() +"/AutoAimButton", m_autoAimButton);
         Logger.recordOutput(getName() +"/CurrentState", s_driveSubsystemInstance.getState().toString());
         Logger.recordOutput(getName() +"/HubPos", Constants.HubConstants.HUB_POS);
         Logger.recordOutput(getName() +"/ClimbAlignButton", m_climbAlignButton);
+        Logger.recordOutput(getName() +"/ResetPoseButton", m_resetPoseButton);
+
+        if (m_resetPoseButton.getAsBoolean())
+        {
+            s_drivetrain.resetPose();
+        }
     }
 
     public static DriveSubsystem getInstance(){
@@ -216,9 +223,10 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
         }
 
     }
-    public void configureBindings(BooleanSupplier autoAIMButton, BooleanSupplier climbAlignButton, DoubleSupplier strafeRequest,DoubleSupplier driveRequest,DoubleSupplier rotateRequest){
-        m_autoAIMButton = autoAIMButton;
+    public void configureBindings(BooleanSupplier autoAimButton, BooleanSupplier climbAlignButton, DoubleSupplier strafeRequest, DoubleSupplier driveRequest, DoubleSupplier rotateRequest, BooleanSupplier resetPoseButton){
+        m_autoAimButton = autoAimButton;
         m_climbAlignButton = climbAlignButton;
+        m_resetPoseButton = resetPoseButton;
         s_strafeRequest = strafeRequest;
         s_driveRequest = driveRequest;
         s_rotateRequest = rotateRequest;
