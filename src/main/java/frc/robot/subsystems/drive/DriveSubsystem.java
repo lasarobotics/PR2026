@@ -16,6 +16,7 @@ import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -25,6 +26,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants;
+import frc.robot.LimelightHelpers;
 import frc.robot.generated.TunerConstants;
 
 public class DriveSubsystem extends StateMachine implements AutoCloseable {
@@ -206,6 +208,13 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
         if (m_resetPoseButton.getAsBoolean())
         {
             s_drivetrain.resetPose();
+        }
+
+        LimelightHelpers.PoseEstimate limelightEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+        if (limelightEstimate != null && limelightEstimate.tagCount > 0) {
+            s_drivetrain.setVisionMeasurementStdDevs(
+                    VecBuilder.fill(0.3, 0.3, 9999999));
+            s_drivetrain.addVisionMeasurement(limelightEstimate.pose, limelightEstimate.timestampSeconds);
         }
     }
 
