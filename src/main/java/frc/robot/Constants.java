@@ -43,7 +43,7 @@ public final class Constants {
     public static final PositionVoltage BACK_SET_POINT = new PositionVoltage(0.0); // TODO
     public static final PositionVoltage FORWARD_SET_POINT = new PositionVoltage(0.0); // TODO
     public static final int CLIMB_MOTOR_ID = 0; // TODO
-    public static final Translation2d CLIMB_POS = new Translation2d(4.7,3);
+    public static final Translation2d CLIMB_POS = new Translation2d(4.7,0);
   }
   public static class FuelManagerConstants {
     public static final int SHOOT_MOTOR_ID = 0; // TODO

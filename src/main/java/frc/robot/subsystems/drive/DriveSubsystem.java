@@ -1,6 +1,7 @@
 package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 import java.util.Optional;
@@ -134,11 +135,13 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 Translation2d currentTranslation2d = currentPose2d.getTranslation();
                 double currentRotation = currentPose2d.getRotation().getRadians();
                 Translation2d translationDiff = Constants.ClimbConstants.CLIMB_POS.minus(currentTranslation2d);
-                double angleCos = translationDiff.getAngle().getCos();
-                double angleSin = translationDiff.getAngle().getSin();
+                double angleCos = translationDiff.getAngle().getCos()*-1;
+                double angleSin = translationDiff.getAngle().getSin()*-1;
                 double desiredAngle = 0;
-                double pidOutputAngle = getInstance().m_rotationPIDController.calculate(currentRotation, desiredAngle);
-                double pidOutput = getInstance().m_translationPIDController.calculate(translationDiff.getNorm(), 0);
+                double pidOutputAngle = Constants.DriveConstants.FAST_SPEED_SCALAR* getInstance().m_rotationPIDController.calculate(currentRotation, desiredAngle);
+                double pidOutput = Constants.DriveConstants.FAST_SPEED_SCALAR *0.5* getInstance().m_translationPIDController.calculate(translationDiff.getNorm(), 0);
+                // double pidInput = Constants.DriveConstants.MAX_ANGULAR_RATE.times(pidOutputAngle).in(RadiansPerSecond);
+                // pidInput = pidInput > 0 ? Math.min(pidInput, 8.0) : Math.max(pidInput, -8.0);
                 s_drivetrain.setControl(
                     s_drive
                         .withVelocityX(
@@ -148,10 +151,11 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                         .withRotationalRate(
                                 (pidOutputAngle))
                 );
-
+                Logger.recordOutput("ClimbPOS", Constants.ClimbConstants.CLIMB_POS);
                 Logger.recordOutput("TranslationDiff", translationDiff);
                 Logger.recordOutput("DesiredAngle", desiredAngle);
-                Logger.recordOutput("PidOutput", Constants.DriveConstants.MAX_ANGULAR_RATE.times(pidOutputAngle));
+                Logger.recordOutput("PidOutputAngle", Constants.DriveConstants.MAX_ANGULAR_RATE.times(pidOutputAngle));
+                Logger.recordOutput("PidOutput", Constants.DriveConstants.FAST_SPEED_SCALAR * pidOutput);
             }
 
             @Override
