@@ -93,7 +93,7 @@ public final class Constants {
 
     public static final double TURN_P = 2.65;
     public static final double TURN_I = 0;
-    public static final double TURN_D = 0.17;
+    public static final double TURN_D = 0.15;
  }
   public static class HubConstants{
   public static final Translation2d HUB_POS = new Translation2d(4.7,3);

@@ -1,5 +1,6 @@
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 import java.util.Optional;
@@ -17,8 +18,9 @@ import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -87,12 +89,14 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 Translation2d currentTranslation2d = currentPose2d.getTranslation();
                 double currentRotation = currentPose2d.getRotation().getRadians();
                 Translation2d translationDiff = Constants.HubConstants.HUB_POS.minus(currentTranslation2d);
-                double desiredAngle = Math.atan2(translationDiff.getY(),translationDiff.getX()); 
-                double pidOutputAngle = getInstance().m_rotationPIDController.calculate(currentRotation,desiredAngle);
+                double desiredRotation = Math.atan2(translationDiff.getY(),translationDiff.getX()); 
+                double pidOutputAngle = getInstance().m_rotationPIDController.calculate(currentRotation, desiredRotation);
 
                 double pidInput = Constants.DriveConstants.MAX_ANGULAR_RATE.times(pidOutputAngle).in(RadiansPerSecond);
                 pidInput = pidInput > 0 ? Math.min(pidInput, 8.0) : Math.max(pidInput, -8.0);
-
+                Rotation2d currentAngle = new Rotation2d(currentRotation);
+                Rotation2d desiredAngle = new Rotation2d(desiredRotation);
+                pidInput = currentAngle.getMeasure().isNear(desiredAngle.getMeasure(), Degrees.of(1.0)) ? 0 : pidInput;
                 s_drivetrain.setControl(
                     s_drive
                         .withVelocityX(
