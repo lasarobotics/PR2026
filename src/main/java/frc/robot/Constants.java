@@ -66,7 +66,7 @@ public final class Constants {
 
     public static final double DEADBAND_SCALAR = 0.1;
     public static final double SLOW_SPEED_SCALAR = 0.3;
-    public static final double FAST_SPEED_SCALAR = 0.6; // TODO
+    public static final double FAST_SPEED_SCALAR = 0.1; // TODO
 
     public static final TrapezoidProfile.Constraints TURN_CONSTRAINTS =
         new TrapezoidProfile.Constraints(
@@ -91,9 +91,9 @@ public final class Constants {
     public static final double AUTO_ALIGN_TOLERANCE_TURN =
         Radians.of(0.075).plus(Degrees.of(7.5)).in(Radians);
 
-    public static final double TURN_P = 7;
-    public static final double TURN_I = 0.65;
-    public static final double TURN_D = 0.2;
+    public static final double TURN_P = 2.65;
+    public static final double TURN_I = 0;
+    public static final double TURN_D = 0.17;
  }
   public static class HubConstants{
   public static final Translation2d HUB_POS = new Translation2d(4.7,3);

@@ -1,5 +1,7 @@
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -88,6 +90,9 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 double desiredAngle = Math.atan2(translationDiff.getY(),translationDiff.getX()); 
                 double pidOutputAngle = getInstance().m_rotationPIDController.calculate(currentRotation,desiredAngle);
 
+                double pidInput = Constants.DriveConstants.MAX_ANGULAR_RATE.times(pidOutputAngle).in(RadiansPerSecond);
+                pidInput = pidInput > 0 ? Math.min(pidInput, 8.0) : Math.max(pidInput, -8.0);
+
                 s_drivetrain.setControl(
                     s_drive
                         .withVelocityX(
@@ -98,15 +103,13 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                             Constants.DriveConstants.MAX_SPEED
                                 .times(-s_driveRequest.getAsDouble())
                                 .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
-                        .withRotationalRate(
-                            Constants.DriveConstants.MAX_ANGULAR_RATE
-                                .times(pidOutputAngle)
-                        )
+                        .withRotationalRate(pidInput)
                 );
+
 
                 Logger.recordOutput("TranslationDiff", translationDiff);
                 Logger.recordOutput("DesiredAngle", desiredAngle);
-                Logger.recordOutput("PidOutput", Constants.DriveConstants.MAX_ANGULAR_RATE.times(pidOutputAngle));
+                Logger.recordOutput("PidInput", pidInput);
             }
 
             @Override
