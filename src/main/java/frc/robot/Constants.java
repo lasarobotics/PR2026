@@ -15,10 +15,9 @@ import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
-import com.ctre.phoenix6.controls.PositionVoltage;
-
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearAcceleration;
@@ -39,9 +38,9 @@ public final class Constants {
   }
 
   public static class ClimbConstants {
-    public static final PositionVoltage UP_SET_POINT = new PositionVoltage(0.0); // TODO
-    public static final PositionVoltage BACK_SET_POINT = new PositionVoltage(0.0); // TODO
-    public static final PositionVoltage FORWARD_SET_POINT = new PositionVoltage(0.0); // TODO
+    public static final double UP_SET_POINT = 0.0; // TODO
+    public static final double BACK_SET_POINT = 0.0; // TODO
+    public static final double FORWARD_SET_POINT = 0.0; // TODO
     public static final int CLIMB_MOTOR_ID = 0; // TODO
     public static final Translation2d CLIMB_POS = new Translation2d(4.7,3);
   }

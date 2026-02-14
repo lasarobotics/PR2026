@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public final FuelManager FUEL_MANAGER = FuelManager.getInstance();
-  public final ClimbSubsystem CLIMB_SUBSYSTEM = ClimbSubsystem.getInstance();
+  public final ClimbSubsystem CLIMB_SUBSYSTEM = new ClimbSubsystem();
   //private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   public final DriveSubsystem DRIVE_SUBSYSTEM = DriveSubsystem.getInstance();
   // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -46,14 +46,15 @@ public class RobotContainer {
    */
   private void configureBindings() {
     FUEL_MANAGER.configureBindings(PRIMARY_CONTROLLER.leftTrigger(),PRIMARY_CONTROLLER.rightBumper(), PRIMARY_CONTROLLER.leftBumper());
-    CLIMB_SUBSYSTEM.configureBindings(PRIMARY_CONTROLLER.povUp(),PRIMARY_CONTROLLER.povLeft(),PRIMARY_CONTROLLER.povRight());
     DRIVE_SUBSYSTEM.configureBindings(
       PRIMARY_CONTROLLER.a(),
       PRIMARY_CONTROLLER.povDown(),
       () -> PRIMARY_CONTROLLER.getLeftY(), // drive x
       () -> PRIMARY_CONTROLLER.getLeftX(), // drive y
       () -> PRIMARY_CONTROLLER.getRightX()); // rotate x
-    
+    PRIMARY_CONTROLLER.povUp().onTrue(CLIMB_SUBSYSTEM.setUp());
+    PRIMARY_CONTROLLER.povLeft().onTrue(CLIMB_SUBSYSTEM.setBack());
+    PRIMARY_CONTROLLER.povRight().onTrue(CLIMB_SUBSYSTEM.setForward());
   }
 
   /**
