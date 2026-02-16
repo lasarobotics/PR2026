@@ -46,9 +46,10 @@ public final class Constants {
     public static final Translation2d CLIMB_POS = new Translation2d(4.7,0);
   }
   public static class FuelManagerConstants {
-    public static final int SHOOT_MOTOR_ID = 0; // TODO
-    public static final int INTAKE_MOTOR_ID = 0; //TODO
-    public static final int MIDDLE_MOTOR_ID = 0; // TODO
+    public static final int SHOOT_MOTOR_LEADER_ID = 30; // TODO
+    public static final int SHOOT_MOTOR_FOLLOWER_ID = 31; // TODO
+    public static final int INTAKE_MOTOR_ID = 32; //TODO
+    public static final int MIDDLE_MOTOR_ID = 33; // TODO
     public static double SHOOT_MOTOR_SPEED = 0; // TODO
     public static double INTAKE_MOTOR_SPEED = 0; // TODO
     public static double MIDDLE_MOTOR_INTAKE_SPEED = 0; // TODO
