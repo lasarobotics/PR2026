@@ -91,7 +91,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
                 Pose2d currentPose2d = s_drivetrain.getState().Pose;
                 Translation2d currentTranslation2d = currentPose2d.getTranslation();
                 double currentRotation = currentPose2d.getRotation().getRadians();
-                Translation2d translationDiff = Constants.HubConstants.HUB_POS.minus(currentTranslation2d);
+                Translation2d translationDiff = s_hubPos.minus(currentTranslation2d);
                 double desiredRotation = Math.atan2(translationDiff.getY(),translationDiff.getX()); 
                 double pidOutputAngle = getInstance().m_rotationPIDController.calculate(currentRotation, desiredRotation);
 
@@ -179,6 +179,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
     private BooleanSupplier m_climbAlignButton;
     private PIDController m_rotationPIDController;
     private PIDController m_translationPIDController;
+    private static Translation2d s_hubPos;
 
     public DriveSubsystem() {
         super(DriveStates.DRIVER_CONTROL);
@@ -205,7 +206,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
         Logger.recordOutput(getName() +"/leftJoystickY", s_driveRequest);
         Logger.recordOutput(getName() +"/AutoAimButton", m_autoAimButton);
         Logger.recordOutput(getName() +"/CurrentState", s_driveSubsystemInstance.getState().toString());
-        Logger.recordOutput(getName() +"/HubPos", Constants.HubConstants.HUB_POS);
+        Logger.recordOutput(getName() +"/HubPos", s_hubPos);
         Logger.recordOutput(getName() +"/ClimbAlignButton", m_climbAlignButton);
         Logger.recordOutput(getName() +"/ResetPoseButton", m_resetPoseButton);
 
@@ -235,10 +236,12 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
             if (ally.get() == Alliance.Red) {
                  s_drivetrain.setOperatorPerspectiveForward(
                 CommandSwerveDrivetrain.kRedAlliancePerspectiveRotation);
+                s_hubPos = Constants.HubConstants.RED_HUB_POS;
             }
             if (ally.get() == Alliance.Blue) {
                 s_drivetrain.setOperatorPerspectiveForward(
                 CommandSwerveDrivetrain.kBlueAlliancePerspectiveRotation);
+                s_hubPos = Constants.HubConstants.BLUE_HUB_POS;
             }
         }
 
