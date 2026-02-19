@@ -6,6 +6,7 @@ import org.lasarobotics.fsm.StateMachine;
 import org.lasarobotics.fsm.SystemState;
 import org.littletonrobotics.junction.Logger;
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import frc.robot.Constants;
@@ -91,6 +92,23 @@ public class ClimbSubsystem extends StateMachine implements AutoCloseable {
     private ClimbSubsystem() {
         super(ClimbStates.UP);
         m_climbMotor = new TalonFX(Constants.ClimbConstants.CLIMB_MOTOR_ID);
+
+        TalonFXConfiguration climbConfiguration = new TalonFXConfiguration();
+
+        climbConfiguration
+            .CurrentLimits
+                .withStatorCurrentLimitEnable(true)
+                .withSupplyCurrentLimitEnable(true)
+                .withStatorCurrentLimit(5)
+                .withSupplyCurrentLimit(1)
+                .withSupplyCurrentLowerLimit(1);
+                
+        climbConfiguration
+            .Slot0
+                .withKP(5)
+                .withKD(1);
+
+        m_climbMotor.getConfigurator().apply(climbConfiguration);
     }
 
     public void configureBindings (

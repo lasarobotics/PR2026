@@ -39,21 +39,21 @@ public final class Constants {
   }
 
   public static class ClimbConstants {
-    public static final PositionVoltage UP_SET_POINT = new PositionVoltage(0.0); // TODO
-    public static final PositionVoltage BACK_SET_POINT = new PositionVoltage(0.0); // TODO
-    public static final PositionVoltage FORWARD_SET_POINT = new PositionVoltage(0.0); // TODO
+    public static final PositionVoltage UP_SET_POINT = new PositionVoltage(0); // TODO
+    public static final PositionVoltage BACK_SET_POINT = new PositionVoltage(5); // TODO
+    public static final PositionVoltage FORWARD_SET_POINT = new PositionVoltage(10); // TODO
     public static final int CLIMB_MOTOR_ID = 40; // TODO
     public static final Translation2d CLIMB_POS = new Translation2d(4.7,0);
   }
   public static class FuelManagerConstants {
     public static final int SHOOT_MOTOR_LEADER_ID = 30; // TODO
     public static final int SHOOT_MOTOR_FOLLOWER_ID = 31; // TODO
-    public static final int INTAKE_MOTOR_ID = 32; //TODO
-    public static final int MIDDLE_MOTOR_ID = 33; // TODO
-    public static double SHOOT_MOTOR_SPEED = 0; // TODO
-    public static double INTAKE_MOTOR_SPEED = 0; // TODO
-    public static double MIDDLE_MOTOR_INTAKE_SPEED = 10; // TODO
-    public static double MIDDLE_MOTOR_SHOOT_SPEED = 30; // TODO
+    public static final int INTAKE_MOTOR_ID = 33; //TODO
+    public static final int MIDDLE_MOTOR_ID = 32; // TODO
+    public static double SHOOT_MOTOR_SPEED = -0.5; // TODO
+    public static double INTAKE_MOTOR_SPEED = -0.5; // TODO
+    public static double MIDDLE_MOTOR_INTAKE_SPEED = -0.5; // TODO
+    public static double MIDDLE_MOTOR_SHOOT_SPEED = 0.5; // TODO
   }
   public static class DriveConstants {
     public static final LinearVelocity MAX_SPEED = TunerConstants.kSpeedAt12Volts;
