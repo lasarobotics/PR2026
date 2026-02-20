@@ -127,6 +127,7 @@ public class ClimbSubsystem extends StateMachine implements AutoCloseable {
         Logger.recordOutput(getName() + "/buttons/Back", m_backButton);
         Logger.recordOutput(getName() + "/buttons/Forward", m_forwardButton);
         Logger.recordOutput(getName() + "/state", getState().toString());
+        Logger.recordOutput(getName() + "/currentPosition", m_climbMotor.getPosition().getValueAsDouble());
     }
 
     @Override
