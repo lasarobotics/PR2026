@@ -12,6 +12,7 @@ import org.lasarobotics.fsm.StateMachine;
 import org.lasarobotics.fsm.SystemState;
 import org.littletonrobotics.junction.Logger;
 
+import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -219,7 +220,11 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
         if (limelightEstimate != null && limelightEstimate.tagCount > 0) {
             s_drivetrain.setVisionMeasurementStdDevs(
                     VecBuilder.fill(0.3, 0.3, 9999999));
-            s_drivetrain.addVisionMeasurement(limelightEstimate.pose, limelightEstimate.timestampSeconds);
+            s_drivetrain.addVisionMeasurement(limelightEstimate.pose, Utils.fpgaToCurrentTime(limelightEstimate.timestampSeconds));
+            Logger.recordOutput(getName() +"/LimeLight Pose", limelightEstimate.pose);
+        }
+        if(limelightEstimate != null){
+            Logger.recordOutput(getName() +"/TagCount", limelightEstimate.tagCount);
         }
     }
 
