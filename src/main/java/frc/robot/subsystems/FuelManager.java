@@ -129,7 +129,7 @@ public class FuelManager extends StateMachine{
                 .withKD(0.01)
                 .withKS(0.2)
                 .withKV(0.1);
-        m_shooterVelocityVoltage = new VelocityVoltage(0);
+        m_shooterVelocityVoltage = new VelocityVoltage( 0);
         m_intakeMotor.getConfigurator().apply(shooterConfig);//TODO add individual configs
         m_middleMotor.getConfigurator().apply(shooterConfig);
 
@@ -158,6 +158,12 @@ public class FuelManager extends StateMachine{
         Logger.recordOutput(getName() + "/Shoot Button", m_shootButton.getAsBoolean());
         Logger.recordOutput(getName() + "/Current State", getInstance().getState().toString());
         Logger.recordOutput(getName() + "/Intake Motor Speed", m_intakeMotor.getRotorVelocity().getValueAsDouble());
+        Logger.recordOutput(getName() + "/Indexer Speed", m_middleMotor.getRotorVelocity().getValueAsDouble());
+
+        //Distance from Hub: x:2.4, y:1.55, Speed:-74.5
+        //Distance from Hub: x:0.2, y:-1.82, Speed: 67
+        //Distance from Hub: x:-1.83, y:-3.24, Speed: -87.5
+        //Distance from Hub: x: .014, y: 1.475, Speed: -65.4
     }
 
 }
