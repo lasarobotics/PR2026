@@ -107,6 +107,7 @@ public class ClimbSubsystem extends StateMachine{
 
     private static ClimbSubsystem s_climbInstance;
     private final TalonFX m_climbMotor;
+    private boolean testingControl;
 
     private BooleanSupplier m_L1Button;
     private BooleanSupplier m_R2CButton;
@@ -164,12 +165,20 @@ public class ClimbSubsystem extends StateMachine{
     public void periodic() {
 
         if (m_positiveVoltageButton.getAsBoolean())
+        {
             m_climbMotor.setControl(new VoltageOut(1.5)); 
+            testingControl = true;
+        }
         else if (m_negativeVoltageButton.getAsBoolean())
+        {
             m_climbMotor.setControl(new VoltageOut(-1.5));
-        // else{
-        //     m_climbMotor.setControl(new VoltageOut(0));
-        // }
+            testingControl = true;
+        }
+        else if (testingControl)
+        {
+            m_climbMotor.setControl(new VoltageOut(0));
+            testingControl = false;
+        }
 
         Logger.recordOutput(getName() + "/buttons/L1", m_L1Button);
         Logger.recordOutput(getName() + "/buttons/Back", m_startButton);
