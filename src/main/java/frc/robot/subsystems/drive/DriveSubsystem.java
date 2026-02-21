@@ -10,6 +10,7 @@ import java.util.function.DoubleSupplier;
 
 import org.lasarobotics.fsm.StateMachine;
 import org.lasarobotics.fsm.SystemState;
+import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.Utils;
@@ -27,6 +28,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
@@ -226,6 +228,19 @@ public class DriveSubsystem extends StateMachine{
         }
         if(limelightEstimate != null){
             Logger.recordOutput(getName() +"/TagCount", limelightEstimate.tagCount);
+        }
+
+        if(DriverStation.isDisabled()){
+                LimelightHelpers.PoseEstimate limelightEstimateDisabled = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+            if (limelightEstimateDisabled != null && limelightEstimateDisabled.tagCount > 0) {
+                s_drivetrain.setVisionMeasurementStdDevs(
+                        VecBuilder.fill(0.1, 0.1, 0.1));
+                s_drivetrain.addVisionMeasurement(limelightEstimateDisabled.pose, Utils.fpgaToCurrentTime(limelightEstimate.timestampSeconds));
+                Logger.recordOutput(getName() +"/LimeLight Pose", limelightEstimateDisabled.pose);
+            }
+            if(limelightEstimateDisabled != null){
+                Logger.recordOutput(getName() +"/TagCount", limelightEstimateDisabled.tagCount);
+            }
         }
     }
 

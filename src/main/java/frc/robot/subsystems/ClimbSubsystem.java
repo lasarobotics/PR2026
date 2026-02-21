@@ -126,7 +126,7 @@ public class ClimbSubsystem extends StateMachine{
     private ClimbSubsystem() {
         super(ClimbStates.L1);
         m_climbMotor = new TalonFX(Constants.ClimbConstants.CLIMB_MOTOR_ID);
-
+    
         TalonFXConfiguration climbConfiguration = new TalonFXConfiguration();
 
         climbConfiguration
@@ -143,6 +143,7 @@ public class ClimbSubsystem extends StateMachine{
                 .withKD(1);
 
         m_climbMotor.getConfigurator().apply(climbConfiguration);
+        m_climbMotor.setPosition(0);
     }
 
     public void configureBindings (

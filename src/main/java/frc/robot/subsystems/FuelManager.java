@@ -8,7 +8,9 @@ import org.lasarobotics.fsm.StateMachine;
 import org.lasarobotics.fsm.SystemState;
 import org.littletonrobotics.junction.Logger;
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
@@ -26,9 +28,9 @@ public class FuelManager extends StateMachine{
         REST {
             @Override
             public void initialize() {
-                getInstance().m_intakeMotor.set(0);
-                getInstance().m_shootMotorLeader.set(0);
-                getInstance().m_middleMotor.set(0);
+                 getInstance().m_shootMotorLeader.setControl(getInstance().m_shooterVelocityVoltage.withVelocity(0));
+                getInstance().m_middleMotor.setControl(getInstance().m_shooterVelocityVoltage.withVelocity(0)); // TODO add vraible speed
+                getInstance().m_intakeMotor.setControl(getInstance().m_shooterVelocityVoltage.withVelocity(0));
             }
             @Override
             public SystemState nextState() {
@@ -47,8 +49,8 @@ public class FuelManager extends StateMachine{
         INTAKE {
             @Override
             public void initialize() {
-                getInstance().m_intakeMotor.set(Constants.FuelManagerConstants.INTAKE_MOTOR_SPEED);
-                getInstance().m_middleMotor.set(Constants.FuelManagerConstants.MIDDLE_MOTOR_INTAKE_SPEED);
+                getInstance().m_middleMotor.setControl(getInstance().m_shooterVelocityVoltage.withVelocity(Constants.FuelManagerConstants.MIDDLE_MOTOR_INTAKE_SPEED)); // TODO add vraible speed
+                getInstance().m_intakeMotor.setControl(getInstance().m_shooterVelocityVoltage.withVelocity(Constants.FuelManagerConstants.INTAKE_MOTOR_SPEED));
             }
             @Override
             public SystemState nextState() {
@@ -61,9 +63,9 @@ public class FuelManager extends StateMachine{
         SHOOT {
             @Override
             public void initialize() {
-                getInstance().m_shootMotorLeader.set(Constants.FuelManagerConstants.SHOOT_MOTOR_SPEED);
-                getInstance().m_middleMotor.set(Constants.FuelManagerConstants.MIDDLE_MOTOR_SHOOT_SPEED); // TODO add vraible speed
-                getInstance().m_intakeMotor.set(Constants.FuelManagerConstants.INTAKE_MOTOR_SPEED);
+                getInstance().m_shootMotorLeader.setControl(getInstance().m_shooterVelocityVoltage.withVelocity(Constants.FuelManagerConstants.SHOOT_MOTOR_SPEED));
+                getInstance().m_middleMotor.setControl(getInstance().m_shooterVelocityVoltage.withVelocity(Constants.FuelManagerConstants.MIDDLE_MOTOR_SHOOT_SPEED)); // TODO add vraible speed
+                getInstance().m_intakeMotor.setControl(getInstance().m_shooterVelocityVoltage.withVelocity(Constants.FuelManagerConstants.INTAKE_MOTOR_SPEED));
             }
             @Override
             public SystemState nextState() {
@@ -77,9 +79,9 @@ public class FuelManager extends StateMachine{
         STATIC_SHOOT {
             @Override
             public void initialize() {
-                getInstance().m_shootMotorLeader.set(Constants.FuelManagerConstants.SHOOT_MOTOR_SPEED);
-                getInstance().m_middleMotor.set(Constants.FuelManagerConstants.MIDDLE_MOTOR_SHOOT_SPEED);
-                getInstance().m_intakeMotor.set(Constants.FuelManagerConstants.INTAKE_MOTOR_SPEED);
+                getInstance().m_shootMotorLeader.setControl(getInstance().m_shooterVelocityVoltage.withVelocity(Constants.FuelManagerConstants.SHOOT_MOTOR_SPEED));
+                getInstance().m_middleMotor.setControl(getInstance().m_shooterVelocityVoltage.withVelocity(Constants.FuelManagerConstants.MIDDLE_MOTOR_SHOOT_SPEED)); // TODO add vraible speed
+                getInstance().m_intakeMotor.setControl(getInstance().m_shooterVelocityVoltage.withVelocity(Constants.FuelManagerConstants.INTAKE_MOTOR_SPEED));
             }
             @Override
             public SystemState nextState() {
@@ -99,6 +101,7 @@ public class FuelManager extends StateMachine{
     private BooleanSupplier m_intakeButton;
     private BooleanSupplier m_shootButton;
     private BooleanSupplier m_staticShootButton;
+    private VelocityVoltage m_shooterVelocityVoltage;
 
     private FuelManager(){
         super(FuelManagerStates.REST);
@@ -107,6 +110,9 @@ public class FuelManager extends StateMachine{
         m_shootMotorLeader = new TalonFX(Constants.FuelManagerConstants.SHOOT_MOTOR_LEADER_ID);
         m_shootMotorFollower = new TalonFX(Constants.FuelManagerConstants.SHOOT_MOTOR_FOLLOWER_ID);
         m_middleMotor =  new TalonFX(Constants.FuelManagerConstants.MIDDLE_MOTOR_ID);
+
+        TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
+        m_shooterVelocityVoltage = new VelocityVoltage(0);
 
         m_shootMotorFollower.setControl(
             new Follower(m_shootMotorLeader.getDeviceID(), MotorAlignmentValue.Opposed)
@@ -131,7 +137,7 @@ public class FuelManager extends StateMachine{
         Logger.recordOutput(getName() + "/Intake Button", m_intakeButton.getAsBoolean());
         Logger.recordOutput(getName() + "/Shoot Button", m_shootButton.getAsBoolean());
         Logger.recordOutput(getName() + "/Current State", getInstance().getState().toString());
-        Logger.recordOutput(getName() + "/Intake Motor Speed", m_intakeMotor.getVelocity().getValueAsDouble());
+        Logger.recordOutput(getName() + "/Intake Motor Speed", m_intakeMotor.getRotorVelocity().getValueAsDouble());
     }
 
 }
