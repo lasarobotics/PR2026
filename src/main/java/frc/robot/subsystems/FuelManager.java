@@ -28,9 +28,9 @@ public class FuelManager extends StateMachine{
         REST {
             @Override
             public void initialize() {
-                 getInstance().m_shootMotorLeader.setControl(getInstance().m_shooterVelocityVoltage.withVelocity(0));
-                getInstance().m_middleMotor.setControl(getInstance().m_shooterVelocityVoltage.withVelocity(0)); // TODO add vraible speed
-                getInstance().m_intakeMotor.setControl(getInstance().m_shooterVelocityVoltage.withVelocity(0));
+                 getInstance().m_shootMotorLeader.set(0);
+                getInstance().m_middleMotor.set(0);
+                getInstance().m_intakeMotor.set(0);
             }
             @Override
             public SystemState nextState() {
@@ -121,6 +121,8 @@ public class FuelManager extends StateMachine{
                 .withKS(0.2)
                 .withKV(0.1);
         m_shooterVelocityVoltage = new VelocityVoltage(0);
+        m_intakeMotor.getConfigurator().apply(shooterConfig);//TODO add individual configs
+        m_middleMotor.getConfigurator().apply(shooterConfig);
 
         m_shootMotorLeader.getConfigurator().apply(shooterConfig);
         m_shootMotorFollower.setControl(
