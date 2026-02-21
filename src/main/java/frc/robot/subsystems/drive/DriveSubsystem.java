@@ -213,6 +213,7 @@ public class DriveSubsystem extends StateMachine{
         Logger.recordOutput(getName() +"/HubPos", s_hubPos);
         Logger.recordOutput(getName() +"/ClimbAlignButton", m_climbAlignButton);
         Logger.recordOutput(getName() +"/ResetPoseButton", m_resetPoseButton);
+        Logger.recordOutput(getName() + "/DistanceToHub", s_hubPos.minus(s_drivetrain.getState().Pose.getTranslation()));
 
         if (m_resetPoseButton.getAsBoolean())
         {

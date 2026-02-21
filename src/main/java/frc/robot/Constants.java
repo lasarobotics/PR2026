@@ -55,6 +55,7 @@ public final class Constants {
     public static double INTAKE_MOTOR_SPEED = -30; // TODO
     public static double MIDDLE_MOTOR_INTAKE_SPEED = -30; // TODO
     public static double MIDDLE_MOTOR_SHOOT_SPEED = 30; // TODO
+    public static double SHOOTER_WITHIN_RANGE_COEFFICIENT = 0.05;
   }
   public static class DriveConstants {
     public static final LinearVelocity MAX_SPEED = TunerConstants.kSpeedAt12Volts;

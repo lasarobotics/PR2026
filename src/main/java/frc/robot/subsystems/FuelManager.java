@@ -64,9 +64,18 @@ public class FuelManager extends StateMachine{
             @Override
             public void initialize() {
                 getInstance().m_shootMotorLeader.setControl(getInstance().m_shooterVelocityVoltage.withVelocity(Constants.FuelManagerConstants.SHOOT_MOTOR_SPEED));
-                getInstance().m_middleMotor.setControl(getInstance().m_shooterVelocityVoltage.withVelocity(Constants.FuelManagerConstants.MIDDLE_MOTOR_SHOOT_SPEED)); // TODO add vraible speed
                 getInstance().m_intakeMotor.setControl(getInstance().m_shooterVelocityVoltage.withVelocity(Constants.FuelManagerConstants.INTAKE_MOTOR_SPEED));
             }
+
+            @Override
+            public void execute() 
+            {   
+                if (Math.abs(getInstance().m_shootMotorFollower.getRotorVelocity().getValueAsDouble() - Constants.FuelManagerConstants.SHOOT_MOTOR_SPEED) <= Math.abs(Constants.FuelManagerConstants.SHOOT_MOTOR_SPEED) * Constants.FuelManagerConstants.SHOOTER_WITHIN_RANGE_COEFFICIENT)
+                {
+                    getInstance().m_middleMotor.setControl(getInstance().m_shooterVelocityVoltage.withVelocity(Constants.FuelManagerConstants.MIDDLE_MOTOR_SHOOT_SPEED)); // TODO add vraible speed
+                }
+            }
+
             @Override
             public SystemState nextState() {
                 if (getInstance().m_shootButton.getAsBoolean()){
