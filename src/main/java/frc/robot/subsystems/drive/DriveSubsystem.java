@@ -200,6 +200,11 @@ public class DriveSubsystem extends StateMachine{
 
     }
 
+    public double getSpeed() {
+        Translation2d distanceToHub = s_hubPos.minus(s_drivetrain.getState().Pose.getTranslation());
+        return Math.sqrt(Math.pow(distanceToHub.getX(), 2) + Math.pow(distanceToHub.getY(), 2));
+    }
+
     @Override
     public void periodic() {
         setPerspective();

@@ -15,6 +15,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
 import frc.robot.Constants;
+import frc.robot.subsystems.drive.DriveSubsystem;
 
 public class FuelManager extends StateMachine{
 
@@ -63,7 +64,7 @@ public class FuelManager extends StateMachine{
         SHOOT {
             @Override
             public void initialize() {
-                getInstance().m_shootMotorLeader.setControl(getInstance().m_shooterVelocityVoltage.withVelocity(Constants.FuelManagerConstants.SHOOT_MOTOR_SPEED));
+                getInstance().m_shootMotorLeader.setControl(getInstance().m_shooterVelocityVoltage.withVelocity(getInstance().getSpeed((s_DriveSubsystemInstance.getSpeed()))));
                 getInstance().m_intakeMotor.setControl(getInstance().m_shooterVelocityVoltage.withVelocity(Constants.FuelManagerConstants.INTAKE_MOTOR_SPEED));
             }
 
@@ -103,6 +104,7 @@ public class FuelManager extends StateMachine{
 }
     
     private static FuelManager s_FuelManagerInstance;
+    private static DriveSubsystem s_DriveSubsystemInstance;
     private final TalonFX m_intakeMotor;
     private final TalonFX m_shootMotorLeader;
     private final TalonFX m_shootMotorFollower;
@@ -114,7 +116,7 @@ public class FuelManager extends StateMachine{
 
     private FuelManager(){
         super(FuelManagerStates.REST);
-
+        s_DriveSubsystemInstance = DriveSubsystem.getInstance();
         m_intakeMotor = new TalonFX(Constants.FuelManagerConstants.INTAKE_MOTOR_ID);
         m_shootMotorLeader = new TalonFX(Constants.FuelManagerConstants.SHOOT_MOTOR_LEADER_ID);
         m_shootMotorFollower = new TalonFX(Constants.FuelManagerConstants.SHOOT_MOTOR_FOLLOWER_ID);
@@ -144,6 +146,13 @@ public class FuelManager extends StateMachine{
             s_FuelManagerInstance = new FuelManager();
         }
         return s_FuelManagerInstance;
+    }
+
+    public double getSpeed(double totalDistance) {
+        double aValue = -2.85;
+        double bValue = 1.17;
+        double cValue = -65.4;
+        return (aValue*Math.pow(totalDistance, 2)) + (bValue*totalDistance) + cValue;
     }
 
     public void configureBindings(BooleanSupplier intakeButton, BooleanSupplier shootButton, BooleanSupplier staticShootButton){
