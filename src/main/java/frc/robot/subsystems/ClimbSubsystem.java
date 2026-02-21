@@ -8,6 +8,7 @@ import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.controls.VoltageOut;
 
 import frc.robot.Constants;
 
@@ -81,6 +82,8 @@ public class ClimbSubsystem extends StateMachine implements AutoCloseable {
     private BooleanSupplier m_upButton;
     private BooleanSupplier m_backButton;
     private BooleanSupplier m_forwardButton;
+    private BooleanSupplier m_positiveVoltageButton;
+    private BooleanSupplier m_negativeVoltageButton;
 
     public static ClimbSubsystem getInstance() {
         if (s_climbInstance == null) {
@@ -114,15 +117,26 @@ public class ClimbSubsystem extends StateMachine implements AutoCloseable {
     public void configureBindings (
         BooleanSupplier upButton,
         BooleanSupplier backButton,
-        BooleanSupplier forwardButton
+        BooleanSupplier forwardButton,
+        BooleanSupplier positiveVoltageButton,
+        BooleanSupplier negativeVoltageButton
     ) {
         m_upButton = upButton;
         m_backButton = backButton;
         m_forwardButton = forwardButton;
+        m_positiveVoltageButton = positiveVoltageButton;
+        m_negativeVoltageButton = negativeVoltageButton;
     }
 
     @Override
     public void periodic() {
+
+        if (m_positiveVoltageButton.getAsBoolean())
+            m_climbMotor.setControl(new VoltageOut(0.5)); 
+        else if (m_negativeVoltageButton.getAsBoolean())
+            m_climbMotor.setControl(new VoltageOut(-0.5));
+
+
         Logger.recordOutput(getName() + "/buttons/Up", m_upButton);
         Logger.recordOutput(getName() + "/buttons/Back", m_backButton);
         Logger.recordOutput(getName() + "/buttons/Forward", m_forwardButton);
