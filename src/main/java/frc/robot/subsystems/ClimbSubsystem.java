@@ -12,7 +12,7 @@ import com.ctre.phoenix6.controls.VoltageOut;
 
 import frc.robot.Constants;
 
-public class ClimbSubsystem extends StateMachine implements AutoCloseable {
+public class ClimbSubsystem extends StateMachine{
 
     public enum ClimbStates implements SystemState {
         NOTHING {
@@ -144,8 +144,4 @@ public class ClimbSubsystem extends StateMachine implements AutoCloseable {
         Logger.recordOutput(getName() + "/currentPosition", m_climbMotor.getPosition().getValueAsDouble());
     }
 
-    @Override
-    public void close() {
-        m_climbMotor.close();
-    }
 }

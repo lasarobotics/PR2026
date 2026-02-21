@@ -23,6 +23,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -31,7 +32,7 @@ import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.generated.TunerConstants;
 
-public class DriveSubsystem extends StateMachine implements AutoCloseable {
+public class DriveSubsystem extends StateMachine{
 
 
     public enum DriveStates implements SystemState {
@@ -213,7 +214,7 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
 
         if (m_resetPoseButton.getAsBoolean())
         {
-            s_drivetrain.resetPose();
+            this.resetPose();
         }
 
         LimelightHelpers.PoseEstimate limelightEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
@@ -235,6 +236,10 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
         return s_driveSubsystemInstance;
     }
 
+    public void resetPose(){
+        s_drivetrain.resetPose();
+    }
+
     public void setPerspective(){
         Optional<Alliance> ally = DriverStation.getAlliance();
         if (ally.isPresent()) {
@@ -251,6 +256,11 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
         }
 
     }
+
+    public Pose2d getPose(){
+        return s_drivetrain.getState().Pose;
+    }
+
     public void configureBindings(BooleanSupplier autoAimButton, BooleanSupplier climbAlignButton, DoubleSupplier strafeRequest, DoubleSupplier driveRequest, DoubleSupplier rotateRequest, BooleanSupplier resetPoseButton){
         m_autoAimButton = autoAimButton;
         m_climbAlignButton = climbAlignButton;
@@ -259,8 +269,5 @@ public class DriveSubsystem extends StateMachine implements AutoCloseable {
         s_driveRequest = driveRequest;
         s_rotateRequest = rotateRequest;
     }
-    @Override
-    public void close() {
-        // TODO
-    }
+
 }

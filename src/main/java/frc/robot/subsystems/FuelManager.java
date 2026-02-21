@@ -14,7 +14,7 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
 import frc.robot.Constants;
 
-public class FuelManager extends StateMachine implements AutoCloseable {
+public class FuelManager extends StateMachine{
 
     public enum FuelManagerStates implements SystemState {
         NOTHING {
@@ -134,11 +134,4 @@ public class FuelManager extends StateMachine implements AutoCloseable {
         Logger.recordOutput(getName() + "/Intake Motor Speed", m_intakeMotor.getVelocity().getValueAsDouble());
     }
 
-    @Override
-    public void close(){
-        m_intakeMotor.close();
-        m_shootMotorLeader.close();
-        m_shootMotorFollower.close();
-        m_middleMotor.close();
-    }
 }
