@@ -30,7 +30,7 @@ public class ClimbSubsystem extends StateMachine{
                 //getInstance().m_climbMotor.setControl(Constants.ClimbConstants.START_SET_POINT);
 
                 //Proposed Solution:
-                /*if (!getInstance().dioInput.get())
+                if (getInstance().dioInput.get())
                 {
                     getInstance().m_climbMotor.setControl(new VoltageOut(-1));
                 }
@@ -38,7 +38,8 @@ public class ClimbSubsystem extends StateMachine{
                 {
                     getInstance().m_climbMotor.setControl(new VoltageOut(0));
                     getInstance().m_climbMotor.setPosition(0);
-                }*/
+                }
+                // TODO make it be able to stop once it reaches the magnet (add an execute)
             }
 
             @Override
@@ -140,7 +141,7 @@ public class ClimbSubsystem extends StateMachine{
     }
 
     private ClimbSubsystem() {
-        super(ClimbStates.L1);
+        super(ClimbStates.START);
         dioInput = new DigitalInput(9);
         m_climbMotor = new TalonFX(Constants.ClimbConstants.CLIMB_MOTOR_ID);
     
