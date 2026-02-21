@@ -122,6 +122,7 @@ public class FuelManager extends StateMachine{
                 .withKV(0.1);
         m_shooterVelocityVoltage = new VelocityVoltage(0);
 
+        m_shootMotorLeader.getConfigurator().apply(shooterConfig);
         m_shootMotorFollower.setControl(
             new Follower(m_shootMotorLeader.getDeviceID(), MotorAlignmentValue.Opposed)
         );
