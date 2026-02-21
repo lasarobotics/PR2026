@@ -8,6 +8,9 @@ import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
+
+import edu.wpi.first.wpilibj.DigitalInput;
+
 import com.ctre.phoenix6.controls.VoltageOut;
 
 import frc.robot.Constants;
@@ -116,6 +119,8 @@ public class ClimbSubsystem extends StateMachine{
     private BooleanSupplier m_positiveVoltageButton;
     private BooleanSupplier m_negativeVoltageButton;
 
+    private DigitalInput dioInput;
+
     public static ClimbSubsystem getInstance() {
         if (s_climbInstance == null) {
             s_climbInstance = new ClimbSubsystem();
@@ -125,6 +130,7 @@ public class ClimbSubsystem extends StateMachine{
 
     private ClimbSubsystem() {
         super(ClimbStates.L1);
+        dioInput = new DigitalInput(9);
         m_climbMotor = new TalonFX(Constants.ClimbConstants.CLIMB_MOTOR_ID);
     
         TalonFXConfiguration climbConfiguration = new TalonFXConfiguration();
@@ -187,6 +193,7 @@ public class ClimbSubsystem extends StateMachine{
         Logger.recordOutput(getName() + "/buttons/L2", m_R2CButton);
         Logger.recordOutput(getName() + "/state", getState().toString());
         Logger.recordOutput(getName() + "/currentPosition", m_climbMotor.getPosition().getValueAsDouble());
+        Logger.recordOutput(getName() + "/port9", dioInput.get());
     }
 
 }
