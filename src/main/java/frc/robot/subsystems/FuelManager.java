@@ -64,7 +64,7 @@ public class FuelManager extends StateMachine{
         SHOOT {
             @Override
             public void initialize() {
-                getInstance().m_shootMotorLeader.setControl(getInstance().m_shooterVelocityVoltage.withVelocity(getInstance().getSpeed((s_DriveSubsystemInstance.getSpeed()))));
+                getInstance().m_shootMotorLeader.setControl(getInstance().m_shooterVelocityVoltage.withVelocity(getInstance().getSpeed((s_DriveSubsystemInstance.getDistanceToHub()))));
                 getInstance().m_intakeMotor.setControl(getInstance().m_shooterVelocityVoltage.withVelocity(Constants.FuelManagerConstants.INTAKE_MOTOR_SPEED));
             }
 
