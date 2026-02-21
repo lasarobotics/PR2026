@@ -27,6 +27,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -35,8 +36,6 @@ import frc.robot.LimelightHelpers;
 import frc.robot.generated.TunerConstants;
 
 public class DriveSubsystem extends StateMachine{
-
-
     public enum DriveStates implements SystemState {
         NOTHING {
             @Override
@@ -184,9 +183,11 @@ public class DriveSubsystem extends StateMachine{
     private PIDController m_rotationPIDController;
     private PIDController m_translationPIDController;
     private static Translation2d s_hubPos;
+    private DigitalInput dioInput;
 
     public DriveSubsystem() {
         super(DriveStates.DRIVER_CONTROL);
+        dioInput = new DigitalInput(9);
         s_drivetrain = TunerConstants.createDrivetrain();
         s_drive =
             new SwerveRequest.FieldCentric()
@@ -214,6 +215,7 @@ public class DriveSubsystem extends StateMachine{
         Logger.recordOutput(getName() +"/ClimbAlignButton", m_climbAlignButton);
         Logger.recordOutput(getName() +"/ResetPoseButton", m_resetPoseButton);
         Logger.recordOutput(getName() + "/DistanceToHub", s_hubPos.minus(s_drivetrain.getState().Pose.getTranslation()));
+        Logger.recordOutput(getName() + "/Port 9 Results", dioInput.get());
 
         if (m_resetPoseButton.getAsBoolean())
         {
