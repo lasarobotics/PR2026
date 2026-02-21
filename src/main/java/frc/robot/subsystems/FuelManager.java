@@ -112,6 +112,14 @@ public class FuelManager extends StateMachine{
         m_middleMotor =  new TalonFX(Constants.FuelManagerConstants.MIDDLE_MOTOR_ID);
 
         TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
+
+        shooterConfig
+            .Slot0
+                .withKP(0.55)
+                .withKI(0)
+                .withKD(0.01)
+                .withKS(0.2)
+                .withKV(0.1);
         m_shooterVelocityVoltage = new VelocityVoltage(0);
 
         m_shootMotorFollower.setControl(
