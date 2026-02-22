@@ -129,10 +129,11 @@ public class ClimbSubsystem extends StateMachine{
     private static ClimbSubsystem s_climbInstance;
     private final TalonFX m_climbMotor;
     private boolean testingControl;
-
     private BooleanSupplier m_L1Button;
+    // Ready To Climb
     private BooleanSupplier m_R2CButton;
     private BooleanSupplier m_L2Button;
+    //initial starting position - zero
     private BooleanSupplier m_startButton;
     private BooleanSupplier m_positiveVoltageButton;
     private BooleanSupplier m_negativeVoltageButton;
