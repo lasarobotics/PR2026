@@ -39,9 +39,15 @@ public class ClimbSubsystem extends StateMachine{
                     getInstance().m_climbMotor.setControl(new VoltageOut(0));
                     getInstance().m_climbMotor.setPosition(0);
                 }
-                // TODO make it be able to stop once it reaches the magnet (add an execute)
             }
+            @Override
+            public void execute(){
 
+                if(!getInstance().dioInput.get()){
+                    getInstance().m_climbMotor.setControl(new VoltageOut(0));
+                    getInstance().m_climbMotor.setPosition(0);
+                }
+            }
             @Override
             public SystemState nextState() {
                 if (getInstance().m_L1Button.getAsBoolean()) {
