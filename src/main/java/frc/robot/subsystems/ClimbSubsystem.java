@@ -32,7 +32,7 @@ public class ClimbSubsystem extends StateMachine{
                 //Proposed Solution:
                 if (getInstance().dioInput.get())
                 {
-                    getInstance().m_climbMotor.setControl(new VoltageOut(-1));
+                    getInstance().m_climbMotor.setControl(new VoltageOut(-2));
                 }
                 else
                 {
