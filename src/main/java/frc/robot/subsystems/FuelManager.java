@@ -72,7 +72,7 @@ public class FuelManager extends StateMachine{
             @Override
             public void execute() 
             {   
-                if (Math.abs(getInstance().m_shootMotorLeader.getRotorVelocity().getValueAsDouble() - getInstance().m_shootSpeed) <= Math.abs(Constants.FuelManagerConstants.SHOOT_MOTOR_SPEED) * Constants.FuelManagerConstants.SHOOTER_WITHIN_RANGE_COEFFICIENT)
+                if (Math.abs(getInstance().m_shootMotorLeader.getRotorVelocity().getValueAsDouble() - getInstance().m_shootSpeed) <= Math.abs(getInstance().m_shootSpeed) * Constants.FuelManagerConstants.SHOOTER_WITHIN_RANGE_COEFFICIENT)
                 {
                     getInstance().m_middleMotor.setControl(getInstance().m_shooterVelocityVoltage.withVelocity(Constants.FuelManagerConstants.MIDDLE_MOTOR_SHOOT_SPEED)); // TODO add vraible speed
                 }

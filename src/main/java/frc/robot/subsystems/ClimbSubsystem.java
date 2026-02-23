@@ -27,9 +27,6 @@ public class ClimbSubsystem extends StateMachine{
         START {
             @Override
             public void initialize() {
-                //getInstance().m_climbMotor.setControl(Constants.ClimbConstants.START_SET_POINT);
-                //test
-                //Proposed Solution:
                 if (getInstance().dioInput.get())
                 {
                     getInstance().m_climbMotor.setControl(new VoltageOut(-2));
