@@ -201,10 +201,11 @@ public class DriveSubsystem extends StateMachine{
     }
 
     public double getDistanceToHub() {
-        Translation2d distanceToHub = s_hubPos.minus(s_drivetrain.getState().Pose.getTranslation());
-        return Math.sqrt(Math.pow(distanceToHub.getX(), 2) + Math.pow(distanceToHub.getY(), 2));
+        Translation2d differenceFromHub = s_hubPos.minus(s_drivetrain.getState().Pose.getTranslation());
+        double distanceToHub = Math.sqrt(Math.pow(differenceFromHub.getX(), 2) + Math.pow(differenceFromHub.getY(), 2));
+        Logger.recordOutput( getName() + "/DistanceToHubAtVarSpeed", distanceToHub);
+        return distanceToHub;
     }
-
     @Override
     public void periodic() {
         setPerspective();
