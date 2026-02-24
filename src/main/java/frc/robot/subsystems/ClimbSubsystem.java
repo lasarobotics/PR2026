@@ -6,8 +6,10 @@ import org.lasarobotics.fsm.StateMachine;
 import org.lasarobotics.fsm.SystemState;
 import org.littletonrobotics.junction.Logger;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 
@@ -29,7 +31,7 @@ public class ClimbSubsystem extends StateMachine{
             public void initialize() {
                 if (getInstance().dioInput.get())
                 {
-                    getInstance().m_climbMotor.setControl(new VoltageOut(-2));
+                    getInstance().m_climbMotor.setControl(new VoltageOut(-6));
                 }
                 else
                 {
@@ -54,6 +56,9 @@ public class ClimbSubsystem extends StateMachine{
                     return L2;
                 }
                 if (getInstance().m_R2CButton.getAsBoolean()) {
+                    return R2C;
+                }
+                if(!getInstance().dioInput.get()){
                     return R2C;
                 }
                 return START;
@@ -84,7 +89,7 @@ public class ClimbSubsystem extends StateMachine{
             public void initialize() {
                 getInstance().m_climbMotor.setControl(Constants.ClimbConstants.L1_SET_POINT);
             }
-
+            //TODO make sure wheels are straight when climbing or else!!! :c
             @Override
             public SystemState nextState() {
                 if (getInstance().m_L2Button.getAsBoolean()) {
@@ -155,15 +160,17 @@ public class ClimbSubsystem extends StateMachine{
             .CurrentLimits
                 .withStatorCurrentLimitEnable(true)
                 .withSupplyCurrentLimitEnable(true)
-                .withStatorCurrentLimit(5)
-                .withSupplyCurrentLimit(1)
-                .withSupplyCurrentLowerLimit(1);
+                .withStatorCurrentLimit(80)
+                .withSupplyCurrentLimit(80)
+                .withSupplyCurrentLowerLimit(40);
                 
         climbConfiguration
             .Slot0
-                .withKP(5)
-                .withKD(1);
-
+                .withKP(2.5)
+                .withKD(0);
+        climbConfiguration
+            .MotorOutput
+                .NeutralMode = NeutralModeValue.Brake;
         m_climbMotor.getConfigurator().apply(climbConfiguration);
         m_climbMotor.setPosition(0);
     }
@@ -189,12 +196,12 @@ public class ClimbSubsystem extends StateMachine{
 
         if (m_positiveVoltageButton.getAsBoolean())
         {
-            m_climbMotor.setControl(new VoltageOut(1.5)); 
+            m_climbMotor.setControl(new VoltageOut(12)); 
             testingControl = true;
         }
         else if (m_negativeVoltageButton.getAsBoolean())
         {
-            m_climbMotor.setControl(new VoltageOut(-1.5));
+            m_climbMotor.setControl(new VoltageOut(-12));
             testingControl = true;
         }
         else if (testingControl)

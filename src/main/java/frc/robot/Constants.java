@@ -41,8 +41,8 @@ public final class Constants {
   public static class ClimbConstants {
     public static final PositionVoltage START_SET_POINT = new PositionVoltage(0); // TODO
     public static final PositionVoltage R2C_SET_POINT = new PositionVoltage(350); // TODO
-    public static final PositionVoltage L1_SET_POINT = new PositionVoltage(45); // TODO
-    public static final PositionVoltage L2_SET_POINT = new PositionVoltage(15); // TODO
+    public static final PositionVoltage L1_SET_POINT = new PositionVoltage(125); // TODO
+    public static final PositionVoltage L2_SET_POINT = new PositionVoltage(-25); // TODO
     public static final int CLIMB_MOTOR_ID = 40; // TODO
     public static final Translation2d CLIMB_POS = new Translation2d(4.7,0);
   }

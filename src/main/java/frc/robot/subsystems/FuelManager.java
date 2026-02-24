@@ -138,8 +138,8 @@ public class FuelManager extends StateMachine{
                 .withKP(999999999);
         shooterConfig
             .MotorOutput
-                .withPeakForwardDutyCycle(1.0)
-                .withPeakReverseDutyCycle(0.0);
+                .withPeakForwardDutyCycle(0.0)
+                .withPeakReverseDutyCycle(-1.0);
         m_shooterVelocityDutyCycle = new VelocityDutyCycle( 0);
 
         TalonFXConfiguration motorConfig = new TalonFXConfiguration();
@@ -190,6 +190,7 @@ public class FuelManager extends StateMachine{
         Logger.recordOutput(getName() + "/Current State", getInstance().getState().toString());
         Logger.recordOutput(getName() + "/Intake Motor Speed", m_intakeMotor.getRotorVelocity().getValueAsDouble());
         Logger.recordOutput(getName() + "/Indexer Speed", m_middleMotor.getRotorVelocity().getValueAsDouble());
+        Logger.recordOutput(getName() + "/SHOOTER Speed", m_shootMotorLeader.getRotorVelocity().getValueAsDouble());
 
         //Distance from Hub: x:2.4, y:1.55, Speed:-74.5
         //Distance from Hub: x:0.2, y:-1.82, Speed: 67
