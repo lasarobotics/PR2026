@@ -51,8 +51,8 @@ public class FuelManager extends StateMachine{
         INTAKE {
             @Override
             public void initialize() {
-                getInstance().m_middleMotor.setControl(getInstance().m_shooterVelocityDutyCycle.withVelocity(Constants.FuelManagerConstants.MIDDLE_MOTOR_INTAKE_SPEED)); // TODO add vraible speed
-                getInstance().m_intakeMotor.setControl(getInstance().m_shooterVelocityDutyCycle.withVelocity(Constants.FuelManagerConstants.INTAKE_MOTOR_SPEED));
+                getInstance().m_middleMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.MIDDLE_MOTOR_INTAKE_SPEED)); // TODO add vraible speed
+                getInstance().m_intakeMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.INTAKE_MOTOR_SPEED));
             }
             @Override
             public SystemState nextState() {
@@ -67,7 +67,7 @@ public class FuelManager extends StateMachine{
             public void initialize() {
                getInstance().m_shootSpeed = getInstance().getSpeed((s_DriveSubsystemInstance.getDistanceToHub()));
                 getInstance().m_shootMotorLeader.setControl(getInstance().m_shooterVelocityDutyCycle.withVelocity(getInstance().m_shootSpeed));
-                getInstance().m_intakeMotor.setControl(getInstance().m_shooterVelocityDutyCycle.withVelocity(Constants.FuelManagerConstants.INTAKE_MOTOR_SPEED));
+                getInstance().m_intakeMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.INTAKE_MOTOR_SPEED));
             }
 
             @Override
@@ -75,7 +75,7 @@ public class FuelManager extends StateMachine{
             {   
                 if (Math.abs(getInstance().m_shootMotorLeader.getRotorVelocity().getValueAsDouble() - getInstance().m_shootSpeed) <= Math.abs(getInstance().m_shootSpeed) * Constants.FuelManagerConstants.SHOOTER_WITHIN_RANGE_COEFFICIENT)
                 {
-                    getInstance().m_middleMotor.setControl(getInstance().m_shooterVelocityDutyCycle.withVelocity(Constants.FuelManagerConstants.MIDDLE_MOTOR_SHOOT_SPEED)); // TODO add vraible speed
+                    getInstance().m_middleMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.MIDDLE_MOTOR_SHOOT_SPEED)); // TODO add vraible speed
                 }
             }
 
@@ -92,13 +92,13 @@ public class FuelManager extends StateMachine{
             @Override
             public void initialize() {
                 getInstance().m_shootMotorLeader.setControl(getInstance().m_shooterVelocityDutyCycle.withVelocity(Constants.FuelManagerConstants.SHOOT_MOTOR_SPEED)); 
-                getInstance().m_intakeMotor.setControl(getInstance().m_shooterVelocityDutyCycle.withVelocity(Constants.FuelManagerConstants.INTAKE_MOTOR_SPEED));
+                getInstance().m_intakeMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.INTAKE_MOTOR_SPEED));
             }
             @Override
             public void execute(){
                 if (Math.abs(getInstance().m_shootMotorLeader.getRotorVelocity().getValueAsDouble() - Constants.FuelManagerConstants.SHOOT_MOTOR_SPEED) <= Math.abs(Constants.FuelManagerConstants.SHOOT_MOTOR_SPEED) * Constants.FuelManagerConstants.SHOOTER_WITHIN_RANGE_COEFFICIENT)
                 {
-                    getInstance().m_middleMotor.setControl(getInstance().m_shooterVelocityDutyCycle.withVelocity(Constants.FuelManagerConstants.MIDDLE_MOTOR_SHOOT_SPEED)); // TODO add vraible speed
+                    getInstance().m_middleMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.MIDDLE_MOTOR_SHOOT_SPEED)); // TODO add vraible speed
                 }
             }
             @Override
@@ -121,6 +121,7 @@ public class FuelManager extends StateMachine{
     private BooleanSupplier m_shootButton;
     private BooleanSupplier m_staticShootButton;
     private VelocityDutyCycle m_shooterVelocityDutyCycle;
+    private VelocityVoltage m_motorVelocityVoltage;
     private double m_shootSpeed;
     private FuelManager(){
         super(FuelManagerStates.REST);
@@ -141,10 +142,22 @@ public class FuelManager extends StateMachine{
                 .withPeakReverseDutyCycle(0.0);
         m_shooterVelocityDutyCycle = new VelocityDutyCycle( 0);
 
-        m_intakeMotor.getConfigurator().apply(shooterConfig);//TODO add individual configs
-        m_middleMotor.getConfigurator().apply(shooterConfig);
+        TalonFXConfiguration motorConfig = new TalonFXConfiguration();
+        motorConfig
+            .Slot0
+                .withKP(0.55)
+                .withKI(0)
+                .withKD(0.01)
+                .withKS(0.2)
+                .withKV(0.1);
+        m_motorVelocityVoltage = new VelocityVoltage( 0);
 
+        m_intakeMotor.getConfigurator().apply(motorConfig);//TODO add individual configs
+        m_middleMotor.getConfigurator().apply(motorConfig);
+
+        m_shootMotorFollower.getConfigurator().apply(shooterConfig);
         m_shootMotorLeader.getConfigurator().apply(shooterConfig);
+
         m_shootMotorFollower.setControl(
             new Follower(m_shootMotorLeader.getDeviceID(), MotorAlignmentValue.Opposed)
         );
