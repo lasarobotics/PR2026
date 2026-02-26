@@ -9,6 +9,11 @@ import frc.robot.commands.Autos;
 import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.FuelManager;
 import frc.robot.subsystems.drive.DriveSubsystem;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.FollowPathCommand;
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -63,9 +68,20 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
 
-  // public Command getAutonomousCommand() {
-  //   // An example command will be run in autonomous
-  //   // TODO
+  public Command getAutonomousCommand() {
+    // An example command will be run in autonomous
+    // TODO
+    return null;
+  }
 
-  // }
+  public Command getPathCommand()
+  {
+    try 
+    {
+      PathPlannerPath path = PathPlannerPath.fromPathFile("Testing Path");
+      return AutoBuilder.followPath(path);
+    }
+    catch (Exception e) {}
+    return null;
+  }
 }

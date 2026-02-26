@@ -8,6 +8,9 @@ import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+
+import com.pathplanner.lib.commands.FollowPathCommand;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -35,6 +38,13 @@ public class Robot extends LoggedRobot {
     m_robotContainer = new RobotContainer();
   }
 
+  @Override
+  public void robotInit()
+  {
+    CommandScheduler.getInstance().run();
+    FollowPathCommand.warmupCommand().schedule();
+  }
+
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
    * that you want ran during disabled, autonomous, teleoperated and test.
@@ -52,6 +62,7 @@ public class Robot extends LoggedRobot {
     m_robotContainer.DRIVE_SUBSYSTEM.periodic();
     m_robotContainer.FUEL_MANAGER.periodic();
     m_robotContainer.CLIMB_SUBSYSTEM.periodic();
+    m_robotContainer.getPathCommand().schedule();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
