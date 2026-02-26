@@ -299,7 +299,7 @@ public class DriveSubsystem extends StateMachine{
         s_drivetrain.setControl(
                     s_drive
                         .withVelocityX(
-                            0)
+                            -0.01)
                         .withVelocityY(
                             0)
                         .withRotationalRate(
