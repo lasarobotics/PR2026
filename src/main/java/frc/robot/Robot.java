@@ -62,7 +62,6 @@ public class Robot extends LoggedRobot {
     m_robotContainer.DRIVE_SUBSYSTEM.periodic();
     m_robotContainer.FUEL_MANAGER.periodic();
     m_robotContainer.CLIMB_SUBSYSTEM.periodic();
-    m_robotContainer.getPathCommand().schedule();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -96,11 +95,14 @@ public class Robot extends LoggedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    
   }
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    m_robotContainer.getPathCommand().schedule();
+  }
 
   @Override
   public void testInit() {
