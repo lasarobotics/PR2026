@@ -81,7 +81,7 @@ public class RobotContainer {
       PathPlannerPath path = PathPlannerPath.fromPathFile("Testing Path");
       return AutoBuilder.followPath(path);
     }
-    catch (Exception e) {}
+    catch (Exception e) {System.out.println("testing");}
     return null;
   }
 }
