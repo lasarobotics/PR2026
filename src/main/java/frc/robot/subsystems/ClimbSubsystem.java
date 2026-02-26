@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import com.ctre.phoenix6.controls.VoltageOut;
 
 import frc.robot.Constants;
+import frc.robot.subsystems.drive.DriveSubsystem;
 
 public class ClimbSubsystem extends StateMachine{
 
@@ -68,6 +69,8 @@ public class ClimbSubsystem extends StateMachine{
             @Override
             public void initialize() {
                 getInstance().m_climbMotor.setControl(Constants.ClimbConstants.R2C_SET_POINT);
+                DriveSubsystem.postClimbZero();
+
             }
 
             @Override
@@ -88,6 +91,7 @@ public class ClimbSubsystem extends StateMachine{
             @Override
             public void initialize() {
                 getInstance().m_climbMotor.setControl(Constants.ClimbConstants.L1_SET_POINT);
+                DriveSubsystem.wheelPushTower();
             }
             //TODO make sure wheels are straight when climbing or else!!! :c
             @Override
@@ -110,6 +114,7 @@ public class ClimbSubsystem extends StateMachine{
             @Override
             public void initialize() {
                 getInstance().m_climbMotor.setControl(Constants.ClimbConstants.L2_SET_POINT);
+                DriveSubsystem.wheelPushTower();
             }
 
             @Override

@@ -55,6 +55,7 @@ public class DriveSubsystem extends StateMachine{
 
             @Override
             public void execute(){
+                if(!s_isClimbing){
                 AngularVelocity rotationRate = Constants.DriveConstants.MAX_ANGULAR_RATE
                         .times(-s_rotateRequest.getAsDouble())
                         .times(Constants.DriveConstants.FAST_SPEED_SCALAR);
@@ -71,8 +72,9 @@ public class DriveSubsystem extends StateMachine{
                         .withRotationalRate(
                             rotationRate)
                 );
-
+                
                 Logger.recordOutput("controlRotationRate", rotationRate);
+                }
             }
 
             @Override
@@ -90,6 +92,7 @@ public class DriveSubsystem extends StateMachine{
         AUTO_AIM {
             @Override 
             public void execute(){
+                if(!s_isClimbing){
                 Pose2d currentPose2d = s_drivetrain.getState().Pose;
                 Translation2d currentTranslation2d = currentPose2d.getTranslation();
                 double currentRotation = currentPose2d.getRotation().getRadians();
@@ -119,6 +122,7 @@ public class DriveSubsystem extends StateMachine{
                 Logger.recordOutput("TranslationDiff", translationDiff);
                 Logger.recordOutput("DesiredAngle", desiredAngle);
                 Logger.recordOutput("PidInput", pidInput);
+                }
             }
 
             @Override
@@ -132,7 +136,8 @@ public class DriveSubsystem extends StateMachine{
         },
         CLIMB_ALIGN {
             @Override 
-            public void execute(){
+            public void execute(){// TODO remove if not used, at least remove the keybind
+                if(!s_isClimbing){
                 Pose2d currentPose2d = s_drivetrain.getState().Pose;
                 Translation2d currentTranslation2d = currentPose2d.getTranslation();
                 double currentRotation = currentPose2d.getRotation().getRadians();
@@ -159,6 +164,7 @@ public class DriveSubsystem extends StateMachine{
                 Logger.recordOutput("PidOutputAngle", Constants.DriveConstants.MAX_ANGULAR_RATE.times(pidOutputAngle));
                 Logger.recordOutput("PidOutput", Constants.DriveConstants.FAST_SPEED_SCALAR * pidOutput);
             }
+        }
 
             @Override
             public SystemState nextState() {
@@ -182,7 +188,7 @@ public class DriveSubsystem extends StateMachine{
     private PIDController m_rotationPIDController;
     private PIDController m_translationPIDController;
     private static Translation2d s_hubPos;
-
+    private static boolean s_isClimbing;
     public DriveSubsystem() {
         super(DriveStates.DRIVER_CONTROL);
         s_drivetrain = TunerConstants.createDrivetrain();
@@ -276,7 +282,30 @@ public class DriveSubsystem extends StateMachine{
         }
 
     }
-
+    public static void postClimbZero(){
+        if(s_isClimbing){
+            s_drivetrain.setControl(
+                    s_drive
+                        .withVelocityX(
+                            0)
+                        .withVelocityY(
+                            0)
+                        .withRotationalRate(
+                                0));
+            s_isClimbing = false;
+        }
+    }
+    public static void wheelPushTower(){
+        s_drivetrain.setControl(
+                    s_drive
+                        .withVelocityX(
+                            0)
+                        .withVelocityY(
+                            0)
+                        .withRotationalRate(
+                                0));
+            s_isClimbing = true;
+    }
     public Pose2d getPose(){
         return s_drivetrain.getState().Pose;
     }
