@@ -281,7 +281,14 @@ public class DriveSubsystem extends StateMachine{
         return s_drivetrain.getState().Pose;
     }
 
-    public void configureBindings(BooleanSupplier autoAimButton, BooleanSupplier climbAlignButton, DoubleSupplier strafeRequest, DoubleSupplier driveRequest, DoubleSupplier rotateRequest, BooleanSupplier resetPoseButton){
+    public void configureBindings(
+        BooleanSupplier autoAimButton, 
+        BooleanSupplier climbAlignButton, 
+        DoubleSupplier strafeRequest, 
+        DoubleSupplier driveRequest, 
+        DoubleSupplier rotateRequest, 
+        BooleanSupplier resetPoseButton)
+    {
         m_autoAimButton = autoAimButton;
         m_climbAlignButton = climbAlignButton;
         m_resetPoseButton = resetPoseButton;
