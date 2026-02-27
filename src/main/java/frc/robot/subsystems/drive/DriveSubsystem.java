@@ -282,6 +282,11 @@ public class DriveSubsystem extends StateMachine{
         }
 
     }
+    public boolean awayFromTower(){
+        if( Math.abs(Constants.DriveConstants.CENTER_XPOS - DriveSubsystem.getInstance().getPose().getX()) < Constants.DriveConstants.STOW_DISTANCE_REQUIREMENT)
+            return true;
+        return false;
+    }
     public static void postClimbZero(){
         if(s_isClimbing){
             s_drivetrain.setControl(
