@@ -50,6 +50,10 @@ public class ClimbSubsystem extends StateMachine{
             }
             @Override
             public SystemState nextState() {
+                if(s_firstFromTeleOp){
+                    s_firstFromTeleOp = false;
+                    return STOW;
+                }
                 if (getInstance().m_L1Button.getAsBoolean()) {
                     return L1;
                 }
@@ -65,6 +69,44 @@ public class ClimbSubsystem extends StateMachine{
                 return START;
             }
         },
+        STOW {
+            @Override
+            public void initialize() {
+                getInstance().m_climbMotor.setControl(Constants.ClimbConstants.STOW_SET_POINT);
+                
+            }
+
+            @Override
+            public SystemState nextState() {
+                if (getInstance().m_L1Button.getAsBoolean()) {
+                    return L1;
+                }
+                if (getInstance().m_R2CButton.getAsBoolean()) {
+                    return R2C;
+                }
+                if (getInstance().m_L2Button.getAsBoolean()) {
+                    return L2;
+                }
+                return STOW;
+            }
+        },
+        DISMOUNT {
+            @Override
+            public void initialize() {
+                getInstance().m_climbMotor.setControl(Constants.ClimbConstants.R2C_SET_POINT);
+            }
+
+            @Override
+            public SystemState nextState() {
+                if (s_firstFromTeleOp)
+                    s_firstFromTeleOp = false;
+
+                if (s_awayFromTower) {
+                    return STOW;
+                }
+                return DISMOUNT;
+            }
+        },
         R2C {
             @Override
             public void initialize() {
@@ -75,14 +117,18 @@ public class ClimbSubsystem extends StateMachine{
 
             @Override
             public SystemState nextState() {
+                if(s_firstFromTeleOp){
+                    s_firstFromTeleOp = false;
+                    return DISMOUNT;
+                }
                 if (getInstance().m_L1Button.getAsBoolean()) {
                     return L1;
                 }
                 if (getInstance().m_L2Button.getAsBoolean()) {
                     return L2;
                 }
-                if (getInstance().m_startButton.getAsBoolean()) {
-                    return START;
+                if (getInstance().m_stowButton.getAsBoolean()) {
+                    return STOW;
                 }
                 return R2C;
             }
@@ -96,11 +142,15 @@ public class ClimbSubsystem extends StateMachine{
             //TODO make sure wheels are straight when climbing or else!!! :c
             @Override
             public SystemState nextState() {
+                if(s_firstFromTeleOp){
+                    s_firstFromTeleOp = false;
+                    return DISMOUNT;
+                }
                 if (getInstance().m_L2Button.getAsBoolean()) {
                     return L2;
                 }
-                if (getInstance().m_startButton.getAsBoolean()) {
-                    return START;
+                if (getInstance().m_stowButton.getAsBoolean()) {
+                    return STOW;
                 }
                 if (getInstance().m_R2CButton.getAsBoolean()) {
                     return R2C;
@@ -119,11 +169,15 @@ public class ClimbSubsystem extends StateMachine{
 
             @Override
             public SystemState nextState() {
+                if(s_firstFromTeleOp){
+                    s_firstFromTeleOp = false;
+                    return DISMOUNT;
+                }
                 if (getInstance().m_L1Button.getAsBoolean()) {
                     return L1;
                 }
-                if (getInstance().m_startButton.getAsBoolean()) {
-                    return START;
+                if (getInstance().m_stowButton.getAsBoolean()) {
+                    return STOW;
                 }
                 if (getInstance().m_R2CButton.getAsBoolean()) {
                     return R2C;
@@ -141,11 +195,12 @@ public class ClimbSubsystem extends StateMachine{
     private BooleanSupplier m_R2CButton;
     private BooleanSupplier m_L2Button;
     //initial starting position - zero
-    private BooleanSupplier m_startButton;
+    private BooleanSupplier m_stowButton;
     private BooleanSupplier m_positiveVoltageButton;
     private BooleanSupplier m_negativeVoltageButton;
-
     private DigitalInput dioInput;
+    private static boolean s_firstFromTeleOp;
+    private static boolean s_awayFromTower;
 
     public static ClimbSubsystem getInstance() {
         if (s_climbInstance == null) {
@@ -184,18 +239,21 @@ public class ClimbSubsystem extends StateMachine{
         BooleanSupplier L1Button,
         BooleanSupplier R2CButton,
         BooleanSupplier L2Button,
-        BooleanSupplier startButton,
+        BooleanSupplier stowButton,
         BooleanSupplier positiveVoltageButton,
         BooleanSupplier negativeVoltageButton
     ) {
         m_L1Button = L1Button;
         m_R2CButton = R2CButton;
         m_L2Button = L2Button;
-        m_startButton = startButton;
+        m_stowButton = stowButton;
         m_positiveVoltageButton = positiveVoltageButton;
         m_negativeVoltageButton = negativeVoltageButton;
     }
 
+    public static void armFirstFromTeleOp(){
+        s_firstFromTeleOp = true;
+    }
     @Override
     public void periodic() {
 
@@ -214,9 +272,9 @@ public class ClimbSubsystem extends StateMachine{
             m_climbMotor.setControl(new VoltageOut(0));
             testingControl = false;
         }
-
+        s_awayFromTower = DriveSubsystem.getInstance().awayFromTower();
         Logger.recordOutput(getName() + "/buttons/L1", m_L1Button);
-        Logger.recordOutput(getName() + "/buttons/Back", m_startButton);
+        Logger.recordOutput(getName() + "/buttons/Back", m_stowButton);
         Logger.recordOutput(getName() + "/buttons/L2", m_L2Button);
         Logger.recordOutput(getName() + "/buttons/L2", m_R2CButton);
         Logger.recordOutput(getName() + "/state", getState().toString());
