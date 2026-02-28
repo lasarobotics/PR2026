@@ -8,6 +8,8 @@ import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+import javax.lang.model.util.ElementScanner14;
+
 import org.lasarobotics.fsm.StateMachine;
 import org.lasarobotics.fsm.SystemState;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -27,6 +29,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -55,25 +58,47 @@ public class DriveSubsystem extends StateMachine{
 
             @Override
             public void execute(){
-                if(!s_isClimbing){
                 AngularVelocity rotationRate = Constants.DriveConstants.MAX_ANGULAR_RATE
                         .times(-s_rotateRequest.getAsDouble())
                         .times(Constants.DriveConstants.FAST_SPEED_SCALAR);
+                if(!s_isClimbing){
                 s_drivetrain.setControl(
                     s_drive
                         .withVelocityX(
                             Constants.DriveConstants.MAX_SPEED
-                                .times(-s_strafeRequest.getAsDouble())
+                                .times(-s_strafeRequest.getAsDouble()*Math.abs(s_strafeRequest.getAsDouble()))
                                 .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
                         .withVelocityY(
                             Constants.DriveConstants.MAX_SPEED
-                                .times(-s_driveRequest.getAsDouble())
+                                .times(-s_driveRequest.getAsDouble()*Math.abs(s_driveRequest.getAsDouble()))
                                 .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
                         .withRotationalRate(
                             rotationRate)
                 );
                 
                 Logger.recordOutput("controlRotationRate", rotationRate);
+                }
+                else 
+                {
+
+                s_drivetrain.setControl(
+                    s_drive
+                        .withVelocityX(
+                            Constants.DriveConstants.MAX_SPEED
+                                .times(-.1)
+                                .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
+                        .withVelocityY(
+                            Constants.DriveConstants.MAX_SPEED
+                                .times(0)
+                                .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
+                        .withRotationalRate(
+                            rotationRate)                
+                );
+
+                s_isClimbing = false;
+
+                Logger.recordOutput(getInstance().getName() + "/counter", s_counter);
+                s_counter++;
                 }
             }
 
@@ -138,33 +163,33 @@ public class DriveSubsystem extends StateMachine{
             @Override 
             public void execute(){// TODO remove if not used, at least remove the keybind
                 if(!s_isClimbing){
-                Pose2d currentPose2d = s_drivetrain.getState().Pose;
-                Translation2d currentTranslation2d = currentPose2d.getTranslation();
-                double currentRotation = currentPose2d.getRotation().getRadians();
-                Translation2d translationDiff = Constants.ClimbConstants.CLIMB_POS.minus(currentTranslation2d);
-                double angleCos = translationDiff.getAngle().getCos()*-1;
-                double angleSin = translationDiff.getAngle().getSin()*-1;
-                double desiredAngle = 0;
-                double pidOutputAngle = Constants.DriveConstants.FAST_SPEED_SCALAR* getInstance().m_rotationPIDController.calculate(currentRotation, desiredAngle);
-                double pidOutput = Constants.DriveConstants.FAST_SPEED_SCALAR *0.5* getInstance().m_translationPIDController.calculate(translationDiff.getNorm(), 0);
-                // double pidInput = Constants.DriveConstants.MAX_ANGULAR_RATE.times(pidOutputAngle).in(RadiansPerSecond);
-                // pidInput = pidInput > 0 ? Math.min(pidInput, 8.0) : Math.max(pidInput, -8.0);
-                s_drivetrain.setControl(
-                    s_drive
-                        .withVelocityX(
-                            pidOutput * angleCos)
-                        .withVelocityY(
-                            pidOutput * angleSin)
-                        .withRotationalRate(
-                                (pidOutputAngle))
-                );
-                Logger.recordOutput("ClimbPOS", Constants.ClimbConstants.CLIMB_POS);
-                Logger.recordOutput("TranslationDiff", translationDiff);
-                Logger.recordOutput("DesiredAngle", desiredAngle);
-                Logger.recordOutput("PidOutputAngle", Constants.DriveConstants.MAX_ANGULAR_RATE.times(pidOutputAngle));
-                Logger.recordOutput("PidOutput", Constants.DriveConstants.FAST_SPEED_SCALAR * pidOutput);
+                    Pose2d currentPose2d = s_drivetrain.getState().Pose;
+                    Translation2d currentTranslation2d = currentPose2d.getTranslation();
+                    double currentRotation = currentPose2d.getRotation().getRadians();
+                    Translation2d translationDiff = Constants.ClimbConstants.CLIMB_POS.minus(currentTranslation2d);
+                    double angleCos = translationDiff.getAngle().getCos()*-1;
+                    double angleSin = translationDiff.getAngle().getSin()*-1;
+                    double desiredAngle = 0;
+                    double pidOutputAngle = Constants.DriveConstants.FAST_SPEED_SCALAR* getInstance().m_rotationPIDController.calculate(currentRotation, desiredAngle);
+                    double pidOutput = Constants.DriveConstants.FAST_SPEED_SCALAR *0.5* getInstance().m_translationPIDController.calculate(translationDiff.getNorm(), 0);
+                    // double pidInput = Constants.DriveConstants.MAX_ANGULAR_RATE.times(pidOutputAngle).in(RadiansPerSecond);
+                    // pidInput = pidInput > 0 ? Math.min(pidInput, 8.0) : Math.max(pidInput, -8.0);
+                    s_drivetrain.setControl(
+                        s_drive
+                            .withVelocityX(
+                                pidOutput * angleCos)
+                            .withVelocityY(
+                                pidOutput * angleSin)
+                            .withRotationalRate(
+                                    (pidOutputAngle))
+                    );
+                    Logger.recordOutput("ClimbPOS", Constants.ClimbConstants.CLIMB_POS);
+                    Logger.recordOutput("TranslationDiff", translationDiff);
+                    Logger.recordOutput("DesiredAngle", desiredAngle);
+                    Logger.recordOutput("PidOutputAngle", Constants.DriveConstants.MAX_ANGULAR_RATE.times(pidOutputAngle));
+                    Logger.recordOutput("PidOutput", Constants.DriveConstants.FAST_SPEED_SCALAR * pidOutput);
+                }
             }
-        }
 
             @Override
             public SystemState nextState() {
@@ -189,6 +214,7 @@ public class DriveSubsystem extends StateMachine{
     private PIDController m_translationPIDController;
     private static Translation2d s_hubPos;
     private static boolean s_isClimbing;
+    private static int s_counter = 0;
     public DriveSubsystem() {
         super(DriveStates.DRIVER_CONTROL);
         s_drivetrain = TunerConstants.createDrivetrain();
@@ -208,7 +234,7 @@ public class DriveSubsystem extends StateMachine{
 
     public double getDistanceToHub() {
         Translation2d differenceFromHub = s_hubPos.minus(s_drivetrain.getState().Pose.getTranslation());
-        double distanceToHub = Math.sqrt(Math.pow(differenceFromHub.getX(), 2) + Math.pow(differenceFromHub.getY(), 2));
+        double distanceToHub = Math.sqrt(Math.pow(differenceFromHub.getX(), 2) + Math.pow(differenceFromHub.getY(), 2)) - 0.4;
         Logger.recordOutput( getName() + "/DistanceToHubAtVarSpeed", distanceToHub);
         return distanceToHub;
     }
@@ -233,7 +259,7 @@ public class DriveSubsystem extends StateMachine{
         LimelightHelpers.PoseEstimate limelightEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
         if (limelightEstimate != null && limelightEstimate.tagCount > 0) {
             s_drivetrain.setVisionMeasurementStdDevs(
-                    VecBuilder.fill(0.3, 0.3, 9999999));
+                    VecBuilder.fill(3, 3, 9999999));
             s_drivetrain.addVisionMeasurement(limelightEstimate.pose, Utils.fpgaToCurrentTime(limelightEstimate.timestampSeconds));
             Logger.recordOutput(getName() +"/LimeLight Pose", limelightEstimate.pose);
         }
@@ -301,14 +327,14 @@ public class DriveSubsystem extends StateMachine{
         }
     }
     public static void wheelPushTower(){
-        s_drivetrain.setControl(
-                    s_drive
-                        .withVelocityX(
-                            -0.01)
-                        .withVelocityY(
-                            0)
-                        .withRotationalRate(
-                                0));
+        // s_drivetrain.setControl(
+        //             s_drive
+        //                 .withVelocityX(
+        //                     -0.1)
+        //                 .withVelocityY(
+        //                     0)
+        //                 .withRotationalRate(
+        //                         0));
             s_isClimbing = true;
     }
     public Pose2d getPose(){

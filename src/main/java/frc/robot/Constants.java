@@ -42,7 +42,7 @@ public final class Constants {
     public static final PositionVoltage START_SET_POINT = new PositionVoltage(0); // TODO
     public static final PositionVoltage R2C_SET_POINT = new PositionVoltage(350); // TODO
     public static final PositionVoltage L1_SET_POINT = new PositionVoltage(125); // TODO
-    public static final PositionVoltage STOW_SET_POINT = new PositionVoltage(175);
+    public static final PositionVoltage STOW_SET_POINT = new PositionVoltage(110);
     public static final PositionVoltage L2_SET_POINT = new PositionVoltage(-25); // TODO
     public static final int CLIMB_MOTOR_ID = 40; // TODO
     public static final Translation2d CLIMB_POS = new Translation2d(4.7,0);
@@ -70,8 +70,8 @@ public final class Constants {
     // measure
 
         
-    public static final double STOW_DISTANCE_REQUIREMENT = 0.0; // TODO 
-    public static final double CENTER_XPOS = 6; 
+    public static final double STOW_DISTANCE_REQUIREMENT = 6.75; // TODO 
+    public static final double CENTER_XPOS = 8.25; 
 
     public static final double DEADBAND_SCALAR = 0.1;
     public static final double SLOW_SPEED_SCALAR = 0.3;

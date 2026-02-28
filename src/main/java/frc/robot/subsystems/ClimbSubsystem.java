@@ -70,6 +70,7 @@ public class ClimbSubsystem extends StateMachine{
             @Override
             public void initialize() {
                 getInstance().m_climbMotor.setControl(Constants.ClimbConstants.STOW_SET_POINT);
+                DriveSubsystem.postClimbZero();
             }
 
             @Override
@@ -94,6 +95,7 @@ public class ClimbSubsystem extends StateMachine{
             @Override
             public void initialize() {
                 getInstance().m_climbMotor.setControl(Constants.ClimbConstants.R2C_SET_POINT);
+                DriveSubsystem.postClimbZero();
             }
 
             @Override
@@ -145,8 +147,16 @@ public class ClimbSubsystem extends StateMachine{
             @Override
             public void initialize() {
                 getInstance().m_climbMotor.setControl(Constants.ClimbConstants.L1_SET_POINT);
-                DriveSubsystem.wheelPushTower();
+                DriveSubsystem.wheelPushTower();   
             }
+            
+
+            @Override
+            public void execute()
+            {
+                          
+            }
+
             @Override
             public SystemState nextState() {
                 if (DriverStation.isAutonomous() && s_L1AutonRequest)
@@ -175,7 +185,13 @@ public class ClimbSubsystem extends StateMachine{
             @Override
             public void initialize() {
                 getInstance().m_climbMotor.setControl(Constants.ClimbConstants.L2_SET_POINT);
-                DriveSubsystem.wheelPushTower();
+                DriveSubsystem.wheelPushTower();  
+            }
+
+            @Override
+            public void execute()
+            {
+                          
             }
 
             @Override

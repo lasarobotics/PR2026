@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import frc.robot.Constants.FuelManagerConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.subsystems.ClimbSubsystem;
@@ -11,8 +12,10 @@ import frc.robot.subsystems.FuelManager;
 import frc.robot.subsystems.drive.DriveSubsystem;
 
 import org.lasarobotics.fsm.SystemState;
+import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.path.PathPlannerPath;
 
@@ -44,6 +47,11 @@ public class RobotContainer {
   SendableChooser<Command> autoChooser;
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
+    NamedCommands.registerCommand("L1_Climb", L1_Climb());
+    NamedCommands.registerCommand("Start_Intake", Start_Intake());
+    NamedCommands.registerCommand("Fuel_Rest", Fuel_Rest());
+    NamedCommands.registerCommand("Start Shoot", Start_Shoot());
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -98,6 +106,7 @@ public class RobotContainer {
 
   public Command L1_Climb()
   {
+    Logger.recordOutput("/command", "L1_Climb");
     return Commands.startEnd(() -> CLIMB_SUBSYSTEM.autonStateRequester(true), 
       () -> CLIMB_SUBSYSTEM.autonStateRequester(false),
       CLIMB_SUBSYSTEM
@@ -105,16 +114,15 @@ public class RobotContainer {
   }
 
   public Command Start_Intake(){
-    return new InstantCommand(() -> FUEL_MANAGER.autonStateRequester(FuelManager.FuelManagerStates.INTAKE));
+    return new InstantCommand(() -> {Logger.recordOutput("/command", "Start_Intake"); FUEL_MANAGER.autonStateRequester(FuelManager.FuelManagerStates.INTAKE);}); 
   }
 
   public Command Fuel_Rest(){
-    return new InstantCommand(() -> FUEL_MANAGER.autonStateRequester(null));
+    return new InstantCommand(() -> {Logger.recordOutput("/command", "Fuel_Rest"); FUEL_MANAGER.autonStateRequester(FuelManager.FuelManagerStates.REST);});
   }
+
 
   public Command Start_Shoot(){
-    return new InstantCommand(() -> FUEL_MANAGER.autonStateRequester(FuelManager.FuelManagerStates.SHOOT));
+    return new InstantCommand(() -> {Logger.recordOutput("/command", "Start_Shoot"); FUEL_MANAGER.autonStateRequester(FuelManager.FuelManagerStates.SHOOT);});
   }
-
-
 }
