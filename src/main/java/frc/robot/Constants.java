@@ -42,6 +42,7 @@ public final class Constants {
     public static final PositionVoltage START_SET_POINT = new PositionVoltage(0); // TODO
     public static final PositionVoltage R2C_SET_POINT = new PositionVoltage(350); // TODO
     public static final PositionVoltage L1_SET_POINT = new PositionVoltage(125); // TODO
+    public static final PositionVoltage STOW_SET_POINT = new PositionVoltage(175);
     public static final PositionVoltage L2_SET_POINT = new PositionVoltage(-25); // TODO
     public static final int CLIMB_MOTOR_ID = 40; // TODO
     public static final Translation2d CLIMB_POS = new Translation2d(4.7,0);
@@ -57,6 +58,7 @@ public final class Constants {
     public static double MIDDLE_MOTOR_SHOOT_SPEED = 30; // TODO
     public static double SHOOTER_WITHIN_RANGE_COEFFICIENT = 0.05;
   }
+
   public static class DriveConstants {
     public static final LinearVelocity MAX_SPEED = TunerConstants.kSpeedAt12Volts;
     public static final LinearAcceleration MAX_ACCELERATION =
@@ -66,6 +68,10 @@ public final class Constants {
     public static final AngularAcceleration MAX_ANGULAR_ACCELERATION =
         RotationsPerSecondPerSecond.of(1); // TODO
     // measure
+
+        
+    public static final double STOW_DISTANCE_REQUIREMENT = 0.0; // TODO 
+    public static final double CENTER_XPOS = 6; 
 
     public static final double DEADBAND_SCALAR = 0.1;
     public static final double SLOW_SPEED_SCALAR = 0.3;
@@ -101,6 +107,5 @@ public final class Constants {
   public static class HubConstants{
   public static final Translation2d BLUE_HUB_POS = new Translation2d(4.61,4.021);
   public static final Translation2d RED_HUB_POS = new Translation2d(11.9,4.021);
-
  }
 }
