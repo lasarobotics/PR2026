@@ -15,10 +15,11 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants;
 import frc.robot.subsystems.drive.DriveSubsystem;
 
-public class FuelManager extends StateMachine{
+public class FuelManager extends StateMachine {
 
     public enum FuelManagerStates implements SystemState {
         NOTHING {
@@ -36,6 +37,10 @@ public class FuelManager extends StateMachine{
             }
             @Override
             public SystemState nextState() {
+                if (DriverStation.isAutonomous() && s_autonStateRequest != null)
+                {
+                    return s_autonStateRequest;
+                }
                 if (getInstance().m_intakeButton.getAsBoolean()){
                     return INTAKE;
                 }
@@ -56,6 +61,10 @@ public class FuelManager extends StateMachine{
             }
             @Override
             public SystemState nextState() {
+                if (DriverStation.isAutonomous() && s_autonStateRequest != null)
+                {
+                    return s_autonStateRequest;
+                }
                 if (getInstance().m_intakeButton.getAsBoolean()){
                     return INTAKE;
                 }
@@ -81,6 +90,10 @@ public class FuelManager extends StateMachine{
 
             @Override
             public SystemState nextState() {
+                if (DriverStation.isAutonomous() && s_autonStateRequest != null)
+                {
+                    return s_autonStateRequest;
+                }
                 if (getInstance().m_shootButton.getAsBoolean()){
                     return SHOOT;
                 }
@@ -103,7 +116,11 @@ public class FuelManager extends StateMachine{
             }
             @Override
             public SystemState nextState() {
-                if (getInstance().m_staticShootButton.getAsBoolean()){
+                if (DriverStation.isAutonomous() && s_autonStateRequest != null)
+                {
+                    return s_autonStateRequest;
+                }
+                if (getInstance().m_staticShootButton.getAsBoolean()) {
                     return STATIC_SHOOT;
                 }
                 return REST;
@@ -123,8 +140,11 @@ public class FuelManager extends StateMachine{
     private VelocityDutyCycle m_shooterVelocityDutyCycle;
     private VelocityVoltage m_motorVelocityVoltage;
     private double m_shootSpeed;
+    private static SystemState s_autonStateRequest;
+
     private FuelManager(){
         super(FuelManagerStates.REST);
+        s_autonStateRequest = null;
         s_DriveSubsystemInstance = DriveSubsystem.getInstance();
         m_intakeMotor = new TalonFX(Constants.FuelManagerConstants.INTAKE_MOTOR_ID);
         m_shootMotorLeader = new TalonFX(Constants.FuelManagerConstants.SHOOT_MOTOR_LEADER_ID);
@@ -175,6 +195,11 @@ public class FuelManager extends StateMachine{
         double bValue = 9.17;
         double cValue = -71.2;
         return (aValue*Math.pow(totalDistance, 2)) + (bValue*totalDistance) + cValue;
+    }
+
+    public static void autonStateRequester(SystemState request)
+    {
+        s_autonStateRequest = request;
     }
 
     public void configureBindings(BooleanSupplier intakeButton, BooleanSupplier shootButton, BooleanSupplier staticShootButton){

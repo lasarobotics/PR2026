@@ -5,9 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "wait",
           "data": {
-            "name": "Shoot"
+            "waitTime": 10.0
           }
         },
         {
@@ -17,21 +17,21 @@
           }
         },
         {
-          "type": "path",
+          "type": "wait",
           "data": {
-            "pathName": "Left Start To Depot"
+            "waitTime": 1.5
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Stop_Intake"
+            "name": "Fuel_Rest"
           }
         },
         {
-          "type": "path",
+          "type": "wait",
           "data": {
-            "pathName": "Depot To Left Shoot"
+            "waitTime": 1.5
           }
         },
         {
@@ -41,9 +41,21 @@
           }
         },
         {
-          "type": "path",
+          "type": "wait",
           "data": {
-            "pathName": "Left Shoot To Left Climb"
+            "waitTime": 1.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Fuel_Rest"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.5
           }
         },
         {
@@ -53,9 +65,15 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 20.0
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Placeholder Path"
+            "pathName": "Placeholder Path 2"
           }
         }
       ]

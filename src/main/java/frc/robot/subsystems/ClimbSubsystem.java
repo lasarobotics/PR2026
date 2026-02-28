@@ -12,6 +12,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 
 import com.ctre.phoenix6.controls.VoltageOut;
 
@@ -50,20 +51,16 @@ public class ClimbSubsystem extends StateMachine{
             }
             @Override
             public SystemState nextState() {
-                if(s_firstFromTeleOp){
-                    s_firstFromTeleOp = false;
-                    return STOW;
-                }
-                if (getInstance().m_L1Button.getAsBoolean()) {
-                    return L1;
-                }
-                if (getInstance().m_L2Button.getAsBoolean()) {
-                    return L2;
-                }
-                if (getInstance().m_R2CButton.getAsBoolean()) {
-                    return R2C;
-                }
-                if(!getInstance().dioInput.get()){
+                if (!getInstance().dioInput.get())
+                {
+                    if (DriverStation.isAutonomous() && s_L1AutonRequest)
+                    {
+                        return L1;
+                    }
+                    if(s_firstFromTeleOp){
+                        s_firstFromTeleOp = false;
+                        return DISMOUNT;
+                    }
                     return R2C;
                 }
                 return START;
@@ -73,11 +70,14 @@ public class ClimbSubsystem extends StateMachine{
             @Override
             public void initialize() {
                 getInstance().m_climbMotor.setControl(Constants.ClimbConstants.STOW_SET_POINT);
-                
             }
 
             @Override
             public SystemState nextState() {
+                if (DriverStation.isAutonomous() && s_L1AutonRequest)
+                {
+                    return L1;
+                }
                 if (getInstance().m_L1Button.getAsBoolean()) {
                     return L1;
                 }
@@ -98,6 +98,10 @@ public class ClimbSubsystem extends StateMachine{
 
             @Override
             public SystemState nextState() {
+                if (DriverStation.isAutonomous() && s_L1AutonRequest)
+                {
+                    return L1;
+                }
                 if (s_firstFromTeleOp)
                     s_firstFromTeleOp = false;
 
@@ -117,6 +121,10 @@ public class ClimbSubsystem extends StateMachine{
 
             @Override
             public SystemState nextState() {
+                if (DriverStation.isAutonomous() && s_L1AutonRequest)
+                {
+                    return L1;
+                }
                 if(s_firstFromTeleOp){
                     s_firstFromTeleOp = false;
                     return DISMOUNT;
@@ -139,9 +147,12 @@ public class ClimbSubsystem extends StateMachine{
                 getInstance().m_climbMotor.setControl(Constants.ClimbConstants.L1_SET_POINT);
                 DriveSubsystem.wheelPushTower();
             }
-            //TODO make sure wheels are straight when climbing or else!!! :c
             @Override
             public SystemState nextState() {
+                if (DriverStation.isAutonomous() && s_L1AutonRequest)
+                {
+                    return L1;
+                }
                 if(s_firstFromTeleOp){
                     s_firstFromTeleOp = false;
                     return DISMOUNT;
@@ -169,7 +180,12 @@ public class ClimbSubsystem extends StateMachine{
 
             @Override
             public SystemState nextState() {
-                if(s_firstFromTeleOp){
+                if (DriverStation.isAutonomous() && s_L1AutonRequest)
+                {
+                    return L1;
+                }
+                if(s_firstFromTeleOp)
+                {
                     s_firstFromTeleOp = false;
                     return DISMOUNT;
                 }
@@ -201,6 +217,7 @@ public class ClimbSubsystem extends StateMachine{
     private DigitalInput dioInput;
     private static boolean s_firstFromTeleOp;
     private static boolean s_awayFromTower;
+    private static boolean s_L1AutonRequest;
 
     public static ClimbSubsystem getInstance() {
         if (s_climbInstance == null) {
@@ -211,6 +228,7 @@ public class ClimbSubsystem extends StateMachine{
 
     private ClimbSubsystem() {
         super(ClimbStates.START);
+        s_L1AutonRequest = false;
         dioInput = new DigitalInput(9);
         m_climbMotor = new TalonFX(Constants.ClimbConstants.CLIMB_MOTOR_ID);
     
@@ -253,6 +271,11 @@ public class ClimbSubsystem extends StateMachine{
 
     public static void armFirstFromTeleOp(){
         s_firstFromTeleOp = true;
+    }
+
+    public static void autonStateRequester(boolean request)
+    {
+        s_L1AutonRequest = request;
     }
     @Override
     public void periodic() {
