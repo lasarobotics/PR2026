@@ -69,7 +69,7 @@ public final class Constants {
 
     public static final double DEADBAND_SCALAR = 0.1;
     public static final double SLOW_SPEED_SCALAR = 0.3;
-    public static final double FAST_SPEED_SCALAR = 0.1; // TODO
+    public static final double FAST_SPEED_SCALAR = 0.75; // TODO
 
     public static final TrapezoidProfile.Constraints TURN_CONSTRAINTS =
         new TrapezoidProfile.Constraints(

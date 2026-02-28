@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  * this project, you must also update the Main.java file in the project.
  */
 public class Robot extends LoggedRobot {
+  
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
@@ -42,7 +43,7 @@ public class Robot extends LoggedRobot {
   public void robotInit()
   {
     CommandScheduler.getInstance().run();
-    FollowPathCommand.warmupCommand().schedule();
+    //FollowPathCommand.warmupCommand().schedule(); TODO
   }
 
   /**
@@ -101,7 +102,7 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    m_robotContainer.getPathCommand().schedule();
+    //m_robotContainer.getPathCommand().schedule(); TODO
   }
 
   @Override
