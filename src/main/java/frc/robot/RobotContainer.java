@@ -51,7 +51,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("L1_Climb", L1_Climb());
     NamedCommands.registerCommand("Start_Intake", Start_Intake());
     NamedCommands.registerCommand("Fuel_Rest", Fuel_Rest());
-    NamedCommands.registerCommand("Start Shoot", Start_Shoot());
+    NamedCommands.registerCommand("Start_Shoot", Start_Shoot());
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -106,9 +106,8 @@ public class RobotContainer {
 
   public Command L1_Climb()
   {
-    Logger.recordOutput("/command", "L1_Climb");
-    return Commands.startEnd(() -> CLIMB_SUBSYSTEM.autonStateRequester(true), 
-      () -> CLIMB_SUBSYSTEM.autonStateRequester(false),
+    return Commands.startEnd(() -> {Logger.recordOutput("/command", "L1_Climb"); CLIMB_SUBSYSTEM.autonStateRequester(true);}, 
+      () -> {Logger.recordOutput("/command", "L1_Climb Finished"); CLIMB_SUBSYSTEM.autonStateRequester(false);},
       CLIMB_SUBSYSTEM
     ).until(() -> !DriverStation.isAutonomous());
   }
