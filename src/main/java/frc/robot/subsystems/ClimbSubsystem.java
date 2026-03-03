@@ -279,7 +279,7 @@ public class ClimbSubsystem extends StateMachine{
     ) {
         m_L1Button = L1Button;
         m_R2CButton = R2CButton;
-        m_L2Button = L2Button;
+        //m_L2Button = L2Button;
         m_stowButton = stowButton;
         m_positiveVoltageButton = positiveVoltageButton;
         m_negativeVoltageButton = negativeVoltageButton;

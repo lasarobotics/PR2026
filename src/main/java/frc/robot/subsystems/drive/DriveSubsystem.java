@@ -215,6 +215,8 @@ public class DriveSubsystem extends StateMachine{
     private static Translation2d s_hubPos;
     private static boolean s_isClimbing;
     private static int s_counter = 0;
+    private static final SwerveRequest.PointWheelsAt pointRequest = new SwerveRequest.PointWheelsAt();
+
     public DriveSubsystem() {
         super(DriveStates.DRIVER_CONTROL);
         s_drivetrain = TunerConstants.createDrivetrain();
@@ -327,15 +329,8 @@ public class DriveSubsystem extends StateMachine{
         }
     }
     public static void wheelPushTower(){
-        // s_drivetrain.setControl(
-        //             s_drive
-        //                 .withVelocityX(
-        //                     -0.1)
-        //                 .withVelocityY(
-        //                     0)
-        //                 .withRotationalRate(
-        //                         0));
-            s_isClimbing = true;
+
+        s_drivetrain.setControl(pointRequest.withModuleDirection(Rotation2d.fromDegrees(0)));
     }
     public Pose2d getPose(){
         return s_drivetrain.getState().Pose;
