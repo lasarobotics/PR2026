@@ -85,9 +85,9 @@ public class ClimbSubsystem extends StateMachine{
                 if (getInstance().m_R2CButton.getAsBoolean()) {
                     return R2C;
                 }
-                if (getInstance().m_L2Button.getAsBoolean()) {
-                    return L2;
-                }
+                // if (getInstance().m_L2Button.getAsBoolean()) {
+                //     return L2;
+                // }
                 return STOW;
             }
         },
@@ -134,9 +134,9 @@ public class ClimbSubsystem extends StateMachine{
                 if (getInstance().m_L1Button.getAsBoolean()) {
                     return L1;
                 }
-                if (getInstance().m_L2Button.getAsBoolean()) {
-                    return L2;
-                }
+                // if (getInstance().m_L2Button.getAsBoolean()) {
+                //     return L2;
+                // }
                 if (getInstance().m_stowButton.getAsBoolean()) {
                     return STOW;
                 }
@@ -149,7 +149,7 @@ public class ClimbSubsystem extends StateMachine{
                 getInstance().m_climbMotor.setControl(Constants.ClimbConstants.L1_SET_POINT);
                 DriveSubsystem.wheelPushTower();   
             }
-            
+
 
             @Override
             public void execute()
@@ -167,9 +167,9 @@ public class ClimbSubsystem extends StateMachine{
                     s_firstFromTeleOp = false;
                     return DISMOUNT;
                 }
-                if (getInstance().m_L2Button.getAsBoolean()) {
-                    return L2;
-                }
+                // if (getInstance().m_L2Button.getAsBoolean()) {
+                //     return L2;
+                // }
                 if (getInstance().m_stowButton.getAsBoolean()) {
                     return STOW;
                 }
@@ -314,7 +314,7 @@ public class ClimbSubsystem extends StateMachine{
         s_awayFromTower = DriveSubsystem.getInstance().awayFromTower();
         Logger.recordOutput(getName() + "/buttons/L1", m_L1Button);
         Logger.recordOutput(getName() + "/buttons/Back", m_stowButton);
-        Logger.recordOutput(getName() + "/buttons/L2", m_L2Button);
+        // Logger.recordOutput(getName() + "/buttons/L2", m_L2Button);
         Logger.recordOutput(getName() + "/buttons/L2", m_R2CButton);
         Logger.recordOutput(getName() + "/state", getState().toString());
         Logger.recordOutput(getName() + "/currentPosition", m_climbMotor.getPosition().getValueAsDouble());
