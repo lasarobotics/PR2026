@@ -215,7 +215,6 @@ public class DriveSubsystem extends StateMachine{
     public double getDistanceToHub() {
         Translation2d differenceFromHub = s_hubPos.minus(s_drivetrain.getState().Pose.getTranslation());
         double distanceToHub = Math.sqrt(Math.pow(differenceFromHub.getX(), 2) + Math.pow(differenceFromHub.getY(), 2)) - 0.4;
-        Logger.recordOutput( getName() + "/DistanceToHubAtVarSpeed", distanceToHub);
         return distanceToHub;
     }
     @Override
@@ -229,7 +228,7 @@ public class DriveSubsystem extends StateMachine{
         Logger.recordOutput(getName() +"/HubPos", s_hubPos);
         Logger.recordOutput(getName() +"/ClimbAlignButton", m_climbAlignButton);
         Logger.recordOutput(getName() +"/ResetPoseButton", m_resetPoseButton);
-        Logger.recordOutput(getName() + "/DistanceToHub", s_hubPos.minus(s_drivetrain.getState().Pose.getTranslation()));
+        Logger.recordOutput(getName() + "/DistanceToHub", getDistanceToHub());
 
         if (m_resetPoseButton.getAsBoolean())
         {

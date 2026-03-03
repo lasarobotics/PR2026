@@ -59,6 +59,12 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "Placeholder Path 2"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "L1_Climb"
@@ -68,12 +74,6 @@
           "type": "wait",
           "data": {
             "waitTime": 20.0
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Placeholder Path 2"
           }
         }
       ]
