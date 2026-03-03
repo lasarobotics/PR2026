@@ -55,7 +55,6 @@ public class DriveSubsystem extends StateMachine{
             }
         },
         DRIVER_CONTROL {
-
             @Override
             public void execute(){
                 AngularVelocity rotationRate = Constants.DriveConstants.MAX_ANGULAR_RATE
@@ -78,28 +77,7 @@ public class DriveSubsystem extends StateMachine{
                 
                 Logger.recordOutput("controlRotationRate", rotationRate);
                 }
-                else 
-                {
-
-                s_drivetrain.setControl(
-                    s_drive
-                        .withVelocityX(
-                            Constants.DriveConstants.MAX_SPEED
-                                .times(-.1)
-                                .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
-                        .withVelocityY(
-                            Constants.DriveConstants.MAX_SPEED
-                                .times(0)
-                                .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
-                        .withRotationalRate(
-                            rotationRate)                
-                );
-
-                s_isClimbing = false;
-
-                Logger.recordOutput(getInstance().getName() + "/counter", s_counter);
-                s_counter++;
-                }
+                else { }
             }
 
             @Override
@@ -118,35 +96,35 @@ public class DriveSubsystem extends StateMachine{
             @Override 
             public void execute(){
                 if(!s_isClimbing){
-                Pose2d currentPose2d = s_drivetrain.getState().Pose;
-                Translation2d currentTranslation2d = currentPose2d.getTranslation();
-                double currentRotation = currentPose2d.getRotation().getRadians();
-                Translation2d translationDiff = s_hubPos.minus(currentTranslation2d);
-                double desiredRotation = Math.atan2(translationDiff.getY(),translationDiff.getX()); 
-                double pidOutputAngle = getInstance().m_rotationPIDController.calculate(currentRotation, desiredRotation);
+                    Pose2d currentPose2d = s_drivetrain.getState().Pose;
+                    Translation2d currentTranslation2d = currentPose2d.getTranslation();
+                    double currentRotation = currentPose2d.getRotation().getRadians();
+                    Translation2d translationDiff = s_hubPos.minus(currentTranslation2d);
+                    double desiredRotation = Math.atan2(translationDiff.getY(),translationDiff.getX()); 
+                    double pidOutputAngle = getInstance().m_rotationPIDController.calculate(currentRotation, desiredRotation);
 
-                double pidInput = Constants.DriveConstants.MAX_ANGULAR_RATE.times(pidOutputAngle).in(RadiansPerSecond);
-                pidInput = pidInput > 0 ? Math.min(pidInput, 8.0) : Math.max(pidInput, -8.0);
-                Rotation2d currentAngle = new Rotation2d(currentRotation);
-                Rotation2d desiredAngle = new Rotation2d(desiredRotation);
-                pidInput = currentAngle.getMeasure().isNear(desiredAngle.getMeasure(), Degrees.of(1.0)) ? 0 : pidInput;
-                s_drivetrain.setControl(
-                    s_drive
-                        .withVelocityX(
-                            Constants.DriveConstants.MAX_SPEED
-                                .times(-s_strafeRequest.getAsDouble())
-                                .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
-                        .withVelocityY(
-                            Constants.DriveConstants.MAX_SPEED
-                                .times(-s_driveRequest.getAsDouble())
-                                .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
-                        .withRotationalRate(pidInput)
-                );
+                    double pidInput = Constants.DriveConstants.MAX_ANGULAR_RATE.times(pidOutputAngle).in(RadiansPerSecond);
+                    pidInput = pidInput > 0 ? Math.min(pidInput, 8.0) : Math.max(pidInput, -8.0);
+                    Rotation2d currentAngle = new Rotation2d(currentRotation);
+                    Rotation2d desiredAngle = new Rotation2d(desiredRotation);
+                    pidInput = currentAngle.getMeasure().isNear(desiredAngle.getMeasure(), Degrees.of(1.0)) ? 0 : pidInput;
+                    s_drivetrain.setControl(
+                        s_drive
+                            .withVelocityX(
+                                Constants.DriveConstants.MAX_SPEED
+                                    .times(-s_strafeRequest.getAsDouble())
+                                    .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
+                            .withVelocityY(
+                                Constants.DriveConstants.MAX_SPEED
+                                    .times(-s_driveRequest.getAsDouble())
+                                    .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
+                            .withRotationalRate(pidInput)
+                    );
 
 
-                Logger.recordOutput("TranslationDiff", translationDiff);
-                Logger.recordOutput("DesiredAngle", desiredAngle);
-                Logger.recordOutput("PidInput", pidInput);
+                    Logger.recordOutput("TranslationDiff", translationDiff);
+                    Logger.recordOutput("DesiredAngle", desiredAngle);
+                    Logger.recordOutput("PidInput", pidInput);
                 }
             }
 
@@ -329,9 +307,10 @@ public class DriveSubsystem extends StateMachine{
         }
     }
     public static void wheelPushTower(){
-
         s_drivetrain.setControl(pointRequest.withModuleDirection(Rotation2d.fromDegrees(0)));
+        s_isClimbing = true;
     }
+
     public Pose2d getPose(){
         return s_drivetrain.getState().Pose;
     }

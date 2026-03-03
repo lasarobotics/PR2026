@@ -154,7 +154,7 @@ public class ClimbSubsystem extends StateMachine{
             @Override
             public void execute()
             {
-                          
+                DriveSubsystem.wheelPushTower();   
             }
 
             @Override
@@ -191,7 +191,7 @@ public class ClimbSubsystem extends StateMachine{
             @Override
             public void execute()
             {
-                          
+                DriveSubsystem.wheelPushTower();   
             }
 
             @Override
