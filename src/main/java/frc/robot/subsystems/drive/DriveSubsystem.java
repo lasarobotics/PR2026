@@ -65,11 +65,11 @@ public class DriveSubsystem extends StateMachine{
                     s_drive
                         .withVelocityX(
                             Constants.DriveConstants.MAX_SPEED
-                                .times(-s_strafeRequest.getAsDouble()/**Math.abs(s_strafeRequest.getAsDouble())*/)
+                                .times(-s_strafeRequest.getAsDouble() * Math.abs(s_strafeRequest.getAsDouble()))
                                 .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
                         .withVelocityY(
                             Constants.DriveConstants.MAX_SPEED
-                                .times(-s_driveRequest.getAsDouble()/**Math.abs(s_driveRequest.getAsDouble())*/)
+                                .times(-s_driveRequest.getAsDouble() * Math.abs(s_driveRequest.getAsDouble()))
                                 .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
                         .withRotationalRate(
                             rotationRate)
