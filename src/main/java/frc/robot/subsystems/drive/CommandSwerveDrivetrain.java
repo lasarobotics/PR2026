@@ -10,6 +10,7 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -26,6 +27,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
@@ -210,13 +212,30 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 Math.sqrt(
                     Math.pow(feedforwards.robotRelativeForcesXNewtons()[3], 2.0)
                         + Math.pow(feedforwards.robotRelativeForcesYNewtons()[3], 2.0)));
+            // setControl(
+            //     m_pathApplyRobotSpeeds
+            //         .withSpeeds(speeds)
+            //         //.withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
+            //         //.withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())
+            //         .withDriveRequestType(DriveRequestType.Velocity));
+            //         //.withSteerRequestType(SteerRequestType.MotionMagicExpo));
+
+            SwerveRequest.FieldCentric s_drive = null;
+
+            s_drive =
+                new SwerveRequest.FieldCentric()
+                    .withDeadband(Constants.DriveConstants.MAX_SPEED.times(Constants.DriveConstants.DEADBAND_SCALAR))
+                    .withRotationalDeadband(Constants.DriveConstants.MAX_ANGULAR_RATE.times(0.1)) // Add a
+                    .withDriveRequestType(DriveRequestType.Velocity)
+                    .withSteerRequestType(SteerRequestType.MotionMagicExpo)
+                    .withForwardPerspective(ForwardPerspectiveValue.OperatorPerspective);
+
             setControl(
-                m_pathApplyRobotSpeeds
-                    .withSpeeds(speeds)
-                    //.withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
-                    //.withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())
-                    .withDriveRequestType(DriveRequestType.Velocity));
-                    //.withSteerRequestType(SteerRequestType.MotionMagicExpo));
+                        s_drive
+                            .withVelocityX(speeds.vxMetersPerSecond)
+                            .withVelocityY(speeds.vyMetersPerSecond)
+                            .withRotationalRate(speeds.omegaRadiansPerSecond)
+            );
           },
           new PPHolonomicDriveController(
               // translation
