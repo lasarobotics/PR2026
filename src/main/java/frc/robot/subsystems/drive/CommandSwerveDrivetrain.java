@@ -164,6 +164,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
           () -> getState().Speeds,
           // Consumer of ChassisSpeeds and feedforwards to drive the robot
           (speeds, feedforwards) -> {
+            Logger.recordOutput("command", "auto drive");
+            Logger.recordOutput("AutoConfigureSpeedsParameter", speeds);
             Logger.recordOutput(
                 getName() + "PathPlanner/Mod0/XNewtons",
                 feedforwards.robotRelativeForcesXNewtons()[0]);
@@ -211,10 +213,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             setControl(
                 m_pathApplyRobotSpeeds
                     .withSpeeds(speeds)
-                    .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
-                    .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())
-                    .withDriveRequestType(DriveRequestType.Velocity)
-                    .withSteerRequestType(SteerRequestType.MotionMagicExpo));
+                    //.withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
+                    //.withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())
+                    .withDriveRequestType(DriveRequestType.Velocity));
+                    //.withSteerRequestType(SteerRequestType.MotionMagicExpo));
           },
           new PPHolonomicDriveController(
               // translation

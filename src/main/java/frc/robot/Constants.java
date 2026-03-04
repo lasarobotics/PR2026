@@ -53,8 +53,8 @@ public final class Constants {
     public static final int INTAKE_MOTOR_ID = 33; //TODO
     public static final int MIDDLE_MOTOR_ID = 32; // TODO
     public static double SHOOT_MOTOR_SPEED = -65.4; // TODO
-    public static double INTAKE_MOTOR_SPEED = -70; // TODO
-    public static double MIDDLE_MOTOR_INTAKE_SPEED = -70; // TODO
+    public static double INTAKE_MOTOR_SPEED = -25; // TODO
+    public static double MIDDLE_MOTOR_INTAKE_SPEED = -110; // TODO
     public static double MIDDLE_MOTOR_SHOOT_SPEED = 30; // TODO
     public static double SHOOTER_WITHIN_RANGE_COEFFICIENT = 0.05;
   }
@@ -75,7 +75,7 @@ public final class Constants {
 
     public static final double DEADBAND_SCALAR = 0.1;
     public static final double SLOW_SPEED_SCALAR = 0.3;
-    public static final double FAST_SPEED_SCALAR = 0.75; // TODO
+    public static final double FAST_SPEED_SCALAR = 1; //0.75; // TODO
 
     public static final TrapezoidProfile.Constraints TURN_CONSTRAINTS =
         new TrapezoidProfile.Constraints(

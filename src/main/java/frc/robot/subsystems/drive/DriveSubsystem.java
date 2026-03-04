@@ -65,11 +65,11 @@ public class DriveSubsystem extends StateMachine{
                     s_drive
                         .withVelocityX(
                             Constants.DriveConstants.MAX_SPEED
-                                .times(-s_strafeRequest.getAsDouble()*Math.abs(s_strafeRequest.getAsDouble()))
+                                .times(-s_strafeRequest.getAsDouble()/**Math.abs(s_strafeRequest.getAsDouble())*/)
                                 .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
                         .withVelocityY(
                             Constants.DriveConstants.MAX_SPEED
-                                .times(-s_driveRequest.getAsDouble()*Math.abs(s_driveRequest.getAsDouble()))
+                                .times(-s_driveRequest.getAsDouble()/**Math.abs(s_driveRequest.getAsDouble())*/)
                                 .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
                         .withRotationalRate(
                             rotationRate)
@@ -214,7 +214,7 @@ public class DriveSubsystem extends StateMachine{
 
     public double getDistanceToHub() {
         Translation2d differenceFromHub = s_hubPos.minus(s_drivetrain.getState().Pose.getTranslation());
-        double distanceToHub = Math.sqrt(Math.pow(differenceFromHub.getX(), 2) + Math.pow(differenceFromHub.getY(), 2)) - 0.4;
+        double distanceToHub = Math.sqrt(Math.pow(differenceFromHub.getX(), 2) + Math.pow(differenceFromHub.getY(), 2)) - 0.45;
         return distanceToHub;
     }
     @Override
