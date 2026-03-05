@@ -296,21 +296,21 @@ public class ClimbSubsystem extends StateMachine{
     @Override
     public void periodic() {
 
-        if (m_positiveVoltageButton.getAsBoolean())
-        {
-            m_climbMotor.setControl(new VoltageOut(12)); 
-            testingControl = true;
-        }
-        else if (m_negativeVoltageButton.getAsBoolean())
-        {
-            m_climbMotor.setControl(new VoltageOut(-12));
-            testingControl = true;
-        }
-        else if (testingControl)
-        {
-            m_climbMotor.setControl(new VoltageOut(0));
-            testingControl = false;
-        }
+        // if (m_positiveVoltageButton.getAsBoolean())
+        // {
+        //     m_climbMotor.setControl(new VoltageOut(12)); 
+        //     testingControl = true;
+        // }
+        // else if (m_negativeVoltageButton.getAsBoolean())
+        // {
+        //     m_climbMotor.setControl(new VoltageOut(-12));
+        //     testingControl = true;
+        // }
+        // else if (testingControl)
+        // {
+        //     m_climbMotor.setControl(new VoltageOut(0));
+        //     testingControl = false;
+        // }
         s_awayFromTower = DriveSubsystem.getInstance().awayFromTower();
         Logger.recordOutput(getName() + "/buttons/L1", m_L1Button);
         Logger.recordOutput(getName() + "/buttons/Back", m_stowButton);
