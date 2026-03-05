@@ -281,8 +281,8 @@ public class ClimbSubsystem extends StateMachine{
         m_R2CButton = R2CButton;
         //m_L2Button = L2Button;
         m_stowButton = stowButton;
-        m_positiveVoltageButton = positiveVoltageButton;
-        m_negativeVoltageButton = negativeVoltageButton;
+        // m_positiveVoltageButton = positiveVoltageButton;
+        // m_negativeVoltageButton = negativeVoltageButton;
     }
 
     public static void armFirstFromTeleOp(){
