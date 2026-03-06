@@ -198,6 +198,7 @@ public class DriveSubsystem extends StateMachine{
 
     public DriveSubsystem() {
         super(DriveStates.DRIVER_CONTROL);
+        setCurrentSpeedScalar(false);
         s_drivetrain = TunerConstants.createDrivetrain();
         s_drive =
             new SwerveRequest.FieldCentric()
