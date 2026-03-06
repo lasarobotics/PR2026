@@ -61,7 +61,7 @@ public class ClimbSubsystem extends StateMachine{
                         s_firstFromTeleOp = false;
                         return DISMOUNT;
                     }
-                    return R2C;
+                    return STOW;
                 }
                 return START;
             }
@@ -71,6 +71,7 @@ public class ClimbSubsystem extends StateMachine{
             public void initialize() {
                 getInstance().m_climbMotor.setControl(Constants.ClimbConstants.STOW_SET_POINT);
                 DriveSubsystem.postClimbZero();
+                DriveSubsystem.setCurrentSpeedScalar(false);
             }
 
             @Override
@@ -96,6 +97,7 @@ public class ClimbSubsystem extends StateMachine{
             public void initialize() {
                 getInstance().m_climbMotor.setControl(Constants.ClimbConstants.R2C_SET_POINT);
                 DriveSubsystem.postClimbZero();
+                DriveSubsystem.setCurrentSpeedScalar(false);
             }
 
             @Override
@@ -118,7 +120,7 @@ public class ClimbSubsystem extends StateMachine{
             public void initialize() {
                 getInstance().m_climbMotor.setControl(Constants.ClimbConstants.R2C_SET_POINT);
                 DriveSubsystem.postClimbZero();
-
+                DriveSubsystem.setCurrentSpeedScalar(true);
             }
 
             @Override

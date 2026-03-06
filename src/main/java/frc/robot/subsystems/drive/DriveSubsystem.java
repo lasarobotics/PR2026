@@ -59,18 +59,18 @@ public class DriveSubsystem extends StateMachine{
             public void execute(){
                 AngularVelocity rotationRate = Constants.DriveConstants.MAX_ANGULAR_RATE
                         .times(-s_rotateRequest.getAsDouble())
-                        .times(Constants.DriveConstants.FAST_SPEED_SCALAR);
+                        .times(s_currentSpeedScalar);
                 if(!s_isClimbing){
                 s_drivetrain.setControl(
                     s_drive
                         .withVelocityX(
                             Constants.DriveConstants.MAX_SPEED
                                 .times(-s_strafeRequest.getAsDouble() * Math.abs(s_strafeRequest.getAsDouble()))
-                                .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
+                                .times(s_currentSpeedScalar))
                         .withVelocityY(
                             Constants.DriveConstants.MAX_SPEED
                                 .times(-s_driveRequest.getAsDouble() * Math.abs(s_driveRequest.getAsDouble()))
-                                .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
+                                .times(s_currentSpeedScalar))
                         .withRotationalRate(
                             rotationRate)
                 );
@@ -113,11 +113,11 @@ public class DriveSubsystem extends StateMachine{
                             .withVelocityX(
                                 Constants.DriveConstants.MAX_SPEED
                                     .times(-s_strafeRequest.getAsDouble())
-                                    .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
+                                    .times(s_currentSpeedScalar))
                             .withVelocityY(
                                 Constants.DriveConstants.MAX_SPEED
                                     .times(-s_driveRequest.getAsDouble())
-                                    .times(Constants.DriveConstants.FAST_SPEED_SCALAR))
+                                    .times(s_currentSpeedScalar))
                             .withRotationalRate(pidInput)
                     );
 
@@ -194,6 +194,7 @@ public class DriveSubsystem extends StateMachine{
     private static boolean s_isClimbing;
     private static int s_counter = 0;
     private static final SwerveRequest.PointWheelsAt pointRequest = new SwerveRequest.PointWheelsAt();
+    private static double s_currentSpeedScalar;
 
     public DriveSubsystem() {
         super(DriveStates.DRIVER_CONTROL);
@@ -312,6 +313,16 @@ public class DriveSubsystem extends StateMachine{
 
     public Pose2d getPose(){
         return s_drivetrain.getState().Pose;
+    }
+
+    public static void setCurrentSpeedScalar(boolean shouldSlow)
+    {
+        if (shouldSlow)
+        {
+            s_currentSpeedScalar = Constants.DriveConstants.SLOW_SPEED_SCALAR;
+            return;
+        }
+        s_currentSpeedScalar = Constants.DriveConstants.FAST_SPEED_SCALAR;
     }
 
     public void configureBindings(
