@@ -216,7 +216,7 @@ public class DriveSubsystem extends StateMachine{
 
     public double getDistanceToHub() {
         Translation2d differenceFromHub = s_hubPos.minus(s_drivetrain.getState().Pose.getTranslation());
-        double distanceToHub = Math.sqrt(Math.pow(differenceFromHub.getX(), 2) + Math.pow(differenceFromHub.getY(), 2)) - 0.45;
+        double distanceToHub = Math.sqrt(Math.pow(differenceFromHub.getX(), 2) + Math.pow(differenceFromHub.getY(), 2)) - 0.1;
         return distanceToHub;
     }
     @Override
