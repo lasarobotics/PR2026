@@ -12,6 +12,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
@@ -50,6 +51,9 @@ public class FuelManager extends StateMachine {
                 if (getInstance().m_staticShootButton.getAsBoolean()){
                     return STATIC_SHOOT;
                 }
+                if (getInstance().m_unclogButton.getAsBoolean()){
+                    return UNCLOG;
+                }
                 return REST;
             }
         },
@@ -58,6 +62,7 @@ public class FuelManager extends StateMachine {
             public void initialize() {
                 getInstance().m_middleMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.MIDDLE_MOTOR_INTAKE_SPEED)); // TODO add vraible speed
                 getInstance().m_intakeMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.INTAKE_MOTOR_SPEED));
+            
             }
             @Override
             public SystemState nextState() {
@@ -67,6 +72,26 @@ public class FuelManager extends StateMachine {
                 }
                 if (getInstance().m_intakeButton.getAsBoolean()){
                     return INTAKE;
+                }
+                return REST;
+            }
+        },
+        UNCLOG {
+            @Override
+            public void initialize() {
+                getInstance().m_middleMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.MIDDLE_MOTOR_INTAKE_SPEED)); // TODO add vraible speed
+                getInstance().m_intakeMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.INTAKE_UNCLOG_SPEED));
+                getInstance().m_shootMotorLeader.setControl(new VoltageOut(1));
+            
+            }
+            @Override
+            public SystemState nextState() {
+                if (DriverStation.isAutonomous() && s_autonStateRequest != null)
+                {
+                    return s_autonStateRequest;
+                }
+                if (getInstance().m_unclogButton.getAsBoolean()){
+                    return UNCLOG;
                 }
                 return REST;
             }
@@ -137,6 +162,7 @@ public class FuelManager extends StateMachine {
     private BooleanSupplier m_intakeButton;
     private BooleanSupplier m_shootButton;
     private BooleanSupplier m_staticShootButton;
+    private BooleanSupplier m_unclogButton;
     private VelocityDutyCycle m_shooterVelocityDutyCycle;
     private VelocityVoltage m_motorVelocityVoltage;
     private double m_shootSpeed;
@@ -202,10 +228,11 @@ public class FuelManager extends StateMachine {
         s_autonStateRequest = request;
     }
 
-    public void configureBindings(BooleanSupplier intakeButton, BooleanSupplier shootButton, BooleanSupplier staticShootButton){
+    public void configureBindings(BooleanSupplier intakeButton, BooleanSupplier shootButton, BooleanSupplier staticShootButton, BooleanSupplier unclogButton){
         m_intakeButton = intakeButton;
         m_shootButton = shootButton;
         m_staticShootButton = staticShootButton;
+        m_unclogButton = unclogButton;
     }
 
     @Override
