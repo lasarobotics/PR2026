@@ -197,7 +197,7 @@ public class DriveSubsystem extends StateMachine{
     private static double s_currentSpeedScalar;
 
     public DriveSubsystem() {
-        super(DriveStates.DRIVER_CONTROL);
+        super(DriveStates.AUTO);
         setCurrentSpeedScalar(false);
         s_drivetrain = TunerConstants.createDrivetrain();
         s_drive =
