@@ -5,27 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Start_Intake"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Left Start To Depot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Stop_Intake"
           }
         },
         {
@@ -35,21 +17,9 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "Start_Shoot"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Left Shoot To Left Climb"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L1_Climb"
           }
         },
         {
