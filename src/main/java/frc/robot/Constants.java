@@ -39,25 +39,28 @@ public final class Constants {
   }
 
   public static class ClimbConstants {
-    public static final PositionVoltage START_SET_POINT = new PositionVoltage(0); // TODO
-    public static final PositionVoltage R2C_SET_POINT = new PositionVoltage(350); // TODO
-    public static final PositionVoltage L1_SET_POINT = new PositionVoltage(125); // TODO
+    public static final PositionVoltage START_SET_POINT = new PositionVoltage(0);
+    public static final PositionVoltage R2C_SET_POINT = new PositionVoltage(350);
+    public static final PositionVoltage L1_SET_POINT = new PositionVoltage(125);
     public static final PositionVoltage STOW_SET_POINT = new PositionVoltage(110);
     public static final PositionVoltage L2_SET_POINT = new PositionVoltage(-25); // TODO
     public static final int CLIMB_MOTOR_ID = 40; // TODO
     public static final Translation2d CLIMB_POS = new Translation2d(4.7,0);
   }
   public static class FuelManagerConstants {
-    public static final int SHOOT_MOTOR_LEADER_ID = 30; // TODO
-    public static final int SHOOT_MOTOR_FOLLOWER_ID = 31; // TODO
-    public static final int INTAKE_MOTOR_ID = 33; //TODO
-    public static final int MIDDLE_MOTOR_ID = 32; // TODO
-    public static double SHOOT_MOTOR_SPEED = -65.4; // TODO
-    public static double INTAKE_MOTOR_SPEED = -25; // TODO
+    public static final int SHOOT_MOTOR_LEADER_ID = 30;
+    public static final int SHOOT_MOTOR_FOLLOWER_ID = 31;
+    public static final int INTAKE_MOTOR_ID = 33;
+    public static final int MIDDLE_MOTOR_ID = 32;
+    public static final int AGITATION_MOTOR_ID = 0; // TODO
+    public static double SHOOT_MOTOR_SPEED = -65.4;
+    public static double INTAKE_MOTOR_SPEED = -25;
     public static double INTAKE_UNCLOG_SPEED = 25;
-    public static double MIDDLE_MOTOR_INTAKE_SPEED = -110; // TODO
-    public static double MIDDLE_MOTOR_SHOOT_SPEED = 30; // TODO
+    public static double MIDDLE_MOTOR_INTAKE_SPEED = -110;
+    public static double MIDDLE_MOTOR_SHOOT_SPEED = 30;
+    public static double AGITATION_MOTOR_SPEED = 0; // TODO
     public static double SHOOTER_WITHIN_RANGE_COEFFICIENT = 0.05;
+    public static final int BEAM_BREAK_DIO = 0; // TODO
   }
 
   public static class DriveConstants {
