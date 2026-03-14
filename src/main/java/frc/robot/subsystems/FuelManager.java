@@ -243,7 +243,7 @@ public class FuelManager extends StateMachine {
         Logger.recordOutput(getName() + "/Intake Motor Speed", m_intakeMotor.getRotorVelocity().getValueAsDouble());
         Logger.recordOutput(getName() + "/Indexer Speed", m_middleMotor.getRotorVelocity().getValueAsDouble());
         Logger.recordOutput(getName() + "/SHOOTER Speed", m_shootMotorLeader.getRotorVelocity().getValueAsDouble());
-        Logger.recordOutput(getName() + "/SHOOTER Speed", getInstance().m_shootSpeed);
+        Logger.recordOutput(getName() + "/Desired Shooter Speed", getInstance().m_shootSpeed);
         //Distance from Hub: x:2.4, y:1.55, Speed:-74.5
         //Distance from Hub: x:0.2, y:-1.82, Speed: 67
         //Distance from Hub: x:-1.83, y:-3.24, Speed: -87.5

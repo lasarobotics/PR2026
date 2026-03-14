@@ -34,11 +34,13 @@ public class ClimbSubsystem extends StateMachine{
                 if (getInstance().dioInput.get())
                 {
                     getInstance().m_climbMotor.setControl(new VoltageOut(-6));
+                    Logger.recordOutput(getInstance().getName() + "/Homing", "Homing");
                 }
                 else
                 {
                     getInstance().m_climbMotor.setControl(new VoltageOut(0));
                     getInstance().m_climbMotor.setPosition(0);
+                    Logger.recordOutput(getInstance().getName() + "/Homing", "Already");
                 }
             }
             @Override
@@ -47,15 +49,16 @@ public class ClimbSubsystem extends StateMachine{
                 if(!getInstance().dioInput.get()){
                     getInstance().m_climbMotor.setControl(new VoltageOut(0));
                     getInstance().m_climbMotor.setPosition(0);
+                    Logger.recordOutput(getInstance().getName() + "/Homing", "Done");
                 }
             }
             @Override
             public SystemState nextState() {
                 if (!getInstance().dioInput.get())
                 {
-                    if (DriverStation.isAutonomous() && s_L1AutonRequest)
+                    if (DriverStation.isAutonomous())
                     {
-                        return L1;
+                        return R2C;
                     }
                     if(s_firstFromTeleOp){
                         s_firstFromTeleOp = false;
