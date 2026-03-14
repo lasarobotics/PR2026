@@ -89,6 +89,9 @@ public class DriveSubsystem extends StateMachine{
                 if(getInstance().m_climbAlignButton.getAsBoolean()){
                     return CLIMB_ALIGN;
                 }
+                if (DriverStation.isAutonomous()) {
+                    return AUTO;
+                }
                 return DRIVER_CONTROL;
             }
         },
@@ -134,6 +137,9 @@ public class DriveSubsystem extends StateMachine{
                 if(getInstance().m_autoAimButton.getAsBoolean()){
                     return AUTO_AIM;
                 }
+                if (DriverStation.isAutonomous()) {
+                    return AUTO;
+                }
                 return DRIVER_CONTROL;
             }
         },
@@ -174,6 +180,9 @@ public class DriveSubsystem extends StateMachine{
                 // TODO
                 if(getInstance().m_climbAlignButton.getAsBoolean()){
                     return CLIMB_ALIGN;
+                }
+                if (DriverStation.isAutonomous()) {
+                    return AUTO;
                 }
                 return DRIVER_CONTROL;
             }
