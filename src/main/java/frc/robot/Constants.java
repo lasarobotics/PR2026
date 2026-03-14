@@ -55,12 +55,12 @@ public final class Constants {
     public static final int SHOOT_MOTOR_FOLLOWER_ID = 31; // TODO
     public static final int INTAKE_MOTOR_ID = 33; //TODO
     public static final int MIDDLE_MOTOR_ID = 32; // TODO
-    public static LoggedNetworkNumber SHOOT_MOTOR_SPEED = new LoggedNetworkNumber("/Tuning/ShootSpeedfortesting", 0.0);//-65.4; TODO this is old value, commented for testing
+    public static double SHOOT_MOTOR_SPEED = -72; //-65.4; TODO this is old value, commented for testing
     public static double INTAKE_MOTOR_SPEED = -25; // TODO
     public static double INTAKE_UNCLOG_SPEED = 25;
     public static double MIDDLE_MOTOR_INTAKE_SPEED = -110; // TODO
     public static double MIDDLE_MOTOR_SHOOT_SPEED = 30; // TODO
-    public static double SHOOTER_WITHIN_RANGE_COEFFICIENT = 0.05;
+    public static double SHOOTER_WITHIN_RANGE_COEFFICIENT = 0.02;
   }
 
   public static class DriveConstants {

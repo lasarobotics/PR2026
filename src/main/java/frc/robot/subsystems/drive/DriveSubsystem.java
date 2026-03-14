@@ -249,27 +249,23 @@ public class DriveSubsystem extends StateMachine{
 
         LimelightHelpers.PoseEstimate limelightEstimate = getFilteredPoseEstimate();
         if (limelightEstimate != null && limelightEstimate.tagCount > 0) {
-            s_drivetrain.setVisionMeasurementStdDevs(
-                    VecBuilder.fill(3, 3, 9999999));
-            s_drivetrain.addVisionMeasurement(limelightEstimate.pose.toPose2d(), Utils.fpgaToCurrentTime(limelightEstimate.timestampSeconds));
+            if(!DriverStation.isDisabled()){
+                s_drivetrain.setVisionMeasurementStdDevs(
+                        VecBuilder.fill(0.5, 0.5, 9999999));
+                s_drivetrain.addVisionMeasurement(limelightEstimate.pose.toPose2d(), Utils.fpgaToCurrentTime(limelightEstimate.timestampSeconds));
+                Logger.recordOutput(getName() +"/LimeLight Pose", limelightEstimate.pose);
+        }
+            else{
+                s_drivetrain.setVisionMeasurementStdDevs(
+                        VecBuilder.fill(3, 3, 3));
+                s_drivetrain.addVisionMeasurement(limelightEstimate.pose.toPose2d(), Utils.fpgaToCurrentTime(limelightEstimate.timestampSeconds));
+            }
             Logger.recordOutput(getName() +"/LimeLight Pose", limelightEstimate.pose);
         }
         if(limelightEstimate != null){
             Logger.recordOutput(getName() +"/TagCount", limelightEstimate.tagCount);
         }
-
-        if(DriverStation.isDisabled()){
-                LimelightHelpers.PoseEstimate limelightEstimateDisabled = getFilteredPoseEstimate();
-            if (limelightEstimateDisabled != null && limelightEstimateDisabled.tagCount > 0) {
-                s_drivetrain.setVisionMeasurementStdDevs(
-                        VecBuilder.fill(0.1, 0.1, 0.1));
-                s_drivetrain.addVisionMeasurement(limelightEstimateDisabled.pose.toPose2d(), Utils.fpgaToCurrentTime(limelightEstimate.timestampSeconds));
-                Logger.recordOutput(getName() +"/LimeLight Pose", limelightEstimateDisabled.pose);
-            }
-            if(limelightEstimateDisabled != null){
-                Logger.recordOutput(getName() +"/TagCount", limelightEstimateDisabled.tagCount);
-            }
-        }
+    
     }
 
     public static DriveSubsystem getInstance(){

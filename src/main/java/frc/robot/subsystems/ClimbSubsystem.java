@@ -13,6 +13,9 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import com.ctre.phoenix6.controls.VoltageOut;
 
@@ -305,6 +308,14 @@ public class ClimbSubsystem extends StateMachine{
     {
         s_L1AutonRequest = request;
     }
+
+    public Command Pit_Home_Climber()
+    {
+        return Commands.run(() -> {getInstance().m_climbMotor.setControl(new VoltageOut(-3));})
+        .until(() -> !getInstance().dioInput.get())
+        .andThen(() -> getInstance().m_climbMotor.setControl(new VoltageOut(0)));
+    }  
+
     @Override
     public void periodic() {
 
