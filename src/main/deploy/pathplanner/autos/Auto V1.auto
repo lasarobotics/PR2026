@@ -19,7 +19,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 5.0
+            "waitTime": 2.0
           }
         },
         {
@@ -37,7 +37,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Left Start To Depot"
+            "pathName": "Left Start To Depot Start"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Depot Start To Intake Depot"
           }
         },
         {
@@ -55,7 +61,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 5.0
+            "waitTime": 2.0
           }
         },
         {
