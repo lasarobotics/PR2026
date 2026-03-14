@@ -28,9 +28,16 @@ public class ClimbSubsystem extends StateMachine{
                 return this;
             }
         },
+        WARMUP {
+          
+            public SystemState nextState() {
+                return START;
+            }
+        },
         START {
             @Override
             public void initialize() {
+                Logger.recordOutput(getInstance().getName() + "/Initialized", true);
                 if (getInstance().dioInput.get())
                 {
                     getInstance().m_climbMotor.setControl(new VoltageOut(-6));
@@ -248,7 +255,7 @@ public class ClimbSubsystem extends StateMachine{
     }
 
     private ClimbSubsystem() {
-        super(ClimbStates.START);
+        super(ClimbStates.WARMUP);
         s_L1AutonRequest = false;
         dioInput = new DigitalInput(9);
         m_climbMotor = new TalonFX(Constants.ClimbConstants.CLIMB_MOTOR_ID);
