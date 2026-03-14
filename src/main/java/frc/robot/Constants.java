@@ -56,13 +56,13 @@ public final class Constants {
     public static final int INTAKE_MOTOR_ID = 33;
     public static final int MIDDLE_MOTOR_ID = 32;
     public static final int AGITATION_MOTOR_ID = 0; // TODO
-    public static double SHOOT_MOTOR_SPEED = -65.4;
+    public static double SHOOT_MOTOR_SPEED = -72; //-65.4; TODO this is old value, commented for testing
     public static double INTAKE_MOTOR_SPEED = -25;
     public static double INTAKE_UNCLOG_SPEED = 25;
     public static double MIDDLE_MOTOR_INTAKE_SPEED = -110;
     public static double MIDDLE_MOTOR_SHOOT_SPEED = 30;
     public static double AGITATION_MOTOR_SPEED = 0; // TODO
-    public static double SHOOTER_WITHIN_RANGE_COEFFICIENT = 0.05;
+    public static double SHOOTER_WITHIN_RANGE_COEFFICIENT = 0.02;
     public static final int BEAM_BREAK_DIO = 0; // TODO
   }
 

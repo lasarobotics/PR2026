@@ -53,6 +53,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Start_Intake", Start_Intake());
     NamedCommands.registerCommand("Fuel_Rest", Fuel_Rest());
     NamedCommands.registerCommand("Start_Shoot", Start_Shoot());
+     NamedCommands.registerCommand("Pit_Home_Climber", CLIMB_SUBSYSTEM.Pit_Home_Climber());
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);

@@ -146,6 +146,7 @@ public class FuelManager extends StateMachine {
             public void execute(){
                 if (Math.abs(getInstance().m_shootMotorLeader.getRotorVelocity().getValueAsDouble() - Constants.FuelManagerConstants.SHOOT_MOTOR_SPEED) <= Math.abs(Constants.FuelManagerConstants.SHOOT_MOTOR_SPEED) * Constants.FuelManagerConstants.SHOOTER_WITHIN_RANGE_COEFFICIENT)
                 {
+                    getInstance().m_intakeMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.INTAKE_MOTOR_SPEED));
                     getInstance().m_middleMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.MIDDLE_MOTOR_SHOOT_SPEED)); // TODO add vraible speed
                 }
             }
@@ -233,9 +234,9 @@ public class FuelManager extends StateMachine {
     }
 
     public double getSpeed(double totalDistance) {
-        double aValue = -3.63;
-        double bValue = 9.17;
-        double cValue = -71.2;
+        double aValue = 1.85;
+        double bValue = -18.2;
+        double cValue = -34.1;
         return (aValue*Math.pow(totalDistance, 2)) + (bValue*totalDistance) + cValue;
     }
 
