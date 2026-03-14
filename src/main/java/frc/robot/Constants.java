@@ -15,6 +15,8 @@ import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
+import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
+
 import com.ctre.phoenix6.controls.PositionVoltage;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -23,6 +25,7 @@ import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.generated.TunerConstants;
 
 /**
@@ -52,7 +55,7 @@ public final class Constants {
     public static final int SHOOT_MOTOR_FOLLOWER_ID = 31; // TODO
     public static final int INTAKE_MOTOR_ID = 33; //TODO
     public static final int MIDDLE_MOTOR_ID = 32; // TODO
-    public static double SHOOT_MOTOR_SPEED = -65.4; // TODO
+    public static LoggedNetworkNumber SHOOT_MOTOR_SPEED = new LoggedNetworkNumber("/Tuning/ShootSpeedfortesting", 0.0);//-65.4; TODO this is old value, commented for testing
     public static double INTAKE_MOTOR_SPEED = -25; // TODO
     public static double INTAKE_UNCLOG_SPEED = 25;
     public static double MIDDLE_MOTOR_INTAKE_SPEED = -110; // TODO
@@ -104,6 +107,9 @@ public final class Constants {
     public static final double TURN_P = 2.65;
     public static final double TURN_I = 0;
     public static final double TURN_D = 0.15;
+
+    public static final double SINGLE_TAG_AMBIGUITY_CUTOFF = 0.5;
+    public static final double SINGLE_TAG_DISTANCE_CUTOFF = 5;
  }
   public static class HubConstants{
   public static final Translation2d BLUE_HUB_POS = new Translation2d(4.61,4.021);

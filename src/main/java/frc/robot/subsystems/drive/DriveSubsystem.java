@@ -35,6 +35,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
+import frc.robot.LimelightHelpers.RawFiducial;
 import frc.robot.generated.TunerConstants;
 
 public class DriveSubsystem extends StateMachine{
@@ -225,7 +226,7 @@ public class DriveSubsystem extends StateMachine{
 
     public double getDistanceToHub() {
         Translation2d differenceFromHub = s_hubPos.minus(s_drivetrain.getState().Pose.getTranslation());
-        double distanceToHub = Math.sqrt(Math.pow(differenceFromHub.getX(), 2) + Math.pow(differenceFromHub.getY(), 2)) - 0.1;
+        double distanceToHub = Math.sqrt(Math.pow(differenceFromHub.getX(), 2) + Math.pow(differenceFromHub.getY(), 2));
         return distanceToHub;
     }
     @Override
@@ -246,11 +247,11 @@ public class DriveSubsystem extends StateMachine{
             this.resetPose();
         }
 
-        LimelightHelpers.PoseEstimate limelightEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+        LimelightHelpers.PoseEstimate limelightEstimate = getFilteredPoseEstimate();
         if (limelightEstimate != null && limelightEstimate.tagCount > 0) {
             s_drivetrain.setVisionMeasurementStdDevs(
                     VecBuilder.fill(3, 3, 9999999));
-            s_drivetrain.addVisionMeasurement(limelightEstimate.pose, Utils.fpgaToCurrentTime(limelightEstimate.timestampSeconds));
+            s_drivetrain.addVisionMeasurement(limelightEstimate.pose.toPose2d(), Utils.fpgaToCurrentTime(limelightEstimate.timestampSeconds));
             Logger.recordOutput(getName() +"/LimeLight Pose", limelightEstimate.pose);
         }
         if(limelightEstimate != null){
@@ -258,11 +259,11 @@ public class DriveSubsystem extends StateMachine{
         }
 
         if(DriverStation.isDisabled()){
-                LimelightHelpers.PoseEstimate limelightEstimateDisabled = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+                LimelightHelpers.PoseEstimate limelightEstimateDisabled = getFilteredPoseEstimate();
             if (limelightEstimateDisabled != null && limelightEstimateDisabled.tagCount > 0) {
                 s_drivetrain.setVisionMeasurementStdDevs(
                         VecBuilder.fill(0.1, 0.1, 0.1));
-                s_drivetrain.addVisionMeasurement(limelightEstimateDisabled.pose, Utils.fpgaToCurrentTime(limelightEstimate.timestampSeconds));
+                s_drivetrain.addVisionMeasurement(limelightEstimateDisabled.pose.toPose2d(), Utils.fpgaToCurrentTime(limelightEstimate.timestampSeconds));
                 Logger.recordOutput(getName() +"/LimeLight Pose", limelightEstimateDisabled.pose);
             }
             if(limelightEstimateDisabled != null){
@@ -333,6 +334,61 @@ public class DriveSubsystem extends StateMachine{
             return;
         }
         s_currentSpeedScalar = Constants.DriveConstants.FAST_SPEED_SCALAR;
+    }
+
+    private LimelightHelpers.PoseEstimate getFilteredPoseEstimate() {
+     LimelightHelpers.PoseEstimate pose_estimate =
+      LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+
+        if (pose_estimate == null) {
+      return null;
+    }
+
+    if (Math.abs(s_drivetrain.getState().Speeds.omegaRadiansPerSecond) > 2 * Math.PI) {
+      return null;
+    }
+
+    if (pose_estimate.tagCount == 0) {
+      return null;
+    }
+
+    if (Double.isNaN(pose_estimate.pose.getX()) || Double.isNaN(pose_estimate.pose.getY()) || Double.isNaN(pose_estimate.pose.toPose2d().getRotation().getDegrees())) {
+      return null;
+    }
+
+    // filtering for unreasonable poses
+    // https://firstfrc.blob.core.windows.net/frc2026/FieldAssets/2026-field-dimension-dwgs.pdf
+    // welded perimeter field is slightly larger
+    // 16.540988 meters x
+    // 8.069326 meters y
+    // bump is 16 cm off the ground
+    // and anything above 25cm is probably insane airtime & unreliable
+    if (
+      pose_estimate.pose.getX() < 0         ||
+      pose_estimate.pose.getX() > 16.540988 ||
+      pose_estimate.pose.getY() < 0         ||
+      pose_estimate.pose.getY() > 8.069326  ||
+      pose_estimate.pose.getZ() < -0.05     ||
+      pose_estimate.pose.getZ() > 0.25
+    ) {
+      return null;
+    }
+
+    // aggressive filtering for one tag
+    // https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltag-robot-localization#using-wpilibs-pose-estimator
+    if (pose_estimate.tagCount == 1 && pose_estimate.rawFiducials.length == 1) {
+      RawFiducial tag = pose_estimate.rawFiducials[0];
+      // ignore anything that has too high ambiguity
+      if (tag.ambiguity > Constants.DriveConstants.SINGLE_TAG_AMBIGUITY_CUTOFF) {
+        return null;
+      }
+      // we outright reject anything further than a certain distance
+      if (tag.distToCamera > Constants.DriveConstants.SINGLE_TAG_DISTANCE_CUTOFF) {
+        return null;
+      }
+    }
+
+    return pose_estimate;
     }
 
     public void configureBindings(

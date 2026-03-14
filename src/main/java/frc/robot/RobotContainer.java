@@ -107,14 +107,10 @@ public class RobotContainer {
 
   public Command L1_Climb()
   {
-    return Commands.startEnd(() -> {Logger.recordOutput("/command", "L1_Climb"); CLIMB_SUBSYSTEM.autonStateRequester(true);}, 
-      () -> {Logger.recordOutput("/command", "L1_Climb Finished"); CLIMB_SUBSYSTEM.autonStateRequester(false);},
-      CLIMB_SUBSYSTEM
-    ).until(() -> !DriverStation.isAutonomous());
-  }
-
+    return new InstantCommand(() -> {Logger.recordOutput("/command", "L1_Climb"); CLIMB_SUBSYSTEM.autonStateRequester(true);}); 
+  }  
   public Command Start_Intake(){
-    return new InstantCommand(() -> {Logger.recordOutput("/command", "Start_Intake"); FUEL_MANAGER.autonStateRequester(FuelManager.FuelManagerStates.INTAKE);}); 
+  return new InstantCommand(() -> {Logger.recordOutput("/command", "Start_Intake"); FUEL_MANAGER.autonStateRequester(FuelManager.FuelManagerStates.INTAKE);}); 
   }
 
   public Command Fuel_Rest(){

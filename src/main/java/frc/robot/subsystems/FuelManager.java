@@ -129,12 +129,12 @@ public class FuelManager extends StateMachine {
         STATIC_SHOOT {
             @Override
             public void initialize() {
-                getInstance().m_shootMotorLeader.setControl(getInstance().m_shooterVelocityDutyCycle.withVelocity(Constants.FuelManagerConstants.SHOOT_MOTOR_SPEED)); 
+                getInstance().m_shootMotorLeader.setControl(getInstance().m_shooterVelocityDutyCycle.withVelocity(Constants.FuelManagerConstants.SHOOT_MOTOR_SPEED.get())); 
                 getInstance().m_intakeMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.INTAKE_MOTOR_SPEED));
             }
             @Override
             public void execute(){
-                if (Math.abs(getInstance().m_shootMotorLeader.getRotorVelocity().getValueAsDouble() - Constants.FuelManagerConstants.SHOOT_MOTOR_SPEED) <= Math.abs(Constants.FuelManagerConstants.SHOOT_MOTOR_SPEED) * Constants.FuelManagerConstants.SHOOTER_WITHIN_RANGE_COEFFICIENT)
+                if (Math.abs(getInstance().m_shootMotorLeader.getRotorVelocity().getValueAsDouble() - Constants.FuelManagerConstants.SHOOT_MOTOR_SPEED.get()) <= Math.abs(Constants.FuelManagerConstants.SHOOT_MOTOR_SPEED.get()) * Constants.FuelManagerConstants.SHOOTER_WITHIN_RANGE_COEFFICIENT)
                 {
                     getInstance().m_middleMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.MIDDLE_MOTOR_SHOOT_SPEED)); // TODO add vraible speed
                 }
