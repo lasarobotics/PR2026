@@ -110,6 +110,8 @@ public final class Constants {
 
     public static final double SINGLE_TAG_AMBIGUITY_CUTOFF = 0.5;
     public static final double SINGLE_TAG_DISTANCE_CUTOFF = 5;
+
+    public static final double FUEL_AIR_TIME = 1.0; //TODO
  }
   public static class HubConstants{
   public static final Translation2d BLUE_HUB_POS = new Translation2d(4.61,4.021);

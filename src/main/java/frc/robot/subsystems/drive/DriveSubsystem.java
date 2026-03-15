@@ -19,7 +19,9 @@ import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
+import com.revrobotics.jni.REVLibJNI;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
@@ -100,17 +102,28 @@ public class DriveSubsystem extends StateMachine{
             @Override 
             public void execute(){
                 if(!s_isClimbing){
-                    Pose2d currentPose2d = s_drivetrain.getState().Pose;
+                    SwerveDriveState currentState = s_drivetrain.getState();
+                    Pose2d currentPose2d = currentState.Pose;
                     Translation2d currentTranslation2d = currentPose2d.getTranslation();
-                    double currentRotation = currentPose2d.getRotation().getRadians();
-                    Translation2d translationDiff = s_hubPos.minus(currentTranslation2d);
-                    double desiredRotation = Math.atan2(translationDiff.getY(),translationDiff.getX()); 
-                    double pidOutputAngle = getInstance().m_rotationPIDController.calculate(currentRotation, desiredRotation);
+                    Rotation2d currentRotation = currentPose2d.getRotation();
+
+                    /* Adds current x and y velocity * fuel air time to current Translation, 
+                    then rotate by current rotation to transform to field centric, 
+                    to get future translation */
+
+                    Translation2d velocityTranslation = new Translation2d(currentState.Speeds.vxMetersPerSecond * Constants.DriveConstants.FUEL_AIR_TIME, currentState.Speeds.vyMetersPerSecond * Constants.DriveConstants.FUEL_AIR_TIME).rotateBy(currentRotation);
+                    Translation2d futurePose = currentTranslation2d.plus(velocityTranslation);
+                    Logger.recordOutput(getInstance().getName() + "/futurePose", new Pose2d(futurePose,new Rotation2d(0)));
+                    Translation2d translationDiff = s_hubPos.minus(futurePose);
+                    double desiredRotation = Math.atan2(translationDiff.getY(),translationDiff.getX());
+                    Logger.recordOutput(getInstance().getName() + "/desiredRotation", desiredRotation); 
+                    double pidOutputAngle = getInstance().m_rotationPIDController.calculate(currentRotation.getRadians(), desiredRotation);
 
                     double pidInput = Constants.DriveConstants.MAX_ANGULAR_RATE.times(pidOutputAngle).in(RadiansPerSecond);
                     pidInput = pidInput > 0 ? Math.min(pidInput, 8.0) : Math.max(pidInput, -8.0);
-                    Rotation2d currentAngle = new Rotation2d(currentRotation);
+                    Rotation2d currentAngle = currentRotation;
                     Rotation2d desiredAngle = new Rotation2d(desiredRotation);
+                    
                     pidInput = currentAngle.getMeasure().isNear(desiredAngle.getMeasure(), Degrees.of(1.0)) ? 0 : pidInput;
                     s_drivetrain.setControl(
                         s_drive
@@ -200,7 +213,7 @@ public class DriveSubsystem extends StateMachine{
     private BooleanSupplier m_climbAlignButton;
     private PIDController m_rotationPIDController;
     private PIDController m_translationPIDController;
-    private static Translation2d s_hubPos;
+    private static Translation2d s_hubPos = Constants.HubConstants.BLUE_HUB_POS;
     private static boolean s_isClimbing;
     private static int s_counter = 0;
     private static final SwerveRequest.PointWheelsAt pointRequest = new SwerveRequest.PointWheelsAt();
@@ -209,6 +222,7 @@ public class DriveSubsystem extends StateMachine{
     public DriveSubsystem() {
         super(DriveStates.AUTO);
         setCurrentSpeedScalar(false);
+        setPerspective();
         s_drivetrain = TunerConstants.createDrivetrain();
         s_drive =
             new SwerveRequest.FieldCentric()
@@ -224,11 +238,22 @@ public class DriveSubsystem extends StateMachine{
 
     }
 
+    public double getPredictedDistanceToHub() {
+        SwerveDriveState currentState = s_drivetrain.getState();
+        Translation2d velocityTranslation = new Translation2d(currentState.Speeds.vxMetersPerSecond * Constants.DriveConstants.FUEL_AIR_TIME, currentState.Speeds.vyMetersPerSecond * Constants.DriveConstants.FUEL_AIR_TIME).rotateBy(currentState.Pose.getRotation());
+        Translation2d futurePose = currentState.Pose.getTranslation().plus(velocityTranslation);
+
+        Translation2d differenceFromHub = s_hubPos.minus(futurePose);
+        double distanceToHub = Math.sqrt(Math.pow(differenceFromHub.getX(), 2) + Math.pow(differenceFromHub.getY(), 2));
+        return distanceToHub;
+    }
+
     public double getDistanceToHub() {
         Translation2d differenceFromHub = s_hubPos.minus(s_drivetrain.getState().Pose.getTranslation());
         double distanceToHub = Math.sqrt(Math.pow(differenceFromHub.getX(), 2) + Math.pow(differenceFromHub.getY(), 2));
         return distanceToHub;
     }
+
     @Override
     public void periodic() {
         setPerspective();
@@ -241,6 +266,7 @@ public class DriveSubsystem extends StateMachine{
         Logger.recordOutput(getName() +"/ClimbAlignButton", m_climbAlignButton);
         Logger.recordOutput(getName() +"/ResetPoseButton", m_resetPoseButton);
         Logger.recordOutput(getName() + "/DistanceToHub", getDistanceToHub());
+        Logger.recordOutput(getName() + "/PrecictedDistanceToHub", getPredictedDistanceToHub());
 
         if (m_resetPoseButton.getAsBoolean())
         {
