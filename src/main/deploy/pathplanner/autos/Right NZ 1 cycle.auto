@@ -1,0 +1,67 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right Bump shoot to right NZ"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right NZ to Right NZ Mid"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Start_Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right NZ Mid to Right NZ end"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Fuel_Rest"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right NZ end to Right bump shoot "
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Start_Shoot"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 4.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Fuel_Rest"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

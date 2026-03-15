@@ -1,0 +1,63 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.687444082754631,
+        "y": 3.273064887152777
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.051153139467595,
+        "y": 3.620866319444444
+      },
+      "isLocked": false,
+      "linkedName": "Right NZ End"
+    },
+    {
+      "anchor": {
+        "x": 3.3259839409722223,
+        "y": 2.721083478009259
+      },
+      "prevControl": {
+        "x": 3.833022135416667,
+        "y": 2.728497468171297
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Right bump Shoot"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 0.8451891447368419,
+      "rotationDegrees": 0.0
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0.0,
+    "rotation": 48.070437456189445
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 1.5,
+    "rotation": -72.22
+  },
+  "useDefaultConstraints": false
+}
