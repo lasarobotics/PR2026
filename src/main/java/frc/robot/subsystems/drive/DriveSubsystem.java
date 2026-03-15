@@ -130,11 +130,11 @@ public class DriveSubsystem extends StateMachine{
                             .withVelocityX(
                                 Constants.DriveConstants.MAX_SPEED
                                     .times(-s_strafeRequest.getAsDouble())
-                                    .times(s_currentSpeedScalar))
+                                    .times(Math.min(s_currentSpeedScalar,Constants.DriveConstants.MID_SPEED_SCALAR)))
                             .withVelocityY(
                                 Constants.DriveConstants.MAX_SPEED
                                     .times(-s_driveRequest.getAsDouble())
-                                    .times(s_currentSpeedScalar))
+                                    .times(Math.min(s_currentSpeedScalar,Constants.DriveConstants.MID_SPEED_SCALAR)))
                             .withRotationalRate(pidInput)
                     );
 
