@@ -222,7 +222,6 @@ public class DriveSubsystem extends StateMachine{
     public DriveSubsystem() {
         super(DriveStates.AUTO);
         setCurrentSpeedScalar(false);
-        setPerspective();
         s_drivetrain = TunerConstants.createDrivetrain();
         s_drive =
             new SwerveRequest.FieldCentric()
@@ -235,7 +234,7 @@ public class DriveSubsystem extends StateMachine{
         m_rotationPIDController = new PIDController(Constants.DriveConstants.TURN_P,Constants.DriveConstants.TURN_I,Constants.DriveConstants.TURN_D   );
         m_rotationPIDController.enableContinuousInput(-Math.PI, Math.PI);
         m_translationPIDController = new PIDController(3,7,0);
-
+        setPerspective();
     }
 
     public double getPredictedDistanceToHub() {
