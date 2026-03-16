@@ -123,8 +123,8 @@ public class DriveSubsystem extends StateMachine{
                     pidInput = pidInput > 0 ? Math.min(pidInput, 8.0) : Math.max(pidInput, -8.0);
                     Rotation2d currentAngle = currentRotation;
                     Rotation2d desiredAngle = new Rotation2d(desiredRotation);
-                    s_isWithinAutoAimTolerance = currentAngle.getMeasure().isNear(desiredAngle.getMeasure(), Degrees.of(1.0));
-                    pidInput = s_isWithinAutoAimTolerance ? 0 : pidInput;
+                    s_isWithinAutoAimTolerance = currentAngle.getMeasure().isNear(desiredAngle.getMeasure(), Degrees.of(10.0));
+                    pidInput = currentAngle.getMeasure().isNear(desiredAngle.getMeasure(), Degrees.of(1.0)) ? 0 : pidInput;
                     s_drivetrain.setControl(
                         s_drive
                             .withVelocityX(
