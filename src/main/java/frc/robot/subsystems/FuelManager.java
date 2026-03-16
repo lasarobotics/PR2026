@@ -99,23 +99,25 @@ public class FuelManager extends StateMachine {
         SHOOT {
             @Override
             public void initialize() {
-                getInstance().m_shootSpeed = getInstance().getSpeed((s_DriveSubsystemInstance.getPredictedDistanceToHub()));
-                getInstance().m_shootMotorLeader.setControl(getInstance().m_shooterVelocityDutyCycle.withVelocity(getInstance().m_shootSpeed));
-                
+                if(DriveSubsystem.isWithinAutoAimTolerance()){
+                    getInstance().m_shootSpeed = getInstance().getSpeed((s_DriveSubsystemInstance.getPredictedDistanceToHub()));
+                    getInstance().m_shootMotorLeader.setControl(getInstance().m_shooterVelocityDutyCycle.withVelocity(getInstance().m_shootSpeed));
+                }
             }
 
             @Override
             public void execute() 
             {   
-                getInstance().m_shootSpeed = getInstance().getSpeed((s_DriveSubsystemInstance.getPredictedDistanceToHub()));
-                getInstance().m_shootMotorLeader.setControl(getInstance().m_shooterVelocityDutyCycle.withVelocity(getInstance().m_shootSpeed));
-                if (Math.abs(getInstance().m_shootMotorLeader.getRotorVelocity().getValueAsDouble() - getInstance().m_shootSpeed) <= Math.abs(getInstance().m_shootSpeed) * Constants.FuelManagerConstants.SHOOTER_WITHIN_RANGE_COEFFICIENT)
-                {
-                    getInstance().m_intakeMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.INTAKE_MOTOR_SPEED));
-                    getInstance().m_middleMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.MIDDLE_MOTOR_SHOOT_SPEED)); // TODO add vraible speed
+                if(DriveSubsystem.isWithinAutoAimTolerance()){
+                    getInstance().m_shootSpeed = getInstance().getSpeed((s_DriveSubsystemInstance.getPredictedDistanceToHub()));
+                    getInstance().m_shootMotorLeader.setControl(getInstance().m_shooterVelocityDutyCycle.withVelocity(getInstance().m_shootSpeed));
+                    if (Math.abs(getInstance().m_shootMotorLeader.getRotorVelocity().getValueAsDouble() - getInstance().m_shootSpeed) <= Math.abs(getInstance().m_shootSpeed) * Constants.FuelManagerConstants.SHOOTER_WITHIN_RANGE_COEFFICIENT)
+                    {
+                        getInstance().m_intakeMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.INTAKE_MOTOR_SPEED));
+                        getInstance().m_middleMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.MIDDLE_MOTOR_SHOOT_SPEED)); // TODO add vraible speed
+                    }
+                    Logger.recordOutput(getInstance().getName() + "/ShooterRequestedSpeed",getInstance().m_shootSpeed);
                 }
-                Logger.recordOutput(getInstance().getName() + "/ShooterRequestedSpeed",getInstance().m_shootSpeed);
-                
             }
 
             @Override

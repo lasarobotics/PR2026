@@ -110,7 +110,7 @@ public class DriveSubsystem extends StateMachine{
                     /* Adds current x and y velocity * fuel air time to current Translation, 
                     then rotate by current rotation to transform to field centric, 
                     to get future translation */
-
+                    
                     Translation2d velocityTranslation = new Translation2d(currentState.Speeds.vxMetersPerSecond * Constants.DriveConstants.FUEL_AIR_TIME, currentState.Speeds.vyMetersPerSecond * Constants.DriveConstants.FUEL_AIR_TIME).rotateBy(currentRotation);
                     Translation2d futurePose = currentTranslation2d.plus(velocityTranslation);
                     Logger.recordOutput(getInstance().getName() + "/futurePose", new Pose2d(futurePose,new Rotation2d(0)));
@@ -123,8 +123,8 @@ public class DriveSubsystem extends StateMachine{
                     pidInput = pidInput > 0 ? Math.min(pidInput, 8.0) : Math.max(pidInput, -8.0);
                     Rotation2d currentAngle = currentRotation;
                     Rotation2d desiredAngle = new Rotation2d(desiredRotation);
-                    
-                    pidInput = currentAngle.getMeasure().isNear(desiredAngle.getMeasure(), Degrees.of(1.0)) ? 0 : pidInput;
+                    s_isWithinAutoAimTolerance = currentAngle.getMeasure().isNear(desiredAngle.getMeasure(), Degrees.of(1.0));
+                    pidInput = s_isWithinAutoAimTolerance ? 0 : pidInput;
                     s_drivetrain.setControl(
                         s_drive
                             .withVelocityX(
@@ -218,7 +218,7 @@ public class DriveSubsystem extends StateMachine{
     private static int s_counter = 0;
     private static final SwerveRequest.PointWheelsAt pointRequest = new SwerveRequest.PointWheelsAt();
     private static double s_currentSpeedScalar;
-
+    private static boolean s_isWithinAutoAimTolerance;
     public DriveSubsystem() {
         super(DriveStates.AUTO);
         setCurrentSpeedScalar(false);
@@ -252,6 +252,10 @@ public class DriveSubsystem extends StateMachine{
         Translation2d differenceFromHub = s_hubPos.minus(s_drivetrain.getState().Pose.getTranslation());
         double distanceToHub = Math.sqrt(Math.pow(differenceFromHub.getX(), 2) + Math.pow(differenceFromHub.getY(), 2));
         return distanceToHub;
+    }
+
+    public static boolean isWithinAutoAimTolerance() {
+        return s_isWithinAutoAimTolerance;
     }
 
     @Override
