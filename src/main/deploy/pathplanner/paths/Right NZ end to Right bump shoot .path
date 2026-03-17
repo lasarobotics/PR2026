@@ -8,34 +8,48 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.552881597717546,
-        "y": 2.1136091298145514
+
+        "x": 6.210514536432477,
+        "y": 2.534068525672688
+
       },
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": "Right NZ End"
     },
     {
       "anchor": {
-        "x": 3.3259839409722223,
-        "y": 2.721083478009259
+        "x": 4.3688633535879635,
+        "y": 2.5161817853009256
       },
       "prevControl": {
-        "x": 3.833022135416667,
-        "y": 2.728497468171297
+        "x": 4.90261824434956,
+        "y": 2.4218506514688953
+      },
+      "nextControl": {
+        "x": 3.8351084628263674,
+        "y": 2.610512919132956
+      },
+      "isLocked": false,
+      "linkedName": "Right Bump"
+    },
+    {
+      "anchor": {
+        "x": 4.10904564525463,
+        "y": 2.5161817853009256
+      },
+      "prevControl": {
+        "x": 4.616083839699075,
+        "y": 2.5235957754629634
       },
       "nextControl": null,
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": "Right bump Shoot"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.5,
-      "rotationDegrees": 0.0
-    },
-    {
-      "waypointRelativePos": 0.8451891447368419,
-      "rotationDegrees": 0.0
+      "waypointRelativePos": 0.44251644736841994,
+      "rotationDegrees": 48.07
     }
   ],
   "constraintZones": [],

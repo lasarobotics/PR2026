@@ -8,42 +8,33 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.379098596643519,
-        "y": 2.496170572916666
+        "x": 4.35774395022746,
+        "y": 2.5416602684512446
       },
       "isLocked": false,
       "linkedName": "Right bump Shoot"
     },
     {
       "anchor": {
-        "x": 5.94200708912037,
-        "y": 2.233400390625001
+        "x": 4.3688633535879635,
+        "y": 2.5161817853009256
       },
       "prevControl": {
-        "x": 5.190599144079885,
-        "y": 2.3853209700427964
+        "x": 4.121296905679973,
+        "y": 2.550979110919717
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Right NZ"
+      "linkedName": "Right Bump"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.37784886045581906,
-      "rotationDegrees": 0.0
-    },
-    {
-      "waypointRelativePos": 0.7712914834066322,
-      "rotationDegrees": 0.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 2.0,
-    "maxAcceleration": 2.5,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -51,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 1.5,
-    "rotation": -90.0
+    "rotation": 48.07
   },
   "reversed": false,
   "folder": null,
@@ -59,5 +50,5 @@
     "velocity": 0,
     "rotation": 48.070437456189445
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }
