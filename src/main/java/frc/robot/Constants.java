@@ -108,7 +108,9 @@ public final class Constants {
     public static final double TURN_P = 2.65;
     public static final double TURN_I = 0;
     public static final double TURN_D = 0.15;
-
+    public static final double AUTOAIMTURN_P = 1.75;
+    public static final double AUTOAIMTURN_I = 0;
+    public static final double AUTOAIMTURN_D = 0;
     public static final double SINGLE_TAG_AMBIGUITY_CUTOFF = 0.5;
     public static final double SINGLE_TAG_DISTANCE_CUTOFF = 5;
 
