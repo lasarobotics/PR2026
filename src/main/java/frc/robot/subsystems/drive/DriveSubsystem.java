@@ -148,7 +148,7 @@ public class DriveSubsystem extends StateMachine{
             @Override
             public void execute(){
                     double currentRotation = s_drivetrain.getState().Pose.getRotation().getRadians();
-                    double pidOutputAngle = getInstance().m_auto_aimrotationPIDController.calculate(currentRotation, Math.PI);
+                    double pidOutputAngle = getInstance().m_auto_aimrotationPIDController.calculate(currentRotation, DriverStation.getAlliance().get() == Alliance.Blue ? 0 : Math.PI);
                     double pidInput = Constants.DriveConstants.MAX_ANGULAR_RATE.times(pidOutputAngle).in(RadiansPerSecond);
                     pidInput = pidInput > 0 ? Math.min(pidInput, 8.0) : Math.max(pidInput, -8.0);
                     s_drivetrain.setControl(
