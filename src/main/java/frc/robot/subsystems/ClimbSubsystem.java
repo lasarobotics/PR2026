@@ -31,12 +31,6 @@ public class ClimbSubsystem extends StateMachine{
                 return this;
             }
         },
-        WARMUP {
-          
-            public SystemState nextState() {
-                return START;
-            }
-        },
         START {
             @Override
             public void initialize() {
@@ -258,7 +252,7 @@ public class ClimbSubsystem extends StateMachine{
     }
 
     private ClimbSubsystem() {
-        super(ClimbStates.WARMUP);
+        super(ClimbStates.START);
         s_L1AutonRequest = false;
         dioInput = new DigitalInput(9);
         m_climbMotor = new TalonFX(Constants.ClimbConstants.CLIMB_MOTOR_ID);

@@ -135,11 +135,11 @@ public class DriveSubsystem extends StateMachine{
             @Override
             public SystemState nextState() {
                 // TODO
-                if(getInstance().m_autoAimButton.getAsBoolean()){
-                    return AUTO_AIM;
-                }
                 if (DriverStation.isAutonomous()) {
                     return AUTO;
+                }
+                if(getInstance().m_autoAimButton.getAsBoolean()){
+                    return AUTO_AIM;
                 }
                 return DRIVER_CONTROL;
             }
@@ -148,12 +148,9 @@ public class DriveSubsystem extends StateMachine{
             @Override
             public void execute(){
                     double currentRotation = s_drivetrain.getState().Pose.getRotation().getRadians();
-                    double pidOutputAngle = getInstance().m_rotationPIDController.calculate(currentRotation, 0);
+                    double pidOutputAngle = getInstance().m_rotationPIDController.calculate(currentRotation, Math.PI);
                     double pidInput = Constants.DriveConstants.MAX_ANGULAR_RATE.times(pidOutputAngle).in(RadiansPerSecond);
                     pidInput = pidInput > 0 ? Math.min(pidInput, 8.0) : Math.max(pidInput, -8.0);
-                    Rotation2d currentAngle = new Rotation2d(currentRotation);
-                    Rotation2d desiredAngle = new Rotation2d(0);
-                    pidInput = currentAngle.getMeasure().isNear(desiredAngle.getMeasure(), Degrees.of(1.0)) ? 0 : pidInput;
                     s_drivetrain.setControl(
                         s_drive
                             .withVelocityX(
@@ -169,6 +166,9 @@ public class DriveSubsystem extends StateMachine{
             }
             @Override
             public SystemState nextState(){
+                if (DriverStation.isAutonomous()) {
+                    return AUTO;
+                }
                 if(!s_isReadyToClimb){
                     return DRIVER_CONTROL;
                 }
@@ -231,7 +231,7 @@ public class DriveSubsystem extends StateMachine{
     private BooleanSupplier m_climbAlignButton;
     private PIDController m_rotationPIDController;
     private PIDController m_translationPIDController;
-    private static Translation2d s_hubPos;
+    private static Translation2d s_hubPos = Constants.HubConstants.BLUE_HUB_POS;
     private static boolean s_isClimbing;
     private static boolean s_isReadyToClimb;
     private static int s_counter = 0;
@@ -240,8 +240,9 @@ public class DriveSubsystem extends StateMachine{
 
     public DriveSubsystem() {
         super(DriveStates.AUTO);
-        isReadyToClimb(false);
         s_drivetrain = TunerConstants.createDrivetrain();
+        setPerspective();
+        isReadyToClimb(false);
         s_drive =
             new SwerveRequest.FieldCentric()
                 .withDeadband(Constants.DriveConstants.MAX_SPEED.times(Constants.DriveConstants.DEADBAND_SCALAR))
@@ -253,14 +254,8 @@ public class DriveSubsystem extends StateMachine{
         m_rotationPIDController = new PIDController(Constants.DriveConstants.TURN_P,Constants.DriveConstants.TURN_I,Constants.DriveConstants.TURN_D   );
         m_rotationPIDController.enableContinuousInput(-Math.PI, Math.PI);
         m_translationPIDController = new PIDController(3,7,0);
-
     }
 
-    public double getDistanceToHub() {
-        Translation2d differenceFromHub = s_hubPos.minus(s_drivetrain.getState().Pose.getTranslation());
-        double distanceToHub = Math.sqrt(Math.pow(differenceFromHub.getX(), 2) + Math.pow(differenceFromHub.getY(), 2));
-        return distanceToHub;
-    }
     @Override
     public void periodic() {
         setPerspective();
@@ -326,6 +321,11 @@ public class DriveSubsystem extends StateMachine{
             }
         }
 
+    }
+    public double getDistanceToHub() {
+        Translation2d differenceFromHub = s_hubPos.minus(s_drivetrain.getState().Pose.getTranslation());
+        double distanceToHub = Math.sqrt(Math.pow(differenceFromHub.getX(), 2) + Math.pow(differenceFromHub.getY(), 2));
+        return distanceToHub;
     }
     public boolean awayFromTower(){
         if( Math.abs(Constants.DriveConstants.CENTER_XPOS - DriveSubsystem.getInstance().getPose().getX()) < Constants.DriveConstants.STOW_DISTANCE_REQUIREMENT)

@@ -78,8 +78,9 @@ public final class Constants {
     public static final double CENTER_XPOS = 8.25; 
 
     public static final double DEADBAND_SCALAR = 0.1;
-    public static final double SLOW_SPEED_SCALAR = 0.25;
-    public static final double FAST_SPEED_SCALAR = 0.75; // TODO
+    public static final double SLOW_SPEED_SCALAR = 0.15;
+    public static final double MID_SPEED_SCALAR = 0.5; //TODO 0.5
+    public static final double FAST_SPEED_SCALAR = 0.75; // TODO 0.75
 
     public static final TrapezoidProfile.Constraints TURN_CONSTRAINTS =
         new TrapezoidProfile.Constraints(
@@ -107,9 +108,13 @@ public final class Constants {
     public static final double TURN_P = 2.65;
     public static final double TURN_I = 0;
     public static final double TURN_D = 0.15;
-
+    public static final double AUTOAIMTURN_P = 1.75;
+    public static final double AUTOAIMTURN_I = 0;
+    public static final double AUTOAIMTURN_D = 0;
     public static final double SINGLE_TAG_AMBIGUITY_CUTOFF = 0.5;
     public static final double SINGLE_TAG_DISTANCE_CUTOFF = 5;
+
+    public static final double FUEL_AIR_TIME = 1.0; //TODO
  }
   public static class HubConstants{
   public static final Translation2d BLUE_HUB_POS = new Translation2d(4.61,4.021);
