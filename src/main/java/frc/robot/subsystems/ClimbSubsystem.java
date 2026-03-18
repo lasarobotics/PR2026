@@ -84,7 +84,7 @@ public class ClimbSubsystem extends StateMachine{
             public void initialize() {
                 getInstance().m_climbMotor.setControl(Constants.ClimbConstants.STOW_SET_POINT);
                 DriveSubsystem.postClimbZero();
-                DriveSubsystem.setCurrentSpeedScalar(false);
+                DriveSubsystem.isReadyToClimb(false);
             }
 
             @Override
@@ -110,7 +110,7 @@ public class ClimbSubsystem extends StateMachine{
             public void initialize() {
                 getInstance().m_climbMotor.setControl(Constants.ClimbConstants.R2C_SET_POINT);
                 DriveSubsystem.postClimbZero();
-                DriveSubsystem.setCurrentSpeedScalar(false);
+                DriveSubsystem.isReadyToClimb(false);
             }
 
             @Override
@@ -133,7 +133,7 @@ public class ClimbSubsystem extends StateMachine{
             public void initialize() {
                 getInstance().m_climbMotor.setControl(Constants.ClimbConstants.R2C_SET_POINT);
                 DriveSubsystem.postClimbZero();
-                DriveSubsystem.setCurrentSpeedScalar(true);
+                DriveSubsystem.isReadyToClimb(true);
             }
 
             @Override
@@ -241,7 +241,7 @@ public class ClimbSubsystem extends StateMachine{
     // Ready To Climb
     private BooleanSupplier m_R2CButton;
     private BooleanSupplier m_L2Button;
-    //initial starting position - zero
+    //stow
     private BooleanSupplier m_stowButton;
     private BooleanSupplier m_positiveVoltageButton;
     private BooleanSupplier m_negativeVoltageButton;

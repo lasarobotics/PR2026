@@ -84,14 +84,14 @@ public class DriveSubsystem extends StateMachine{
             @Override
             public SystemState nextState() {
                 // TODO
+                if (DriverStation.isAutonomous()) {
+                    return AUTO;
+                }
                 if(getInstance().m_autoAimButton.getAsBoolean()){
                     return AUTO_AIM;
                 }
-                if(getInstance().m_climbAlignButton.getAsBoolean()){
+                if(s_isReadyToClimb){
                     return CLIMB_ALIGN;
-                }
-                if (DriverStation.isAutonomous()) {
-                    return AUTO;
                 }
                 return DRIVER_CONTROL;
             }
@@ -144,7 +144,38 @@ public class DriveSubsystem extends StateMachine{
                 return DRIVER_CONTROL;
             }
         },
-        CLIMB_ALIGN {
+        CLIMB_ALIGN{
+            @Override
+            public void execute(){
+                    double currentRotation = s_drivetrain.getState().Pose.getRotation().getRadians();
+                    double pidOutputAngle = getInstance().m_rotationPIDController.calculate(currentRotation, 0);
+                    double pidInput = Constants.DriveConstants.MAX_ANGULAR_RATE.times(pidOutputAngle).in(RadiansPerSecond);
+                    pidInput = pidInput > 0 ? Math.min(pidInput, 8.0) : Math.max(pidInput, -8.0);
+                    Rotation2d currentAngle = new Rotation2d(currentRotation);
+                    Rotation2d desiredAngle = new Rotation2d(0);
+                    pidInput = currentAngle.getMeasure().isNear(desiredAngle.getMeasure(), Degrees.of(1.0)) ? 0 : pidInput;
+                    s_drivetrain.setControl(
+                        s_drive
+                            .withVelocityX(
+                                Constants.DriveConstants.MAX_SPEED
+                                    .times(-s_strafeRequest.getAsDouble())
+                                    .times(s_currentSpeedScalar))
+                            .withVelocityY(
+                                Constants.DriveConstants.MAX_SPEED
+                                    .times(-s_driveRequest.getAsDouble())
+                                    .times(s_currentSpeedScalar))
+                            .withRotationalRate(pidInput)
+                    );
+            }
+            @Override
+            public SystemState nextState(){
+                if(!s_isReadyToClimb){
+                    return DRIVER_CONTROL;
+                }
+                return CLIMB_ALIGN;
+            }
+        },
+        FULL_CLIMB_ALIGN {
             @Override 
             public void execute(){// TODO remove if not used, at least remove the keybind
                 if(!s_isClimbing){
@@ -180,7 +211,7 @@ public class DriveSubsystem extends StateMachine{
             public SystemState nextState() {
                 // TODO
                 if(getInstance().m_climbAlignButton.getAsBoolean()){
-                    return CLIMB_ALIGN;
+                    return FULL_CLIMB_ALIGN;
                 }
                 if (DriverStation.isAutonomous()) {
                     return AUTO;
@@ -202,13 +233,14 @@ public class DriveSubsystem extends StateMachine{
     private PIDController m_translationPIDController;
     private static Translation2d s_hubPos;
     private static boolean s_isClimbing;
+    private static boolean s_isReadyToClimb;
     private static int s_counter = 0;
     private static final SwerveRequest.PointWheelsAt pointRequest = new SwerveRequest.PointWheelsAt();
     private static double s_currentSpeedScalar;
 
     public DriveSubsystem() {
         super(DriveStates.AUTO);
-        setCurrentSpeedScalar(false);
+        isReadyToClimb(false);
         s_drivetrain = TunerConstants.createDrivetrain();
         s_drive =
             new SwerveRequest.FieldCentric()
@@ -322,13 +354,15 @@ public class DriveSubsystem extends StateMachine{
         return s_drivetrain.getState().Pose;
     }
 
-    public static void setCurrentSpeedScalar(boolean shouldSlow)
+    public static void isReadyToClimb(boolean ready)
     {
-        if (shouldSlow)
+        if (ready)
         {
+            s_isReadyToClimb = true;
             s_currentSpeedScalar = Constants.DriveConstants.SLOW_SPEED_SCALAR;
             return;
         }
+        s_isReadyToClimb = false;
         s_currentSpeedScalar = Constants.DriveConstants.FAST_SPEED_SCALAR;
     }
 
