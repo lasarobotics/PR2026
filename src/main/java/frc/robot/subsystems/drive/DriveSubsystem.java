@@ -105,7 +105,7 @@ public class DriveSubsystem extends StateMachine{
                     double currentRotation = currentPose2d.getRotation().getRadians();
                     Translation2d translationDiff = s_hubPos.minus(currentTranslation2d);
                     double desiredRotation = Math.atan2(translationDiff.getY(),translationDiff.getX()); 
-                    double pidOutputAngle = getInstance().m_rotationPIDController.calculate(currentRotation, desiredRotation);
+                    double pidOutputAngle = getInstance().m_auto_aimrotationPIDController.calculate(currentRotation, desiredRotation);
 
                     double pidInput = Constants.DriveConstants.MAX_ANGULAR_RATE.times(pidOutputAngle).in(RadiansPerSecond);
                     pidInput = pidInput > 0 ? Math.min(pidInput, 8.0) : Math.max(pidInput, -8.0);
@@ -148,7 +148,7 @@ public class DriveSubsystem extends StateMachine{
             @Override
             public void execute(){
                     double currentRotation = s_drivetrain.getState().Pose.getRotation().getRadians();
-                    double pidOutputAngle = getInstance().m_rotationPIDController.calculate(currentRotation, Math.PI);
+                    double pidOutputAngle = getInstance().m_auto_aimrotationPIDController.calculate(currentRotation, Math.PI);
                     double pidInput = Constants.DriveConstants.MAX_ANGULAR_RATE.times(pidOutputAngle).in(RadiansPerSecond);
                     pidInput = pidInput > 0 ? Math.min(pidInput, 8.0) : Math.max(pidInput, -8.0);
                     s_drivetrain.setControl(
@@ -230,6 +230,7 @@ public class DriveSubsystem extends StateMachine{
     private BooleanSupplier m_autoAimButton;
     private BooleanSupplier m_climbAlignButton;
     private PIDController m_rotationPIDController;
+    private PIDController m_auto_aimrotationPIDController;
     private PIDController m_translationPIDController;
     private static Translation2d s_hubPos = Constants.HubConstants.BLUE_HUB_POS;
     private static boolean s_isClimbing;
@@ -253,6 +254,8 @@ public class DriveSubsystem extends StateMachine{
         
         m_rotationPIDController = new PIDController(Constants.DriveConstants.TURN_P,Constants.DriveConstants.TURN_I,Constants.DriveConstants.TURN_D   );
         m_rotationPIDController.enableContinuousInput(-Math.PI, Math.PI);
+        m_auto_aimrotationPIDController = new PIDController(Constants.DriveConstants.AUTOAIMTURN_P,Constants.DriveConstants.AUTOAIMTURN_I,Constants.DriveConstants.AUTOAIMTURN_D);
+        m_auto_aimrotationPIDController.enableContinuousInput(-Math.PI, Math.PI);
         m_translationPIDController = new PIDController(3,7,0);
     }
 
