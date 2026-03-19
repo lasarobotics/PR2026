@@ -53,7 +53,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Start_Intake", Start_Intake());
     NamedCommands.registerCommand("Fuel_Rest", Fuel_Rest());
     NamedCommands.registerCommand("Start_Shoot", Start_Shoot());
-     NamedCommands.registerCommand("Pit_Home_Climber", CLIMB_SUBSYSTEM.Pit_Home_Climber());
+    NamedCommands.registerCommand("Pit_Home_Climber", CLIMB_SUBSYSTEM.Pit_Home_Climber());
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -93,17 +93,6 @@ public class RobotContainer {
     // An example command will be run in autonomous
     
     return autoChooser.getSelected();
-  }
-
-  public Command getPathCommand() 
-  {
-    try 
-    {
-      PathPlannerPath path = PathPlannerPath.fromPathFile("Testing Path");
-      return AutoBuilder.followPath(path);
-    }
-    catch (Exception e) {System.out.println(e);}
-    return null;
   }
 
   public Command L1_Climb()

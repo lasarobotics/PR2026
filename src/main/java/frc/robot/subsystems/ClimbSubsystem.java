@@ -34,7 +34,6 @@ public class ClimbSubsystem extends StateMachine{
         START {
             @Override
             public void initialize() {
-                Logger.recordOutput(getInstance().getName() + "/Initialized", true);
                 if (getInstance().dioInput.get())
                 {
                     getInstance().m_climbMotor.setControl(new VoltageOut(-6));
@@ -49,7 +48,6 @@ public class ClimbSubsystem extends StateMachine{
             }
             @Override
             public void execute(){
-
                 if(!getInstance().dioInput.get()){
                     getInstance().m_climbMotor.setControl(new VoltageOut(0));
                     getInstance().m_climbMotor.setPosition(0);
@@ -64,7 +62,8 @@ public class ClimbSubsystem extends StateMachine{
                     {
                         return R2C;
                     }
-                    if(s_firstFromTeleOp){
+                    if(s_firstFromTeleOp)
+                    {
                         s_firstFromTeleOp = false;
                         return DISMOUNT;
                     }
@@ -86,6 +85,11 @@ public class ClimbSubsystem extends StateMachine{
                 if (DriverStation.isAutonomous() && s_L1AutonRequest)
                 {
                     return L1;
+                }
+                if (s_firstFromTeleOp)
+                {
+                    s_firstFromTeleOp = false;
+                    return DISMOUNT;
                 }
                 if (getInstance().m_L1Button.getAsBoolean()) {
                     return L1;
@@ -115,7 +119,6 @@ public class ClimbSubsystem extends StateMachine{
                 }
                 if (s_firstFromTeleOp)
                     s_firstFromTeleOp = false;
-
                 if (s_awayFromTower) {
                     return STOW;
                 }
@@ -230,7 +233,6 @@ public class ClimbSubsystem extends StateMachine{
 
     private static ClimbSubsystem s_climbInstance;
     private final TalonFX m_climbMotor;
-    private boolean testingControl;
     private BooleanSupplier m_L1Button;
     // Ready To Climb
     private BooleanSupplier m_R2CButton;
@@ -288,10 +290,10 @@ public class ClimbSubsystem extends StateMachine{
     ) {
         m_L1Button = L1Button;
         m_R2CButton = R2CButton;
-        //m_L2Button = L2Button;
+        m_L2Button = L2Button;
         m_stowButton = stowButton;
-        // m_positiveVoltageButton = positiveVoltageButton;
-        // m_negativeVoltageButton = negativeVoltageButton;
+        m_positiveVoltageButton = positiveVoltageButton;
+        m_negativeVoltageButton = negativeVoltageButton;
     }
 
     public static void armFirstFromTeleOp(){
@@ -331,7 +333,7 @@ public class ClimbSubsystem extends StateMachine{
         s_awayFromTower = DriveSubsystem.getInstance().awayFromTower();
         Logger.recordOutput(getName() + "/buttons/L1", m_L1Button);
         Logger.recordOutput(getName() + "/buttons/Back", m_stowButton);
-        // Logger.recordOutput(getName() + "/buttons/L2", m_L2Button);
+        Logger.recordOutput(getName() + "/buttons/L2", m_L2Button);
         Logger.recordOutput(getName() + "/buttons/L2", m_R2CButton);
         Logger.recordOutput(getName() + "/state", getState().toString());
         Logger.recordOutput(getName() + "/currentPosition", m_climbMotor.getPosition().getValueAsDouble());

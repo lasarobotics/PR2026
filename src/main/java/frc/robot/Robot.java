@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.ClimbSubsystem;
+import frc.robot.subsystems.FuelManager;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -37,7 +38,6 @@ public class Robot extends LoggedRobot {
     Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
     Logger.addDataReceiver(new NT4Publisher());
     Logger.start();
-    Logger.recordOutput("Test",true);
     m_robotContainer = new RobotContainer();
   }
 
@@ -45,7 +45,7 @@ public class Robot extends LoggedRobot {
   public void robotInit()
   {
     CommandScheduler.getInstance().run();
-    //FollowPathCommand.warmupCommand().schedule(); TODO
+    FollowPathCommand.warmupCommand().schedule();
   }
 
   /**
@@ -101,6 +101,7 @@ public class Robot extends LoggedRobot {
       m_autonomousCommand.cancel();
     }
     ClimbSubsystem.armFirstFromTeleOp();
+    FuelManager.autonStateRequester(null);
   }
 
   /** This function is called periodically during operator control. */

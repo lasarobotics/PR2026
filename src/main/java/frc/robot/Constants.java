@@ -50,6 +50,7 @@ public final class Constants {
     public static final int CLIMB_MOTOR_ID = 40; // TODO
     public static final Translation2d CLIMB_POS = new Translation2d(4.7,0);
   }
+  
   public static class FuelManagerConstants {
     public static final int SHOOT_MOTOR_LEADER_ID = 30; // TODO
     public static final int SHOOT_MOTOR_FOLLOWER_ID = 31; // TODO

@@ -371,58 +371,59 @@ public class DriveSubsystem extends StateMachine{
     }
 
     private LimelightHelpers.PoseEstimate getFilteredPoseEstimate() {
-     LimelightHelpers.PoseEstimate pose_estimate =
-      LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+        LimelightHelpers.PoseEstimate pose_estimate =
+            LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
 
         if (pose_estimate == null) {
-      return null;
-    }
+            return null;
+        }
 
-    if (Math.abs(s_drivetrain.getState().Speeds.omegaRadiansPerSecond) > 2 * Math.PI) {
-      return null;
-    }
+        if (Math.abs(s_drivetrain.getState().Speeds.omegaRadiansPerSecond) > 2 * Math.PI) {
+            return null;
+        }
 
-    if (pose_estimate.tagCount == 0) {
-      return null;
-    }
+        if (pose_estimate.tagCount == 0) {
+            return null;
+        }
 
-    if (Double.isNaN(pose_estimate.pose.getX()) || Double.isNaN(pose_estimate.pose.getY()) || Double.isNaN(pose_estimate.pose.toPose2d().getRotation().getDegrees())) {
-      return null;
-    }
+        if (Double.isNaN(pose_estimate.pose.getX()) || Double.isNaN(pose_estimate.pose.getY()) || Double.isNaN(pose_estimate.pose.toPose2d().getRotation().getDegrees())) {
+            return null;
+        }
 
-    // filtering for unreasonable poses
-    // https://firstfrc.blob.core.windows.net/frc2026/FieldAssets/2026-field-dimension-dwgs.pdf
-    // welded perimeter field is slightly larger
-    // 16.540988 meters x
-    // 8.069326 meters y
-    // bump is 16 cm off the ground
-    // and anything above 25cm is probably insane airtime & unreliable
-    if (
-      pose_estimate.pose.getX() < 0         ||
-      pose_estimate.pose.getX() > 16.540988 ||
-      pose_estimate.pose.getY() < 0         ||
-      pose_estimate.pose.getY() > 8.069326  ||
-      pose_estimate.pose.getZ() < -0.05     ||
-      pose_estimate.pose.getZ() > 0.25
-    ) {
-      return null;
-    }
+        // filtering for unreasonable poses
+        // https://firstfrc.blob.core.windows.net/frc2026/FieldAssets/2026-field-dimension-dwgs.pdf
+        // welded perimeter field is slightly larger
+        // 16.540988 meters x
+        // 8.069326 meters y
+        // bump is 16 cm off the ground
+        // and anything above 25cm is probably insane airtime & unreliable
+        if (
+        pose_estimate.pose.getX() < 0         ||
+        pose_estimate.pose.getX() > 16.540988 ||
+        pose_estimate.pose.getY() < 0         ||
+        pose_estimate.pose.getY() > 8.069326  ||
+        pose_estimate.pose.getZ() < -0.05     ||
+        pose_estimate.pose.getZ() > 0.25
+        )
+        {
+            return null;
+        }
 
-    // aggressive filtering for one tag
-    // https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltag-robot-localization#using-wpilibs-pose-estimator
-    if (pose_estimate.tagCount == 1 && pose_estimate.rawFiducials.length == 1) {
-      RawFiducial tag = pose_estimate.rawFiducials[0];
-      // ignore anything that has too high ambiguity
-      if (tag.ambiguity > Constants.DriveConstants.SINGLE_TAG_AMBIGUITY_CUTOFF) {
-        return null;
-      }
-      // we outright reject anything further than a certain distance
-      if (tag.distToCamera > Constants.DriveConstants.SINGLE_TAG_DISTANCE_CUTOFF) {
-        return null;
-      }
-    }
+        // aggressive filtering for one tag
+        // https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltag-robot-localization#using-wpilibs-pose-estimator
+        if (pose_estimate.tagCount == 1 && pose_estimate.rawFiducials.length == 1) {
+            RawFiducial tag = pose_estimate.rawFiducials[0];
+            // ignore anything that has too high ambiguity
+            if (tag.ambiguity > Constants.DriveConstants.SINGLE_TAG_AMBIGUITY_CUTOFF) {
+                return null;
+            }
+            // we outright reject anything further than a certain distance
+            if (tag.distToCamera > Constants.DriveConstants.SINGLE_TAG_DISTANCE_CUTOFF) {
+                return null;
+            }
+        }
 
-    return pose_estimate;
+        return pose_estimate;
     }
 
     public void configureBindings(
