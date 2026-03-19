@@ -305,7 +305,7 @@ public class ClimbSubsystem extends StateMachine{
 
     public Command Pit_Home_Climber()
     {
-        return Commands.run(() -> {getInstance().m_climbMotor.setControl(new VoltageOut(-3));})
+        return Commands.run(() -> {getInstance().m_climbMotor.setControl(new VoltageOut(-6));})
         .until(() -> !getInstance().dioInput.get())
         .andThen(() -> getInstance().m_climbMotor.setControl(new VoltageOut(0)));
     }  

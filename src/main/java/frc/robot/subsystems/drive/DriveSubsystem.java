@@ -210,12 +210,13 @@ public class DriveSubsystem extends StateMachine{
             @Override
             public SystemState nextState() {
                 // TODO
-                if(getInstance().m_climbAlignButton.getAsBoolean()){
-                    return FULL_CLIMB_ALIGN;
-                }
                 if (DriverStation.isAutonomous()) {
                     return AUTO;
                 }
+                if(getInstance().m_climbAlignButton.getAsBoolean()){
+                    return FULL_CLIMB_ALIGN;
+                }
+                
                 return DRIVER_CONTROL;
             }
         }
