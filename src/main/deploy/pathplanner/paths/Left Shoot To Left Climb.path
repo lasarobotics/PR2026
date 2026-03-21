@@ -45,7 +45,7 @@
     "rotation": 5.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Left Auto Paths",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -29.45537254197945
