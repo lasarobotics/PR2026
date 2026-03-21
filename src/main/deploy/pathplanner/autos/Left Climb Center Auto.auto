@@ -5,33 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "wait",
+          "type": "path",
           "data": {
-            "waitTime": 10.0
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Start_Intake"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.5
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Fuel_Rest"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.5
+            "pathName": "Center Start To Center Shoot"
           }
         },
         {
@@ -41,15 +17,9 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "Left Placeholder Path"
-          }
-        },
-        {
           "type": "wait",
           "data": {
-            "waitTime": 1.5
+            "waitTime": 10.0
           }
         },
         {
@@ -59,9 +29,9 @@
           }
         },
         {
-          "type": "wait",
+          "type": "path",
           "data": {
-            "waitTime": 1.5
+            "pathName": "Center Shoot To Center Climb"
           }
         },
         {
@@ -73,7 +43,13 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 20.0
+            "waitTime": 30.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Left Placeholder Path"
           }
         }
       ]

@@ -37,19 +37,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Left Start To Depot Start"
+            "pathName": "Right Start To Outpost Start"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Depot Start To Intake Depot"
+            "pathName": "Outpost Start To Outpost Intake"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Depot To Left Shoot"
+            "pathName": "Outpost To Right Shoot"
           }
         },
         {
@@ -79,7 +79,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Left Shoot To Left Climb"
+            "pathName": "Right Shoot To Right Climb"
           }
         },
         {
@@ -97,7 +97,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Left Placeholder Path"
+            "pathName": "Right Placeholder Path"
           }
         }
       ]
