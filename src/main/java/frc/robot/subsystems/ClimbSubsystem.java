@@ -259,7 +259,7 @@ public class ClimbSubsystem extends StateMachine{
     private ClimbSubsystem() {
         super(ClimbStates.START);
         s_L1AutonRequest = false;
-        dioInput = new DigitalInput(9);
+        dioInput = new DigitalInput(Constants.ClimbConstants.CLIMB_HOMER_ID);
         m_climbMotor = new TalonFX(Constants.ClimbConstants.CLIMB_MOTOR_ID);
     
         TalonFXConfiguration climbConfiguration = new TalonFXConfiguration();

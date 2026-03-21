@@ -16,6 +16,7 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants;
 import frc.robot.subsystems.drive.DriveSubsystem;
@@ -42,6 +43,9 @@ public class FuelManager extends StateMachine {
                 {
                     return s_autonStateRequest;
                 }
+                if (getInstance().m_unclogButton.getAsBoolean() || getInstance().m_shooterBeamBreak.get()){
+                    return UNCLOG;
+                }
                 if (getInstance().m_intakeButton.getAsBoolean()){
                     return INTAKE;
                 }
@@ -50,9 +54,6 @@ public class FuelManager extends StateMachine {
                 }
                 if (getInstance().m_staticShootButton.getAsBoolean()){
                     return STATIC_SHOOT;
-                }
-                if (getInstance().m_unclogButton.getAsBoolean()){
-                    return UNCLOG;
                 }
                 return REST;
             }
@@ -69,6 +70,9 @@ public class FuelManager extends StateMachine {
                 if (DriverStation.isAutonomous() && s_autonStateRequest != null)
                 {
                     return s_autonStateRequest;
+                }
+                if (getInstance().m_unclogButton.getAsBoolean() || getInstance().m_shooterBeamBreak.get()){
+                    return UNCLOG;
                 }
                 if (getInstance().m_intakeButton.getAsBoolean()){
                     return INTAKE;
@@ -90,7 +94,7 @@ public class FuelManager extends StateMachine {
                 {
                     return s_autonStateRequest;
                 }
-                if (getInstance().m_unclogButton.getAsBoolean()){
+                if (getInstance().m_unclogButton.getAsBoolean() || getInstance().m_shooterBeamBreak.get()){
                     return UNCLOG;
                 }
                 return REST;
@@ -159,6 +163,7 @@ public class FuelManager extends StateMachine {
     private final TalonFX m_shootMotorLeader;
     private final TalonFX m_shootMotorFollower;
     private final TalonFX m_middleMotor;
+    private final DigitalInput m_shooterBeamBreak;
     private BooleanSupplier m_intakeButton;
     private BooleanSupplier m_shootButton;
     private BooleanSupplier m_staticShootButton;
@@ -176,7 +181,7 @@ public class FuelManager extends StateMachine {
         m_shootMotorLeader = new TalonFX(Constants.FuelManagerConstants.SHOOT_MOTOR_LEADER_ID);
         m_shootMotorFollower = new TalonFX(Constants.FuelManagerConstants.SHOOT_MOTOR_FOLLOWER_ID);
         m_middleMotor =  new TalonFX(Constants.FuelManagerConstants.MIDDLE_MOTOR_ID);
-
+        m_shooterBeamBreak = new DigitalInput(Constants.FuelManagerConstants.BEAM_BREAK_ID);
         TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
 
         shooterConfig
