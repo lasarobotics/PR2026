@@ -236,7 +236,6 @@ public class DriveSubsystem extends StateMachine{
     private static Translation2d s_hubPos = Constants.HubConstants.BLUE_HUB_POS;
     private static boolean s_isClimbing;
     private static boolean s_isReadyToClimb;
-    private static int s_counter = 0;
     private static final SwerveRequest.PointWheelsAt pointRequest = new SwerveRequest.PointWheelsAt();
     private static double s_currentSpeedScalar;
 
@@ -272,6 +271,7 @@ public class DriveSubsystem extends StateMachine{
         Logger.recordOutput(getName() +"/ClimbAlignButton", m_climbAlignButton);
         Logger.recordOutput(getName() +"/ResetPoseButton", m_resetPoseButton);
         Logger.recordOutput(getName() + "/DistanceToHub", getDistanceToHub());
+        Logger.recordOutput(getName() + "/isReadyToClimb", s_isReadyToClimb);
 
         if (m_resetPoseButton.getAsBoolean())
         {

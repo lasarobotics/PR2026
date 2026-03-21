@@ -37,6 +37,12 @@
         {
           "type": "path",
           "data": {
+            "pathName": "Left Start"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
             "pathName": "Left Start To Depot Start"
           }
         },

@@ -129,8 +129,11 @@ public class ClimbSubsystem extends StateMachine{
             @Override
             public void initialize() {
                 getInstance().m_climbMotor.setControl(Constants.ClimbConstants.R2C_SET_POINT);
-                DriveSubsystem.postClimbZero();
-                DriveSubsystem.isReadyToClimb(true);
+                if (!DriverStation.isAutonomous())
+                {
+                    DriveSubsystem.postClimbZero();
+                    DriveSubsystem.isReadyToClimb(true);
+                }
             }
 
             @Override
@@ -309,7 +312,7 @@ public class ClimbSubsystem extends StateMachine{
     {
         return Commands.run(() -> {getInstance().m_climbMotor.setControl(new VoltageOut(-6));})
         .until(() -> !getInstance().dioInput.get())
-        .andThen(() -> getInstance().m_climbMotor.setControl(new VoltageOut(0)));
+        .andThen(() -> getInstance().m_climbMotor.setControl(Constants.ClimbConstants.R2C_SET_POINT));
     }  
 
     @Override
