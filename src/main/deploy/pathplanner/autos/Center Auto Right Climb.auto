@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Center Shoot To Center Climb"
+            "pathName": "Center Shoot To Right Climb"
           }
         },
         {
@@ -49,7 +49,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Placeholder Path"
+            "pathName": "Right Placeholder Path"
           }
         }
       ]
