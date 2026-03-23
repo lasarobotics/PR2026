@@ -12,7 +12,7 @@
         "y": 2.7826917679398147
       },
       "isLocked": false,
-      "linkedName": "Right Bump"
+      "linkedName": "Bump end"
     },
     {
       "anchor": {
@@ -48,7 +48,7 @@
   "folder": "Right Auto Paths",
   "idealStartingState": {
     "velocity": 1.5,
-    "rotation": 52.25
+    "rotation": 41.87786953788429
   },
   "useDefaultConstraints": true
 }

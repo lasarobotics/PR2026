@@ -12,7 +12,7 @@
         "y": 2.514707560627676
       },
       "isLocked": false,
-      "linkedName": "Right Start"
+      "linkedName": "Right Start Not Shoot"
     },
     {
       "anchor": {
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 1.5,
-    "rotation": 52.25
+    "rotation": -130.0
   },
   "reversed": false,
   "folder": "Right Auto Paths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 52.25319461272537
+    "rotation": -130.0
   },
   "useDefaultConstraints": true
 }

@@ -57,17 +57,21 @@
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Right Bump"
+      "linkedName": "Bump end"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1.59140625,
-      "rotationDegrees": 110.0
+      "waypointRelativePos": 1,
+      "rotationDegrees": -110.0
     },
     {
-      "waypointRelativePos": 1.9903884594882724,
-      "rotationDegrees": 110.0
+      "waypointRelativePos": 1.59140625,
+      "rotationDegrees": -70.0
+    },
+    {
+      "waypointRelativePos": 2,
+      "rotationDegrees": -70.0
     }
   ],
   "constraintZones": [],
@@ -83,13 +87,13 @@
   },
   "goalEndState": {
     "velocity": 1.5,
-    "rotation": 52.25
+    "rotation": 41.87786953788429
   },
   "reversed": false,
   "folder": "Right Auto Paths",
   "idealStartingState": {
     "velocity": 1.5,
-    "rotation": 52.25
+    "rotation": -130.0
   },
   "useDefaultConstraints": true
 }
