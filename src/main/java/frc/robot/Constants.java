@@ -42,25 +42,29 @@ public final class Constants {
   }
 
   public static class ClimbConstants {
-    public static final PositionVoltage START_SET_POINT = new PositionVoltage(0); // TODO
-    public static final PositionVoltage R2C_SET_POINT = new PositionVoltage(350); // TODO
-    public static final PositionVoltage L1_SET_POINT = new PositionVoltage(125); // TODO
+    public static final PositionVoltage START_SET_POINT = new PositionVoltage(0); 
+    public static final PositionVoltage R2C_SET_POINT = new PositionVoltage(350);
+    public static final PositionVoltage L1_SET_POINT = new PositionVoltage(125); 
     public static final PositionVoltage STOW_SET_POINT = new PositionVoltage(110);
     public static final PositionVoltage L2_SET_POINT = new PositionVoltage(-25); // TODO
-    public static final int CLIMB_MOTOR_ID = 40; // TODO
+    public static final int CLIMB_MOTOR_ID = 40; 
+    public static final int CLIMB_HOMER_ID = 9;
     public static final Translation2d CLIMB_POS = new Translation2d(4.7,0);
   }
   
   public static class FuelManagerConstants {
-    public static final int SHOOT_MOTOR_LEADER_ID = 30; // TODO
-    public static final int SHOOT_MOTOR_FOLLOWER_ID = 31; // TODO
-    public static final int INTAKE_MOTOR_ID = 33; //TODO
-    public static final int MIDDLE_MOTOR_ID = 32; // TODO
-    public static double SHOOT_MOTOR_SPEED = -72; //-65.4; TODO this is old value, commented for testing
-    public static double INTAKE_MOTOR_SPEED = -25; // TODO
+    public static final int SHOOT_MOTOR_LEADER_ID = 30; 
+    public static final int SHOOT_MOTOR_FOLLOWER_ID = 31; 
+    public static final int INTAKE_MOTOR_ID = 33; 
+    public static final int MIDDLE_MOTOR_ID = 32; 
+    public static final int BEAM_BREAK_ID = 8;//TODODODODODODODODODODODOODODODFINDFINDFIND
+    public static final int AGITATION_MOTOR_ID = 34; // TODO
+    public static double SHOOT_MOTOR_SPEED = -72; 
+    public static double INTAKE_MOTOR_SPEED = -25; 
     public static double INTAKE_UNCLOG_SPEED = 25;
-    public static double MIDDLE_MOTOR_INTAKE_SPEED = -110; // TODO
-    public static double MIDDLE_MOTOR_SHOOT_SPEED = 30; // TODO
+    public static double MIDDLE_MOTOR_INTAKE_SPEED = -110; 
+    public static double MIDDLE_MOTOR_SHOOT_SPEED = 30; 
+    public static final int AGITATION_MOTOR_SPEED = 0; // TODO
     public static double SHOOTER_WITHIN_RANGE_COEFFICIENT = 0.02;
   }
 
@@ -75,13 +79,13 @@ public final class Constants {
     // measure
 
         
-    public static final double STOW_DISTANCE_REQUIREMENT = 6.75; // TODO 
+    public static final double STOW_DISTANCE_REQUIREMENT = 6.75; 
     public static final double CENTER_XPOS = 8.25; 
 
     public static final double DEADBAND_SCALAR = 0.1;
     public static final double SLOW_SPEED_SCALAR = 0.1;
-    public static final double MID_SPEED_SCALAR = 0.5; //TODO 0.5
-    public static final double FAST_SPEED_SCALAR = 0.75; // TODO 0.75
+    public static final double MID_SPEED_SCALAR = 0.5; 
+    public static final double FAST_SPEED_SCALAR = 0.75; 
 
     public static final TrapezoidProfile.Constraints TURN_CONSTRAINTS =
         new TrapezoidProfile.Constraints(

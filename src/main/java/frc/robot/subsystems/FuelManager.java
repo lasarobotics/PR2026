@@ -16,6 +16,7 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants;
 import frc.robot.subsystems.drive.DriveSubsystem;
@@ -32,15 +33,19 @@ public class FuelManager extends StateMachine {
         REST {
             @Override
             public void initialize() {
-                 getInstance().m_shootMotorLeader.set(0);
+                getInstance().m_shootMotorLeader.set(0);
                 getInstance().m_middleMotor.set(0);
                 getInstance().m_intakeMotor.set(0);
+                getInstance().m_agitationMotor.set(0);
             }
             @Override
             public SystemState nextState() {
                 if (DriverStation.isAutonomous() && s_autonStateRequest != null)
                 {
                     return s_autonStateRequest;
+                }
+                if (getInstance().m_unclogButton.getAsBoolean() || getInstance().m_shooterBeamBreak.get()){
+                    return UNCLOG;
                 }
                 if (getInstance().m_intakeButton.getAsBoolean()){
                     return INTAKE;
@@ -51,9 +56,6 @@ public class FuelManager extends StateMachine {
                 if (getInstance().m_staticShootButton.getAsBoolean()){
                     return STATIC_SHOOT;
                 }
-                if (getInstance().m_unclogButton.getAsBoolean()){
-                    return UNCLOG;
-                }
                 return REST;
             }
         },
@@ -62,13 +64,16 @@ public class FuelManager extends StateMachine {
             public void initialize() {
                 getInstance().m_middleMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.MIDDLE_MOTOR_INTAKE_SPEED)); // TODO add vraible speed
                 getInstance().m_intakeMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.INTAKE_MOTOR_SPEED));
-            
+                getInstance().m_agitationMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.AGITATION_MOTOR_SPEED));
             }
             @Override
             public SystemState nextState() {
                 if (DriverStation.isAutonomous() && s_autonStateRequest != null)
                 {
                     return s_autonStateRequest;
+                }
+                if (getInstance().m_unclogButton.getAsBoolean() || getInstance().m_shooterBeamBreak.get()){
+                    return UNCLOG;
                 }
                 if (getInstance().m_intakeButton.getAsBoolean()){
                     return INTAKE;
@@ -82,7 +87,7 @@ public class FuelManager extends StateMachine {
                 getInstance().m_middleMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.MIDDLE_MOTOR_INTAKE_SPEED)); // TODO add vraible speed
                 getInstance().m_intakeMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.INTAKE_UNCLOG_SPEED));
                 getInstance().m_shootMotorLeader.setControl(new VoltageOut(1));
-            
+                getInstance().m_agitationMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.AGITATION_MOTOR_SPEED));
             }
             @Override
             public SystemState nextState() {
@@ -90,7 +95,7 @@ public class FuelManager extends StateMachine {
                 {
                     return s_autonStateRequest;
                 }
-                if (getInstance().m_unclogButton.getAsBoolean()){
+                if (getInstance().m_unclogButton.getAsBoolean() || getInstance().m_shooterBeamBreak.get()){
                     return UNCLOG;
                 }
                 return REST;
@@ -99,8 +104,9 @@ public class FuelManager extends StateMachine {
         SHOOT {
             @Override
             public void initialize() {
-                getInstance().m_shootSpeed = getInstance().getSpeed((s_DriveSubsystemInstance.getDistanceToHub()));
+                getInstance().m_shootSpeed = getInstance().getSpeed((s_DriveSubsystemInstance.getDistanceToHub())); // use predictedDistanceToHub for sotm
                 getInstance().m_shootMotorLeader.setControl(getInstance().m_shooterVelocityDutyCycle.withVelocity(getInstance().m_shootSpeed));
+                getInstance().m_agitationMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.AGITATION_MOTOR_SPEED));
             }
 
             @Override
@@ -130,6 +136,7 @@ public class FuelManager extends StateMachine {
             @Override
             public void initialize() {
                 getInstance().m_shootMotorLeader.setControl(getInstance().m_shooterVelocityDutyCycle.withVelocity(Constants.FuelManagerConstants.SHOOT_MOTOR_SPEED)); 
+                getInstance().m_agitationMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.AGITATION_MOTOR_SPEED));
           }
             @Override
             public void execute(){
@@ -159,6 +166,8 @@ public class FuelManager extends StateMachine {
     private final TalonFX m_shootMotorLeader;
     private final TalonFX m_shootMotorFollower;
     private final TalonFX m_middleMotor;
+    private final TalonFX m_agitationMotor;
+    private final DigitalInput m_shooterBeamBreak;
     private BooleanSupplier m_intakeButton;
     private BooleanSupplier m_shootButton;
     private BooleanSupplier m_staticShootButton;
@@ -176,7 +185,8 @@ public class FuelManager extends StateMachine {
         m_shootMotorLeader = new TalonFX(Constants.FuelManagerConstants.SHOOT_MOTOR_LEADER_ID);
         m_shootMotorFollower = new TalonFX(Constants.FuelManagerConstants.SHOOT_MOTOR_FOLLOWER_ID);
         m_middleMotor =  new TalonFX(Constants.FuelManagerConstants.MIDDLE_MOTOR_ID);
-
+        m_agitationMotor = new TalonFX(Constants.FuelManagerConstants.AGITATION_MOTOR_ID);
+        m_shooterBeamBreak = new DigitalInput(Constants.FuelManagerConstants.BEAM_BREAK_ID);
         TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
 
         shooterConfig

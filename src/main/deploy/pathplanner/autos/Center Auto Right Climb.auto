@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Center Start To Center Shoot"
@@ -31,7 +37,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Center Shoot To Left Climb"
+            "pathName": "Center Shoot To Right Climb"
           }
         },
         {
@@ -49,7 +55,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Left Placeholder Path"
+            "pathName": "Right Placeholder Path"
           }
         }
       ]
