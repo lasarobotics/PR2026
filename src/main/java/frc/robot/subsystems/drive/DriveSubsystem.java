@@ -16,6 +16,7 @@ import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -104,6 +105,11 @@ public class DriveSubsystem extends StateMachine{
                     Translation2d currentTranslation2d = currentPose2d.getTranslation();
                     double currentRotation = currentPose2d.getRotation().getRadians();
                     Translation2d translationDiff = s_hubPos.minus(currentTranslation2d);
+                    //sotm if we ever want
+                    // Translation2d velocityTranslation = new Translation2d(currentState.Speeds.vxMetersPerSecond * Constants.DriveConstants.FUEL_AIR_TIME, currentState.Speeds.vyMetersPerSecond * Constants.DriveConstants.FUEL_AIR_TIME).rotateBy(currentRotation);
+                    // Translation2d futurePose = currentTranslation2d.plus(velocityTranslation);
+                    // Logger.recordOutput(getInstance().getName() + "/futurePose", new Pose2d(futurePose,new Rotation2d(0)));
+                    // Translation2d translationDiff = s_hubPos.minus(futurePose);
                     double desiredRotation = Math.atan2(translationDiff.getY(),translationDiff.getX()); 
                     double pidOutputAngle = getInstance().m_auto_aimrotationPIDController.calculate(currentRotation, desiredRotation);
 
@@ -328,6 +334,15 @@ public class DriveSubsystem extends StateMachine{
     }
     public double getDistanceToHub() {
         Translation2d differenceFromHub = s_hubPos.minus(s_drivetrain.getState().Pose.getTranslation());
+        double distanceToHub = Math.sqrt(Math.pow(differenceFromHub.getX(), 2) + Math.pow(differenceFromHub.getY(), 2));
+        return distanceToHub;
+    }
+     public double getPredictedDistanceToHub() {
+        SwerveDriveState currentState = s_drivetrain.getState();
+        Translation2d velocityTranslation = new Translation2d(currentState.Speeds.vxMetersPerSecond * Constants.DriveConstants.FUEL_AIR_TIME, currentState.Speeds.vyMetersPerSecond * Constants.DriveConstants.FUEL_AIR_TIME).rotateBy(currentState.Pose.getRotation());
+        Translation2d futurePose = currentState.Pose.getTranslation().plus(velocityTranslation);
+
+        Translation2d differenceFromHub = s_hubPos.minus(futurePose);
         double distanceToHub = Math.sqrt(Math.pow(differenceFromHub.getX(), 2) + Math.pow(differenceFromHub.getY(), 2));
         return distanceToHub;
     }
