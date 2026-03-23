@@ -1,0 +1,133 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Left Start to NZ"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Start_Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "NZ route 1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Fuel_Rest"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Left NZ return"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Start_Shoot"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 4.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Fuel_Rest"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Left Start To Depot Start"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Start_Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Depot Start To Intake Depot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Fuel_Rest"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Depot To Left Shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Start_Shoot"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 4.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Fuel_Rest"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Left Shoot To Left Climb"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L1_Climb"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 100.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Left Placeholder Path"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
