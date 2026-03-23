@@ -8,10 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-
         "x": 6.210514536432477,
         "y": 2.534068525672688
-
       },
       "isLocked": true,
       "linkedName": "Right NZ End"
@@ -68,7 +66,7 @@
     "rotation": 48.070437456189445
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Right Auto Paths",
   "idealStartingState": {
     "velocity": 1.5,
     "rotation": -72.22

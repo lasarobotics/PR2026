@@ -20,7 +20,7 @@
         "y": 5.930513552068473
       },
       "prevControl": {
-        "x": 0.08860199714693257,
+        "x": 0.08860199714693251,
         "y": 5.930513552068473
       },
       "nextControl": null,
@@ -45,7 +45,7 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Left Auto Paths",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0
