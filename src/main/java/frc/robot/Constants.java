@@ -57,8 +57,8 @@ public final class Constants {
     public static final int SHOOT_MOTOR_FOLLOWER_ID = 31; 
     public static final int INTAKE_MOTOR_ID = 33; 
     public static final int MIDDLE_MOTOR_ID = 32; 
-    public static final int BEAM_BREAK_ID = 58;//TODODODODODODODODODODODOODODODFINDFINDFIND
-    public static final int AGITATION_MOTOR_ID = 59; // TODO
+    public static final int BEAM_BREAK_ID = 8;//TODODODODODODODODODODODOODODODFINDFINDFIND
+    public static final int AGITATION_MOTOR_ID = 34; // TODO
     public static double SHOOT_MOTOR_SPEED = -72; 
     public static double INTAKE_MOTOR_SPEED = -25; 
     public static double INTAKE_UNCLOG_SPEED = 25;
