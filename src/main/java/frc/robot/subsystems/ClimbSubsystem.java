@@ -230,7 +230,7 @@ public class ClimbSubsystem extends StateMachine{
                 if (getInstance().m_R2CButton.getAsBoolean()) {
                     return R2C;
                 }
-                return L2;
+                return STOW; //FAILSAFE return L2 is what is should be IF WE WANT
             }
         }
     }
