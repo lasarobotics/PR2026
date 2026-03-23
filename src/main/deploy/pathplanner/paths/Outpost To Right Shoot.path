@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.4938659058487873,
-        "y": 0.6256633380884447
+        "x": 1.321940085592011,
+        "y": 1.4019828815977178
       },
       "isLocked": false,
       "linkedName": "Outpost Intake"
     },
     {
       "anchor": {
-        "x": 2.4476034236804565,
-        "y": 2.0877318116975756
+        "x": 2.162952924393723,
+        "y": 2.838174037089873
       },
       "prevControl": {
-        "x": 2.331155492154066,
-        "y": 1.3372895863052796
+        "x": 2.0465049928673325,
+        "y": 2.087731811697577
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 41.87786953788429
+    "rotation": 23.38522105721366
   },
   "reversed": false,
   "folder": "Right Auto Paths",

@@ -19,7 +19,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 2.0
+            "waitTime": 3.0
           }
         },
         {
@@ -37,13 +37,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Right Start To Outpost Start"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Outpost Start To Outpost Intake"
+            "pathName": "Right Start To Outpost"
           }
         },
         {
@@ -67,7 +61,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 2.0
+            "waitTime": 4.0
           }
         },
         {

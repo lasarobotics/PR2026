@@ -100,6 +100,7 @@ public class Robot extends LoggedRobot {
       m_autonomousCommand.cancel();
     }
     ClimbSubsystem.armFirstFromTeleOp();
+    ClimbSubsystem.autonStateRequester(false);
     FuelManager.autonStateRequester(null);
   }
 

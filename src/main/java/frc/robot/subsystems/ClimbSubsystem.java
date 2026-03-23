@@ -65,9 +65,9 @@ public class ClimbSubsystem extends StateMachine{
                     if(s_firstFromTeleOp)
                     {
                         s_firstFromTeleOp = false;
-                        return DISMOUNT;
                     }
-                    return STOW;
+                    System.out.println("test");
+                    return DISMOUNT;
                 }
                 return START;
             }
@@ -180,6 +180,7 @@ public class ClimbSubsystem extends StateMachine{
                 }
                 if(s_firstFromTeleOp){
                     s_firstFromTeleOp = false;
+                    System.out.println("test1");
                     return DISMOUNT;
                 }
                 // if (getInstance().m_L2Button.getAsBoolean()) {

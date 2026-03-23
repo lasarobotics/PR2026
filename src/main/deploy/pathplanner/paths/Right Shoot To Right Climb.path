@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.4476034236804565,
-        "y": 2.0877318116975756
+        "x": 2.162952924393723,
+        "y": 2.838174037089873
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.460542082738944,
-        "y": 2.631155492154065
+        "x": 1.9429957203994292,
+        "y": 3.187517831669045
       },
       "isLocked": false,
       "linkedName": "Right Shoot"
     },
     {
       "anchor": {
-        "x": 1.35,
-        "y": 3.25
+        "x": 1.334878744650499,
+        "y": 3.2
       },
       "prevControl": {
-        "x": 2.292339514978602,
-        "y": 3.045192582025677
+        "x": 1.5818194859827663,
+        "y": 3.238990643368253
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Right Climb"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -48,7 +48,7 @@
   "folder": "Right Auto Paths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 41.87786953788429
+    "rotation": 23.38522105721366
   },
   "useDefaultConstraints": true
 }
