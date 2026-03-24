@@ -13,6 +13,7 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
@@ -44,7 +45,7 @@ public class FuelManager extends StateMachine {
                 {
                     return s_autonStateRequest;
                 }
-                if (getInstance().m_unclogButton.getAsBoolean() || getInstance().m_shooterBeamBreak.get()){
+                if (getInstance().m_unclogButton.getAsBoolean() || getInstance().m_shooterBeamBreak.getIsDetected().getValue()){
                     return UNCLOG;
                 }
                 if (getInstance().m_intakeButton.getAsBoolean()){
@@ -72,7 +73,7 @@ public class FuelManager extends StateMachine {
                 {
                     return s_autonStateRequest;
                 }
-                if (getInstance().m_unclogButton.getAsBoolean() || getInstance().m_shooterBeamBreak.get()){
+                if (getInstance().m_unclogButton.getAsBoolean() || getInstance().m_shooterBeamBreak.getIsDetected().getValue()){
                     return UNCLOG;
                 }
                 if (getInstance().m_intakeButton.getAsBoolean()){
@@ -95,7 +96,7 @@ public class FuelManager extends StateMachine {
                 {
                     return s_autonStateRequest;
                 }
-                if (getInstance().m_unclogButton.getAsBoolean() || getInstance().m_shooterBeamBreak.get()){
+                if (getInstance().m_unclogButton.getAsBoolean() || getInstance().m_shooterBeamBreak.getIsDetected().getValue()){
                     return UNCLOG;
                 }
                 return REST;
@@ -167,7 +168,7 @@ public class FuelManager extends StateMachine {
     private final TalonFX m_shootMotorFollower;
     private final TalonFX m_middleMotor;
     private final TalonFX m_agitationMotor;
-    private final DigitalInput m_shooterBeamBreak;
+    private final CANrange m_shooterBeamBreak;
     private BooleanSupplier m_intakeButton;
     private BooleanSupplier m_shootButton;
     private BooleanSupplier m_staticShootButton;
@@ -186,7 +187,7 @@ public class FuelManager extends StateMachine {
         m_shootMotorFollower = new TalonFX(Constants.FuelManagerConstants.SHOOT_MOTOR_FOLLOWER_ID);
         m_middleMotor =  new TalonFX(Constants.FuelManagerConstants.MIDDLE_MOTOR_ID);
         m_agitationMotor = new TalonFX(Constants.FuelManagerConstants.AGITATION_MOTOR_ID);
-        m_shooterBeamBreak = new DigitalInput(Constants.FuelManagerConstants.BEAM_BREAK_ID);
+        m_shooterBeamBreak = new CANrange(Constants.FuelManagerConstants.BEAM_BREAK_ID);
         TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
 
         shooterConfig
@@ -217,6 +218,13 @@ public class FuelManager extends StateMachine {
         m_shootMotorFollower.setControl(
             new Follower(m_shootMotorLeader.getDeviceID(), MotorAlignmentValue.Opposed)
         );
+
+        TalonFXConfiguration agitatorConfig = new TalonFXConfiguration();
+        agitatorConfig
+            .Slot0
+                .withKP(0.6)
+                .withKV(0.1);
+        m_agitationMotor.getConfigurator().apply(agitatorConfig);
     }
 
     public static FuelManager getInstance(){
@@ -254,6 +262,8 @@ public class FuelManager extends StateMachine {
         Logger.recordOutput(getName() + "/Indexer Speed", m_middleMotor.getRotorVelocity().getValueAsDouble());
         Logger.recordOutput(getName() + "/SHOOTER Speed", m_shootMotorLeader.getRotorVelocity().getValueAsDouble());
         Logger.recordOutput(getName() + "/Desired Shooter Speed", getInstance().m_shootSpeed);
+        Logger.recordOutput(getName() + "/BeamBreak", getInstance().m_shooterBeamBreak.getIsDetected().getValue());
+
         //Distance from Hub: x:2.4, y:1.55, Speed:-74.5
         //Distance from Hub: x:0.2, y:-1.82, Speed: 67
         //Distance from Hub: x:-1.83, y:-3.24, Speed: -87.5

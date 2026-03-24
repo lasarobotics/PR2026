@@ -64,7 +64,7 @@ public final class Constants {
     public static double INTAKE_UNCLOG_SPEED = 25;
     public static double MIDDLE_MOTOR_INTAKE_SPEED = -110; 
     public static double MIDDLE_MOTOR_SHOOT_SPEED = 30; 
-    public static final int AGITATION_MOTOR_SPEED = 0; // TODO
+    public static final int AGITATION_MOTOR_SPEED = -108; // TODO
     public static double SHOOTER_WITHIN_RANGE_COEFFICIENT = 0.02;
   }
 
