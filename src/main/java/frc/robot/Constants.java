@@ -64,8 +64,9 @@ public final class Constants {
     public static double INTAKE_UNCLOG_SPEED = 25;
     public static double MIDDLE_MOTOR_INTAKE_SPEED = -110; 
     public static double MIDDLE_MOTOR_SHOOT_SPEED = 30; 
-    public static final int AGITATION_MOTOR_SPEED = -108; // TODO
+    public static final int AGITATION_MOTOR_SPEED = -126; // -108; // TODO
     public static double SHOOTER_WITHIN_RANGE_COEFFICIENT = 0.02;
+    public static final int THUMPER_INTERVAL_LENGTH = 50;
   }
 
   public static class DriveConstants {
@@ -84,8 +85,8 @@ public final class Constants {
 
     public static final double DEADBAND_SCALAR = 0.1;
     public static final double SLOW_SPEED_SCALAR = 0.1;
-    public static final double MID_SPEED_SCALAR = 0.5; 
-    public static final double FAST_SPEED_SCALAR = 0.75; 
+    public static final double MID_SPEED_SCALAR = .15; // 0.5; 
+    public static final double FAST_SPEED_SCALAR = .15; // 0.75; 
 
     public static final TrapezoidProfile.Constraints TURN_CONSTRAINTS =
         new TrapezoidProfile.Constraints(

@@ -107,7 +107,6 @@ public class FuelManager extends StateMachine {
             public void initialize() {
                 getInstance().m_shootSpeed = getInstance().getSpeed((s_DriveSubsystemInstance.getDistanceToHub())); // use predictedDistanceToHub for sotm
                 getInstance().m_shootMotorLeader.setControl(getInstance().m_shooterVelocityDutyCycle.withVelocity(getInstance().m_shootSpeed));
-                getInstance().m_agitationMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.AGITATION_MOTOR_SPEED));
             }
 
             @Override
@@ -118,6 +117,15 @@ public class FuelManager extends StateMachine {
                     getInstance().m_intakeMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.INTAKE_MOTOR_SPEED));
                     getInstance().m_middleMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.MIDDLE_MOTOR_SHOOT_SPEED)); // TODO add vraible speed
                 }
+                if (getInstance().m_thumpIntervalCounter <= Constants.FuelManagerConstants.THUMPER_INTERVAL_LENGTH) {
+                    getInstance().m_agitationMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.AGITATION_MOTOR_SPEED));
+                } else {
+                    if (getInstance().m_thumpIntervalCounter >= 100) {
+                        getInstance().m_thumpIntervalCounter = 0;
+                    }
+                    getInstance().m_agitationMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(0));
+                }
+                getInstance().m_thumpIntervalCounter++;
             }
 
             @Override
@@ -136,9 +144,8 @@ public class FuelManager extends StateMachine {
         STATIC_SHOOT {
             @Override
             public void initialize() {
-                getInstance().m_shootMotorLeader.setControl(getInstance().m_shooterVelocityDutyCycle.withVelocity(Constants.FuelManagerConstants.SHOOT_MOTOR_SPEED)); 
-                getInstance().m_agitationMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.AGITATION_MOTOR_SPEED));
-          }
+                getInstance().m_shootMotorLeader.setControl(getInstance().m_shooterVelocityDutyCycle.withVelocity(Constants.FuelManagerConstants.SHOOT_MOTOR_SPEED));
+            }
             @Override
             public void execute(){
                 if (Math.abs(getInstance().m_shootMotorLeader.getRotorVelocity().getValueAsDouble() - Constants.FuelManagerConstants.SHOOT_MOTOR_SPEED) <= Math.abs(Constants.FuelManagerConstants.SHOOT_MOTOR_SPEED) * Constants.FuelManagerConstants.SHOOTER_WITHIN_RANGE_COEFFICIENT)
@@ -146,6 +153,15 @@ public class FuelManager extends StateMachine {
                     getInstance().m_intakeMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.INTAKE_MOTOR_SPEED));
                     getInstance().m_middleMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.MIDDLE_MOTOR_SHOOT_SPEED)); // TODO add vraible speed
                 }
+                if (getInstance().m_thumpIntervalCounter <= Constants.FuelManagerConstants.THUMPER_INTERVAL_LENGTH) {
+                    getInstance().m_agitationMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.AGITATION_MOTOR_SPEED));
+                } else {
+                    if (getInstance().m_thumpIntervalCounter >= 100) {
+                        getInstance().m_thumpIntervalCounter = 0;
+                    }
+                    getInstance().m_agitationMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(0));
+                }
+                getInstance().m_thumpIntervalCounter++;
             }
             @Override
             public SystemState nextState() {
@@ -177,9 +193,11 @@ public class FuelManager extends StateMachine {
     private VelocityVoltage m_motorVelocityVoltage;
     private double m_shootSpeed;
     private static SystemState s_autonStateRequest;
+    private int m_thumpIntervalCounter;
 
     private FuelManager(){
         super(FuelManagerStates.REST);
+        m_thumpIntervalCounter = 0;
         s_autonStateRequest = null;
         s_DriveSubsystemInstance = DriveSubsystem.getInstance();
         m_intakeMotor = new TalonFX(Constants.FuelManagerConstants.INTAKE_MOTOR_ID);
