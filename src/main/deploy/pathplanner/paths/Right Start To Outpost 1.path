@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 0.4938659058487873,
-        "y": 0.6256633380884444
+        "x": 2.124136947218259,
+        "y": 1.7642653352353794
       },
       "prevControl": {
-        "x": 1.0372895863052782,
-        "y": 0.793865905848786
+        "x": 2.66756062767475,
+        "y": 1.9324679029957212
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Outpost Intake"
+      "linkedName": "Outpost 1"
     }
   ],
   "rotationTargets": [],
@@ -41,13 +41,13 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": 0.0
+    "velocity": 1.5,
+    "rotation": 29.744881296942154
   },
   "reversed": false,
   "folder": "Right Auto Paths",
   "idealStartingState": {
-    "velocity": 0,
+    "velocity": 1.5,
     "rotation": 52.25319461272537
   },
   "useDefaultConstraints": true

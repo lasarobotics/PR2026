@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7785164051355205,
-        "y": 0.8973751783166914
+        "x": 1.8006704707560623,
+        "y": 0.6774179743223976
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.7655777460716455,
-        "y": 2.152425106986941
+        "x": 1.5506704707560623,
+        "y": 0.6774179743223976
       },
       "isLocked": false,
-      "linkedName": "Outpost 3"
+      "linkedName": "Outpost 2"
     },
     {
       "anchor": {
-        "x": 2.162952924393723,
-        "y": 2.838174037089873
+        "x": 0.7785164051355205,
+        "y": 0.8973751783166914
       },
       "prevControl": {
-        "x": 1.4125106990014262,
-        "y": 2.514707560627676
+        "x": 0.9865289787199804,
+        "y": 0.7587001292603827
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Right Shoot"
+      "linkedName": "Outpost 3"
     }
   ],
   "rotationTargets": [],
@@ -41,14 +41,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": 23.38522105721366
+    "velocity": 1.5,
+    "rotation": -147.52880770918526
   },
   "reversed": false,
   "folder": "Right Auto Paths",
   "idealStartingState": {
     "velocity": 1.5,
-    "rotation": -147.52880770918526
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

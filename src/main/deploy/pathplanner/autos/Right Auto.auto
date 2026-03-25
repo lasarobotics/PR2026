@@ -37,7 +37,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Right Start To Outpost"
+            "pathName": "Right Start To Outpost 1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Outpost 1 to Outpost 2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Outpost 2 to Outpost 3"
           }
         },
         {
