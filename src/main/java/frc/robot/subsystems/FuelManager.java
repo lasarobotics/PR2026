@@ -120,7 +120,7 @@ public class FuelManager extends StateMachine {
                 if (getInstance().m_thumpIntervalCounter <= Constants.FuelManagerConstants.THUMPER_INTERVAL_LENGTH) {
                     getInstance().m_agitationMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.AGITATION_MOTOR_SPEED));
                 } else {
-                    if (getInstance().m_thumpIntervalCounter >= 100) {
+                    if (getInstance().m_thumpIntervalCounter >= Constants.FuelManagerConstants.THUMPER_TOTAL_LENGTH) {
                         getInstance().m_thumpIntervalCounter = 0;
                     }
                     getInstance().m_agitationMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(0));
@@ -156,7 +156,7 @@ public class FuelManager extends StateMachine {
                 if (getInstance().m_thumpIntervalCounter <= Constants.FuelManagerConstants.THUMPER_INTERVAL_LENGTH) {
                     getInstance().m_agitationMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(Constants.FuelManagerConstants.AGITATION_MOTOR_SPEED));
                 } else {
-                    if (getInstance().m_thumpIntervalCounter >= 100) {
+                    if (getInstance().m_thumpIntervalCounter >= Constants.FuelManagerConstants.THUMPER_TOTAL_LENGTH) {
                         getInstance().m_thumpIntervalCounter = 0;
                     }
                     getInstance().m_agitationMotor.setControl(getInstance().m_motorVelocityVoltage.withVelocity(0));
