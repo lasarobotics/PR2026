@@ -8,11 +8,11 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.49017722800926,
-        "y": 2.7826917679398147
+        "x": 4.501659071180556,
+        "y": 2.38069603587963
       },
       "isLocked": false,
-      "linkedName": "Bump end"
+      "linkedName": "Right Bump"
     },
     {
       "anchor": {
@@ -20,15 +20,20 @@
         "y": 2.838174037089873
       },
       "prevControl": {
-        "x": 2.709737810898452,
-        "y": 3.2225337329154455
+        "x": 1.8528962673611118,
+        "y": 2.7603841869212964
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "Right Shoot"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.5345703124999998,
+      "rotationDegrees": 44.619061216295904
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -48,7 +53,7 @@
   "folder": "Right Auto Paths",
   "idealStartingState": {
     "velocity": 1.5,
-    "rotation": 41.87786953788429
+    "rotation": 135.38759462726853
   },
   "useDefaultConstraints": true
 }
