@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.3866333808844504,
-        "y": 3.0063766048502147
+        "x": 1.38,
+        "y": 3.2
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.3866333808844504,
-        "y": 3.0063766048502147
+        "x": 2.38,
+        "y": 3.2
       },
       "isLocked": false,
       "linkedName": "Right Climb"
