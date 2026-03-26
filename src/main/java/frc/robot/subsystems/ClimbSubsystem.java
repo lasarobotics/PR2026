@@ -313,6 +313,13 @@ public class ClimbSubsystem extends StateMachine{
     {
         return Commands.run(() -> {getInstance().m_climbMotor.setControl(new VoltageOut(-6));})
         .until(() -> !getInstance().dioInput.get())
+        .andThen(() -> getInstance().m_climbMotor.setControl(new VoltageOut(-6)));
+    }  
+
+    public Command Auto_Home_Climber()
+    {
+        return Commands.run(() -> {getInstance().m_climbMotor.setControl(new VoltageOut(-6));})
+        .until(() -> !getInstance().dioInput.get())
         .andThen(() -> getInstance().m_climbMotor.setControl(Constants.ClimbConstants.R2C_SET_POINT));
     }  
 
