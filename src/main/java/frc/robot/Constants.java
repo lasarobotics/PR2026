@@ -43,9 +43,9 @@ public final class Constants {
 
   public static class ClimbConstants {
     public static final PositionVoltage START_SET_POINT = new PositionVoltage(0); 
-    public static final PositionVoltage R2C_SET_POINT = new PositionVoltage(350);
-    public static final PositionVoltage L1_SET_POINT = new PositionVoltage(125); 
-    public static final PositionVoltage STOW_SET_POINT = new PositionVoltage(110);
+    public static final PositionVoltage R2C_SET_POINT = new PositionVoltage(330);
+    public static final PositionVoltage L1_SET_POINT = new PositionVoltage(85); 
+    public static final PositionVoltage STOW_SET_POINT = new PositionVoltage(90);
     public static final PositionVoltage L2_SET_POINT = new PositionVoltage(-25); // TODO
     public static final int CLIMB_MOTOR_ID = 40; 
     public static final int CLIMB_HOMER_ID = 9;
@@ -57,14 +57,14 @@ public final class Constants {
     public static final int SHOOT_MOTOR_FOLLOWER_ID = 31; 
     public static final int INTAKE_MOTOR_ID = 33; 
     public static final int MIDDLE_MOTOR_ID = 32; 
-    public static final int BEAM_BREAK_ID = 8;//TODODODODODODODODODODODOODODODFINDFINDFIND
-    public static final int AGITATION_MOTOR_ID = 34; // TODO
+    public static final int BEAM_BREAK_ID = 8;
+    public static final int AGITATION_MOTOR_ID = 34;
     public static double SHOOT_MOTOR_SPEED = -72; 
     public static double INTAKE_MOTOR_SPEED = -25; 
     public static double INTAKE_UNCLOG_SPEED = 25;
     public static double MIDDLE_MOTOR_INTAKE_SPEED = -110; 
     public static double MIDDLE_MOTOR_SHOOT_SPEED = 30; 
-    public static final int AGITATION_MOTOR_SPEED = -126; // -108; // TODO
+    public static final int AGITATION_MOTOR_SPEED = -126;
     public static double SHOOTER_WITHIN_RANGE_COEFFICIENT = 0.02;
     public static final int THUMPER_INTERVAL_LENGTH = 50;
     public static final int THUMPER_TOTAL_LENGTH = 100;
@@ -121,7 +121,7 @@ public final class Constants {
     public static final double SINGLE_TAG_AMBIGUITY_CUTOFF = 0.5;
     public static final double SINGLE_TAG_DISTANCE_CUTOFF = 5;
 
-    public static final double FUEL_AIR_TIME = 1.0; //TODO
+    public static final double FUEL_AIR_TIME = .9; //TODO
  }
   public static class HubConstants{
   public static final Translation2d BLUE_HUB_POS = new Translation2d(4.61,4.021);

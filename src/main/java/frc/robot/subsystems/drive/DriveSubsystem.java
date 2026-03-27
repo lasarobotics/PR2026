@@ -106,10 +106,10 @@ public class DriveSubsystem extends StateMachine{
                     double currentRotation = currentPose2d.getRotation().getRadians();
                     Translation2d translationDiff = s_hubPos.minus(currentTranslation2d);
                     //sotm if we ever want
-                    // Translation2d velocityTranslation = new Translation2d(currentState.Speeds.vxMetersPerSecond * Constants.DriveConstants.FUEL_AIR_TIME, currentState.Speeds.vyMetersPerSecond * Constants.DriveConstants.FUEL_AIR_TIME).rotateBy(currentRotation);
+                    // Translation2d velocityTranslation = new Translation2d(s_drivetrain.getState().Speeds.vxMetersPerSecond * Constants.DriveConstants.FUEL_AIR_TIME, s_drivetrain.getState().Speeds.vyMetersPerSecond * Constants.DriveConstants.FUEL_AIR_TIME).rotateBy(new Rotation2d(currentRotation));
                     // Translation2d futurePose = currentTranslation2d.plus(velocityTranslation);
                     // Logger.recordOutput(getInstance().getName() + "/futurePose", new Pose2d(futurePose,new Rotation2d(0)));
-                    // Translation2d translationDiff = s_hubPos.minus(futurePose);
+                    //Translation2d translationDiff = s_hubPos.minus(futurePose);
                     double desiredRotation = Math.atan2(translationDiff.getY(),translationDiff.getX()); 
                     double pidOutputAngle = getInstance().m_auto_aimrotationPIDController.calculate(currentRotation, desiredRotation);
 
