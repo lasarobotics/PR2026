@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 1.2184308131241082,
-        "y": 4.028530670470756
+        "y": 4.129
       },
       "prevControl": null,
       "nextControl": {
         "x": 1.4844386488755958,
-        "y": 3.968069709719268
+        "y": 4.0685390392485115
       },
       "isLocked": false,
       "linkedName": "Left Climb"
@@ -48,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 5.0
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

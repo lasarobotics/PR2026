@@ -17,11 +17,11 @@
     {
       "anchor": {
         "x": 1.2184308131241082,
-        "y": 4.028530670470756
+        "y": 4.129
       },
       "prevControl": {
         "x": 1.6539884095447368,
-        "y": 4.028530670470756
+        "y": 4.129
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 5.0
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": "Left Auto Paths",
