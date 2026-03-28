@@ -1,0 +1,67 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Start_Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right Start To Outpost 1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Fuel_Rest"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Outpost To Right Bump"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Start_Shoot"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 8.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Fuel_Rest"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 30.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right Bump Placeholder Path"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

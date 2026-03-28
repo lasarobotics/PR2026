@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 0.5585592011412266,
+        "y": 0.5868473609129818
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 0.7655777460770323,
+        "y": 0.8197432239657634
+      },
+      "isLocked": false,
+      "linkedName": "Outpost 3"
+    },
+    {
+      "anchor": {
+        "x": 3.4697574893009984,
+        "y": 2.514707560627676
+      },
+      "prevControl": {
+        "x": 3.30158929080192,
+        "y": 2.32972254227869
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Right Start"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 52.25319461272537
+  },
+  "reversed": false,
+  "folder": "Right Auto Paths",
+  "idealStartingState": {
+    "velocity": 1.0,
+    "rotation": 1.5481576989779176
+  },
+  "useDefaultConstraints": true
+}
