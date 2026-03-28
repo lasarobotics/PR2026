@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 1.35,
-        "y": 3.14
+        "y": 3.2
       },
       "prevControl": null,
       "nextControl": {
         "x": 2.3500000000000005,
-        "y": 3.14
+        "y": 3.2
       },
       "isLocked": false,
       "linkedName": "Right Climb"
