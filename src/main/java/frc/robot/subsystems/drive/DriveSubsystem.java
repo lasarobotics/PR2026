@@ -16,6 +16,8 @@ import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
@@ -31,6 +33,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -93,6 +96,9 @@ public class DriveSubsystem extends StateMachine{
                 }
                 if(s_isReadyToClimb){
                     return CLIMB_ALIGN;
+                }
+                if(getInstance().m_parkButton.getAsBoolean()){
+                    return PARK;
                 }
                 return DRIVER_CONTROL;
             }
@@ -225,6 +231,22 @@ public class DriveSubsystem extends StateMachine{
                 
                 return DRIVER_CONTROL;
             }
+        },
+        PARK{
+            @Override
+            public void execute(){
+                s_drivetrain.getModule(0).apply(new DutyCycleOut(0), new PositionVoltage(0));
+                s_drivetrain.getModule(1).apply(new DutyCycleOut(0), new PositionVoltage(0.25));
+                s_drivetrain.getModule(2).apply(new DutyCycleOut(0), new PositionVoltage(0.5));
+                s_drivetrain.getModule(3).apply(new DutyCycleOut(0), new PositionVoltage(0.75));
+            }
+            @Override
+            public SystemState nextState(){
+                if(getInstance().m_parkButton.getAsBoolean()){
+                    return PARK;
+                }
+                return DRIVER_CONTROL;
+            }
         }
     }
     private static DriveSubsystem s_driveSubsystemInstance;
@@ -236,6 +258,7 @@ public class DriveSubsystem extends StateMachine{
     private BooleanSupplier m_resetPoseButton;
     private BooleanSupplier m_autoAimButton;
     private BooleanSupplier m_climbAlignButton;
+    private BooleanSupplier m_parkButton;
     private PIDController m_rotationPIDController;
     private PIDController m_auto_aimrotationPIDController;
     private PIDController m_translationPIDController;
@@ -447,11 +470,13 @@ public class DriveSubsystem extends StateMachine{
         DoubleSupplier strafeRequest, 
         DoubleSupplier driveRequest, 
         DoubleSupplier rotateRequest, 
-        BooleanSupplier resetPoseButton)
+        BooleanSupplier resetPoseButton,
+        BooleanSupplier parkButton)
     {
         m_autoAimButton = autoAimButton;
         m_climbAlignButton = climbAlignButton;
         m_resetPoseButton = resetPoseButton;
+        m_parkButton = parkButton;
         s_strafeRequest = strafeRequest;
         s_driveRequest = driveRequest;
         s_rotateRequest = rotateRequest;
