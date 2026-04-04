@@ -65,7 +65,15 @@ public class TunerConstants {
               new OpenLoopRampsConfigs()
                   .withVoltageOpenLoopRampPeriod(Seconds.of(0.5))
                   .withDutyCycleOpenLoopRampPeriod(Seconds.of(0.5))
-                  .withTorqueOpenLoopRampPeriod(Seconds.of(0.5)));
+                  .withTorqueOpenLoopRampPeriod(Seconds.of(0.5)))
+          .withSlot1(
+            new Slot1Configs()
+                .withKP(50)
+                .withKI(0)
+                .withKD(0.1)
+                .withKS(0)
+                .withKV(0)
+          );
   private static final TalonFXConfiguration steerInitialConfigs =
       new TalonFXConfiguration()
         .withCurrentLimits(

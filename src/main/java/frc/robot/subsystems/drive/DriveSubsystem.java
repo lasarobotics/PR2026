@@ -15,14 +15,21 @@ import org.lasarobotics.fsm.SystemState;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.StaticBrake;
+import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveControlParameters;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
+import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
+import com.ctre.phoenix6.swerve.SwerveRequest.NativeSwerveRequest;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
@@ -79,7 +86,7 @@ public class DriveSubsystem extends StateMachine{
                         .withRotationalRate(
                             rotationRate)
                 );
-                
+
                 Logger.recordOutput("controlRotationRate", rotationRate);
                 }
                 else { }
@@ -234,12 +241,23 @@ public class DriveSubsystem extends StateMachine{
         },
         PARK{
             @Override
-            public void execute(){
-                s_drivetrain.getModule(0).apply(new DutyCycleOut(0), new PositionVoltage(0));
-                s_drivetrain.getModule(1).apply(new DutyCycleOut(0), new PositionVoltage(0.25));
-                s_drivetrain.getModule(2).apply(new DutyCycleOut(0), new PositionVoltage(0.5));
-                s_drivetrain.getModule(3).apply(new DutyCycleOut(0), new PositionVoltage(0.75));
+            public void initialize()
+            {
+                s_drivetrain.applyRequest(() -> getInstance().m_idle);
+                getInstance().m_module0DrivePos = s_drivetrain.getModule(0).getDriveMotor().getPosition().getValueAsDouble();
+                getInstance().m_module1DrivePos = s_drivetrain.getModule(1).getDriveMotor().getPosition().getValueAsDouble();
+                getInstance().m_module2DrivePos = s_drivetrain.getModule(2).getDriveMotor().getPosition().getValueAsDouble();
+                getInstance().m_module3DrivePos = s_drivetrain.getModule(3).getDriveMotor().getPosition().getValueAsDouble();
+                
             }
+
+            @Override
+            public void execute(){
+             
+                s_drivetrain.setControl(new ParkRequest());
+
+            }
+
             @Override
             public SystemState nextState(){
                 if(getInstance().m_parkButton.getAsBoolean()){
@@ -262,11 +280,17 @@ public class DriveSubsystem extends StateMachine{
     private PIDController m_rotationPIDController;
     private PIDController m_auto_aimrotationPIDController;
     private PIDController m_translationPIDController;
+    private TalonFXConfiguration m_brakeConfiguration;
     private static Translation2d s_hubPos = Constants.HubConstants.BLUE_HUB_POS;
     private static boolean s_isClimbing;
     private static boolean s_isReadyToClimb;
     private static final SwerveRequest.PointWheelsAt pointRequest = new SwerveRequest.PointWheelsAt();
     private static double s_currentSpeedScalar;
+    final SwerveRequest.Idle m_idle = new SwerveRequest.Idle();
+    private double m_module0DrivePos;
+    private double m_module1DrivePos;
+    private double m_module2DrivePos;
+    private double m_module3DrivePos;
 
     public DriveSubsystem() {
         super(DriveStates.AUTO);
@@ -286,6 +310,8 @@ public class DriveSubsystem extends StateMachine{
         m_auto_aimrotationPIDController = new PIDController(Constants.DriveConstants.AUTOAIMTURN_P,Constants.DriveConstants.AUTOAIMTURN_I,Constants.DriveConstants.AUTOAIMTURN_D);
         m_auto_aimrotationPIDController.enableContinuousInput(-Math.PI, Math.PI);
         m_translationPIDController = new PIDController(3,7,0);
+
+        
     }
 
     @Override
@@ -462,6 +488,21 @@ public class DriveSubsystem extends StateMachine{
         }
 
         return pose_estimate;
+    }
+
+    public static class ParkRequest implements SwerveRequest{
+        public StatusCode apply(SwerveControlParameters paraeters, SwerveModule<?, ?, ?>... modulestoApply){
+            // front left
+            s_drivetrain.getModule(0).apply(new PositionVoltage(getInstance().m_module0DrivePos).withSlot(1), new PositionVoltage(0.25));
+            // front right
+            s_drivetrain.getModule(1).apply(new PositionVoltage(getInstance().m_module1DrivePos).withSlot(1), new PositionVoltage(0));
+            // back left
+            s_drivetrain.getModule(2).apply(new PositionVoltage(getInstance().m_module2DrivePos).withSlot(1), new PositionVoltage(0));
+            // back right
+            s_drivetrain.getModule(3).apply(new PositionVoltage(getInstance().m_module3DrivePos).withSlot(1), new PositionVoltage(0.25));
+
+            return StatusCode.OK;
+        }
     }
 
     public void configureBindings(
