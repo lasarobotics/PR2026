@@ -104,9 +104,6 @@ public class DriveSubsystem extends StateMachine{
                 if(s_isReadyToClimb){
                     return CLIMB_ALIGN;
                 }
-                if(getInstance().m_parkButton.getAsBoolean()){
-                    return PARK;
-                }
                 return DRIVER_CONTROL;
             }
         },
@@ -114,23 +111,11 @@ public class DriveSubsystem extends StateMachine{
             @Override 
             public void execute(){
                 if(!s_isClimbing){
-                    Pose2d currentPose2d = s_drivetrain.getState().Pose;
-                    Translation2d currentTranslation2d = currentPose2d.getTranslation();
-                    double currentRotation = currentPose2d.getRotation().getRadians();
-                    Translation2d translationDiff = s_hubPos.minus(currentTranslation2d);
-                    //sotm if we ever want
-                    // Translation2d velocityTranslation = new Translation2d(s_drivetrain.getState().Speeds.vxMetersPerSecond * Constants.DriveConstants.FUEL_AIR_TIME, s_drivetrain.getState().Speeds.vyMetersPerSecond * Constants.DriveConstants.FUEL_AIR_TIME).rotateBy(new Rotation2d(currentRotation));
-                    // Translation2d futurePose = currentTranslation2d.plus(velocityTranslation);
-                    // Logger.recordOutput(getInstance().getName() + "/futurePose", new Pose2d(futurePose,new Rotation2d(0)));
-                    //Translation2d translationDiff = s_hubPos.minus(futurePose);
-                    double desiredRotation = Math.atan2(translationDiff.getY(),translationDiff.getX()); 
-                    double pidOutputAngle = getInstance().m_auto_aimrotationPIDController.calculate(currentRotation, desiredRotation);
+                    double pidOutputAngle = getInstance().m_auto_aimrotationPIDController.calculate(s_currentRotation, s_desiredRotation);
 
                     double pidInput = Constants.DriveConstants.MAX_ANGULAR_RATE.times(pidOutputAngle).in(RadiansPerSecond);
                     pidInput = pidInput > 0 ? Math.min(pidInput, 8.0) : Math.max(pidInput, -8.0);
-                    Rotation2d currentAngle = new Rotation2d(currentRotation);
-                    Rotation2d desiredAngle = new Rotation2d(desiredRotation);
-                    pidInput = currentAngle.getMeasure().isNear(desiredAngle.getMeasure(), Degrees.of(1.0)) ? 0 : pidInput;
+                    pidInput = Math.abs(s_currentRotation - s_desiredRotation) < Math.PI / 180 ? 0 : pidInput;
                     s_drivetrain.setControl(
                         s_drive
                             .withVelocityX(
@@ -145,19 +130,23 @@ public class DriveSubsystem extends StateMachine{
                     );
 
 
-                    Logger.recordOutput("TranslationDiff", translationDiff);
-                    Logger.recordOutput("DesiredAngle", desiredAngle);
+                    Logger.recordOutput("TranslationDiff", s_translationDiff);
+                    Logger.recordOutput("DesiredAngle", s_desiredRotation);
                     Logger.recordOutput("PidInput", pidInput);
                 }
             }
 
             @Override
             public SystemState nextState() {
-                // TODO
                 if (DriverStation.isAutonomous()) {
                     return AUTO;
                 }
-                if(getInstance().m_autoAimButton.getAsBoolean()){
+                if (getInstance().m_autoAimButton.getAsBoolean() && s_isAutoAimed && Math.abs(s_strafeRequest.getAsDouble()) < 0.1 && Math.abs(s_driveRequest.getAsDouble()) < 0.1)
+                {
+                    return PARK;
+                }
+                else if (getInstance().m_autoAimButton.getAsBoolean())
+                {
                     return AUTO_AIM;
                 }
                 return DRIVER_CONTROL;
@@ -239,6 +228,7 @@ public class DriveSubsystem extends StateMachine{
                 return DRIVER_CONTROL;
             }
         },
+        // Brian Park state
         PARK{
             @Override
             public void initialize()
@@ -260,8 +250,17 @@ public class DriveSubsystem extends StateMachine{
 
             @Override
             public SystemState nextState(){
-                if(getInstance().m_parkButton.getAsBoolean()){
-                    return PARK;
+                if (DriverStation.isAutonomous())
+                {
+                    return AUTO;
+                }
+                if (getInstance().m_autoAimButton.getAsBoolean())
+                {
+                    if(getInstance().s_isAutoAimed && Math.abs(s_strafeRequest.getAsDouble()) < 0.1 && Math.abs(s_driveRequest.getAsDouble()) < 0.1)
+                    {
+                        return PARK;
+                    }
+                    return AUTO_AIM;
                 }
                 return DRIVER_CONTROL;
             }
@@ -276,11 +275,9 @@ public class DriveSubsystem extends StateMachine{
     private BooleanSupplier m_resetPoseButton;
     private BooleanSupplier m_autoAimButton;
     private BooleanSupplier m_climbAlignButton;
-    private BooleanSupplier m_parkButton;
     private PIDController m_rotationPIDController;
     private PIDController m_auto_aimrotationPIDController;
     private PIDController m_translationPIDController;
-    private TalonFXConfiguration m_brakeConfiguration;
     private static Translation2d s_hubPos = Constants.HubConstants.BLUE_HUB_POS;
     private static boolean s_isClimbing;
     private static boolean s_isReadyToClimb;
@@ -291,6 +288,13 @@ public class DriveSubsystem extends StateMachine{
     private double m_module1DrivePos;
     private double m_module2DrivePos;
     private double m_module3DrivePos;
+    private static boolean s_isAutoAimed;
+    private static Pose2d s_currentPose2d;
+    private static Translation2d s_currentTranslation2d;
+    private static double s_currentRotation;
+    private static Translation2d s_translationDiff;
+    private static double s_desiredRotation;
+
 
     public DriveSubsystem() {
         super(DriveStates.AUTO);
@@ -310,11 +314,10 @@ public class DriveSubsystem extends StateMachine{
         m_auto_aimrotationPIDController = new PIDController(Constants.DriveConstants.AUTOAIMTURN_P,Constants.DriveConstants.AUTOAIMTURN_I,Constants.DriveConstants.AUTOAIMTURN_D);
         m_auto_aimrotationPIDController.enableContinuousInput(-Math.PI, Math.PI);
         m_translationPIDController = new PIDController(3,7,0);
-
-        
     }
 
     @Override
+
     public void periodic() {
         setPerspective();
         Logger.recordOutput(getName() + "/Pose", s_drivetrain.getState().Pose);
@@ -352,6 +355,31 @@ public class DriveSubsystem extends StateMachine{
             Logger.recordOutput(getName() +"/TagCount", limelightEstimate.tagCount);
         }
     
+        s_currentPose2d = s_drivetrain.getState().Pose;
+        s_currentTranslation2d = s_currentPose2d.getTranslation();
+        s_currentRotation = s_currentPose2d.getRotation().getRadians();
+        s_translationDiff = s_hubPos.minus(s_currentTranslation2d);
+        // sotm if we ever want
+        // Translation2d velocityTranslation = new
+        // Translation2d(s_drivetrain.getState().Speeds.vxMetersPerSecond *
+        // Constants.DriveConstants.FUEL_AIR_TIME,
+        // s_drivetrain.getState().Speeds.vyMetersPerSecond *
+        // Constants.DriveConstants.FUEL_AIR_TIME).rotateBy(new
+        // Rotation2d(currentRotation));
+        // Translation2d futurePose = currentTranslation2d.plus(velocityTranslation);
+        // Logger.recordOutput(getInstance().getName() + "/futurePose", new
+        // Pose2d(futurePose,new Rotation2d(0)));
+        // Translation2d translationDiff = s_hubPos.minus(futurePose);
+        s_desiredRotation = Math.atan2(s_translationDiff.getY(), s_translationDiff.getX());
+
+        if (Math.abs(s_currentRotation - s_desiredRotation) < 4 * Math.PI / 180) 
+        {
+            s_isAutoAimed = true;
+        }
+        else
+        {
+            s_isAutoAimed = false;
+        }
     }
 
     public static DriveSubsystem getInstance(){
@@ -511,13 +539,11 @@ public class DriveSubsystem extends StateMachine{
         DoubleSupplier strafeRequest, 
         DoubleSupplier driveRequest, 
         DoubleSupplier rotateRequest, 
-        BooleanSupplier resetPoseButton,
-        BooleanSupplier parkButton)
+        BooleanSupplier resetPoseButton)
     {
         m_autoAimButton = autoAimButton;
         m_climbAlignButton = climbAlignButton;
         m_resetPoseButton = resetPoseButton;
-        m_parkButton = parkButton;
         s_strafeRequest = strafeRequest;
         s_driveRequest = driveRequest;
         s_rotateRequest = rotateRequest;
