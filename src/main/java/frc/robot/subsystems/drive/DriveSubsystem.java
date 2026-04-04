@@ -521,13 +521,13 @@ public class DriveSubsystem extends StateMachine{
     public static class ParkRequest implements SwerveRequest{
         public StatusCode apply(SwerveControlParameters paraeters, SwerveModule<?, ?, ?>... modulestoApply){
             // front left
-            s_drivetrain.getModule(0).apply(new PositionVoltage(getInstance().m_module0DrivePos).withSlot(1), new PositionVoltage(0.25));
+            s_drivetrain.getModule(0).apply(new PositionVoltage(getInstance().m_module0DrivePos).withSlot(1), new PositionVoltage(0.125));
             // front right
-            s_drivetrain.getModule(1).apply(new PositionVoltage(getInstance().m_module1DrivePos).withSlot(1), new PositionVoltage(0));
+            s_drivetrain.getModule(1).apply(new PositionVoltage(getInstance().m_module1DrivePos).withSlot(1), new PositionVoltage(-0.125));
             // back left
-            s_drivetrain.getModule(2).apply(new PositionVoltage(getInstance().m_module2DrivePos).withSlot(1), new PositionVoltage(0));
+            s_drivetrain.getModule(2).apply(new PositionVoltage(getInstance().m_module2DrivePos).withSlot(1), new PositionVoltage(-0.125));
             // back right
-            s_drivetrain.getModule(3).apply(new PositionVoltage(getInstance().m_module3DrivePos).withSlot(1), new PositionVoltage(0.25));
+            s_drivetrain.getModule(3).apply(new PositionVoltage(getInstance().m_module3DrivePos).withSlot(1), new PositionVoltage(0.125));
 
             return StatusCode.OK;
         }
