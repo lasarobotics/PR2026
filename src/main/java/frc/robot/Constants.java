@@ -15,6 +15,7 @@ import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
+import org.apache.commons.math3.util.MathArrays.Position;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -59,6 +60,10 @@ public final class Constants {
     public static final int MIDDLE_MOTOR_ID = 32; 
     public static final int BEAM_BREAK_ID = 8;
     public static final int AGITATION_MOTOR_ID = 34;
+    public static final int HOPPER_MOTOR_ID = 0; // TODO
+    public static final PositionVoltage HOPPER_STOW_POINT = new PositionVoltage(0); // TODO
+    public static final PositionVoltage HOPPER_DEPLOY_POINT = new PositionVoltage(0); // TODO
+    public static final PositionVoltage HOPPER_JIGGLE_POINT = new PositionVoltage(0); // TODO
     public static double SHOOT_MOTOR_SPEED = -72; 
     public static double INTAKE_MOTOR_SPEED = -25; 
     public static double INTAKE_UNCLOG_SPEED = 25;

@@ -1,354 +1,340 @@
 package frc.robot.subsystems;
 
-import java.util.function.BooleanSupplier;
-
-import org.lasarobotics.fsm.StateMachine;
-import org.lasarobotics.fsm.SystemState;
-import org.littletonrobotics.junction.Logger;
-
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-
-import com.ctre.phoenix6.controls.VoltageOut;
-
 import frc.robot.Constants;
 import frc.robot.subsystems.drive.DriveSubsystem;
+import java.util.function.BooleanSupplier;
+import org.lasarobotics.fsm.StateMachine;
+import org.lasarobotics.fsm.SystemState;
+import org.littletonrobotics.junction.Logger;
 
-public class ClimbSubsystem extends StateMachine{
+public class ClimbSubsystem extends StateMachine {
 
-    public enum ClimbStates implements SystemState {
-        NOTHING {
-            @Override
-            public SystemState nextState() {
-                return this;
-            }
-        },
-        START {
-            @Override
-            public void initialize() {
-                if (getInstance().dioInput.get())
-                {
-                    getInstance().m_climbMotor.setControl(new VoltageOut(-6));
-                    Logger.recordOutput(getInstance().getName() + "/Homing", "Homing");
-                }
-                else
-                {
-                    getInstance().m_climbMotor.setControl(new VoltageOut(0));
-                    getInstance().m_climbMotor.setPosition(0);
-                    Logger.recordOutput(getInstance().getName() + "/Homing", "Already");
-                }
-            }
-            @Override
-            public void execute(){
-                if(!getInstance().dioInput.get()){
-                    getInstance().m_climbMotor.setControl(new VoltageOut(0));
-                    getInstance().m_climbMotor.setPosition(0);
-                    Logger.recordOutput(getInstance().getName() + "/Homing", "Done");
-                }
-            }
-            @Override
-            public SystemState nextState() {
-                if (!getInstance().dioInput.get())
-                {
-                    if (DriverStation.isAutonomous())
-                    {
-                        return R2C;
-                    }
-                    if(s_firstFromTeleOp)
-                    {
-                        s_firstFromTeleOp = false;
-                    }
-                    System.out.println("test");
-                    return DISMOUNT;
-                }
-                return START;
-            }
-        },
-        STOW {
-            @Override
-            public void initialize() {
-                getInstance().m_climbMotor.setControl(Constants.ClimbConstants.STOW_SET_POINT);
-                DriveSubsystem.postClimbZero();
-                DriveSubsystem.isReadyToClimb(false);
-            }
-
-            @Override
-            public SystemState nextState() {
-                if (DriverStation.isAutonomous() && s_L1AutonRequest)
-                {
-                    return L1;
-                }
-                if (s_firstFromTeleOp)
-                {
-                    s_firstFromTeleOp = false;
-                    return DISMOUNT;
-                }
-                if (getInstance().m_L1Button.getAsBoolean()) {
-                    return L1;
-                }
-                if (getInstance().m_R2CButton.getAsBoolean()) {
-                    return R2C;
-                }
-                // if (getInstance().m_L2Button.getAsBoolean()) {
-                //     return L2;
-                // }
-                return STOW;
-            }
-        },
-        DISMOUNT {
-            @Override
-            public void initialize() {
-                getInstance().m_climbMotor.setControl(Constants.ClimbConstants.R2C_SET_POINT);
-                DriveSubsystem.postClimbZero();
-                DriveSubsystem.isReadyToClimb(false);
-            }
-
-            @Override
-            public SystemState nextState() {
-                if (DriverStation.isAutonomous() && s_L1AutonRequest)
-                {
-                    return L1;
-                }
-                if (s_firstFromTeleOp)
-                    s_firstFromTeleOp = false;
-                if (s_awayFromTower) {
-                    return STOW;
-                }
-                return DISMOUNT;
-            }
-        },
-        R2C {
-            @Override
-            public void initialize() {
-                getInstance().m_climbMotor.setControl(Constants.ClimbConstants.R2C_SET_POINT);
-                if (!DriverStation.isAutonomous())
-                {
-                    DriveSubsystem.postClimbZero();
-                    DriveSubsystem.isReadyToClimb(true);
-                }
-            }
-
-            @Override
-            public SystemState nextState() {
-                if (DriverStation.isAutonomous() && s_L1AutonRequest)
-                {
-                    return L1;
-                }
-                if(s_firstFromTeleOp){
-                    s_firstFromTeleOp = false;
-                    return DISMOUNT;
-                }
-                if (getInstance().m_L1Button.getAsBoolean()) {
-                    return L1;
-                }
-                // if (getInstance().m_L2Button.getAsBoolean()) {
-                //     return L2;
-                // }
-                if (getInstance().m_stowButton.getAsBoolean()) {
-                    return STOW;
-                }
-                return R2C;
-            }
-        },
-        L1 {
-            @Override
-            public void initialize() {
-                getInstance().m_climbMotor.setControl(Constants.ClimbConstants.L1_SET_POINT);
-                DriveSubsystem.wheelPushTower();   
-            }
-
-
-            @Override
-            public void execute()
-            {
-                DriveSubsystem.wheelPushTower();   
-            }
-
-            @Override
-            public SystemState nextState() {
-                if (DriverStation.isAutonomous() && s_L1AutonRequest)
-                {
-                    return L1;
-                }
-                if(s_firstFromTeleOp){
-                    s_firstFromTeleOp = false;
-                    System.out.println("test1");
-                    return DISMOUNT;
-                }
-                // if (getInstance().m_L2Button.getAsBoolean()) {
-                //     return L2;
-                // }
-                if (getInstance().m_stowButton.getAsBoolean()) {
-                    return STOW;
-                }
-                if (getInstance().m_R2CButton.getAsBoolean()) {
-                    return R2C;
-                }
-                return L1;
-            }
-
-            
-        },
-        L2 {
-            @Override
-            public void initialize() {
-                getInstance().m_climbMotor.setControl(Constants.ClimbConstants.L2_SET_POINT);
-                DriveSubsystem.wheelPushTower();  
-            }
-
-            @Override
-            public void execute()
-            {
-                DriveSubsystem.wheelPushTower();   
-            }
-
-            @Override
-            public SystemState nextState() {
-                if (DriverStation.isAutonomous() && s_L1AutonRequest)
-                {
-                    return L1;
-                }
-                if(s_firstFromTeleOp)
-                {
-                    s_firstFromTeleOp = false;
-                    return DISMOUNT;
-                }
-                if (getInstance().m_L1Button.getAsBoolean()) {
-                    return L1;
-                }
-                if (getInstance().m_stowButton.getAsBoolean()) {
-                    return STOW;
-                }
-                if (getInstance().m_R2CButton.getAsBoolean()) {
-                    return R2C;
-                }
-                return STOW; //FAILSAFE return L2 is what is should be IF WE WANT
-            }
+  public enum ClimbStates implements SystemState {
+    NOTHING {
+      @Override
+      public SystemState nextState() {
+        return this;
+      }
+    },
+    START {
+      @Override
+      public void initialize() {
+        if (getInstance().dioInput.get()) {
+          getInstance().m_climbMotor.setControl(new VoltageOut(-6));
+          Logger.recordOutput(getInstance().getName() + "/Homing", "Homing");
+        } else {
+          getInstance().m_climbMotor.setControl(new VoltageOut(0));
+          getInstance().m_climbMotor.setPosition(0);
+          Logger.recordOutput(getInstance().getName() + "/Homing", "Already");
         }
-    }
+      }
 
-    private static ClimbSubsystem s_climbInstance;
-    private final TalonFX m_climbMotor;
-    private BooleanSupplier m_L1Button;
-    // Ready To Climb
-    private BooleanSupplier m_R2CButton;
-    private BooleanSupplier m_L2Button;
-    //stow
-    private BooleanSupplier m_stowButton;
-    private BooleanSupplier m_positiveVoltageButton;
-    private BooleanSupplier m_negativeVoltageButton;
-    private DigitalInput dioInput;
-    private static boolean s_firstFromTeleOp;
-    private static boolean s_awayFromTower;
-    private static boolean s_L1AutonRequest;
-
-    public static ClimbSubsystem getInstance() {
-        if (s_climbInstance == null) {
-            s_climbInstance = new ClimbSubsystem();
+      @Override
+      public void execute() {
+        if (!getInstance().dioInput.get()) {
+          getInstance().m_climbMotor.setControl(new VoltageOut(0));
+          getInstance().m_climbMotor.setPosition(0);
+          Logger.recordOutput(getInstance().getName() + "/Homing", "Done");
         }
-        return s_climbInstance;
+        s_isClimbing = false;
+      }
+
+      @Override
+      public SystemState nextState() {
+        if (!getInstance().dioInput.get()) {
+          if (DriverStation.isAutonomous()) {
+            return R2C;
+          }
+          if (s_firstFromTeleOp) {
+            s_firstFromTeleOp = false;
+          }
+          System.out.println("test");
+          return DISMOUNT;
+        }
+        return START;
+      }
+    },
+    STOW {
+      @Override
+      public void initialize() {
+        getInstance().m_climbMotor.setControl(Constants.ClimbConstants.STOW_SET_POINT);
+        DriveSubsystem.postClimbZero();
+        DriveSubsystem.isReadyToClimb(false);
+        s_isClimbing = false;
+      }
+
+      @Override
+      public SystemState nextState() {
+        if (DriverStation.isAutonomous() && s_L1AutonRequest) {
+          return L1;
+        }
+        if (s_firstFromTeleOp) {
+          s_firstFromTeleOp = false;
+          return DISMOUNT;
+        }
+        if (getInstance().m_L1Button.getAsBoolean()) {
+          return L1;
+        }
+        if (getInstance().m_R2CButton.getAsBoolean()) {
+          return R2C;
+        }
+        // if (getInstance().m_L2Button.getAsBoolean()) {
+        //     return L2;
+        // }
+        return STOW;
+      }
+    },
+    DISMOUNT {
+      @Override
+      public void initialize() {
+        getInstance().m_climbMotor.setControl(Constants.ClimbConstants.R2C_SET_POINT);
+        DriveSubsystem.postClimbZero();
+        DriveSubsystem.isReadyToClimb(false);
+        s_isClimbing = false;
+      }
+
+      @Override
+      public SystemState nextState() {
+        if (DriverStation.isAutonomous() && s_L1AutonRequest) {
+          return L1;
+        }
+        if (s_firstFromTeleOp) s_firstFromTeleOp = false;
+        if (s_awayFromTower) {
+          return STOW;
+        }
+        return DISMOUNT;
+      }
+    },
+    R2C {
+      @Override
+      public void initialize() {
+        getInstance().m_climbMotor.setControl(Constants.ClimbConstants.R2C_SET_POINT);
+        if (!DriverStation.isAutonomous()) {
+          DriveSubsystem.postClimbZero();
+          DriveSubsystem.isReadyToClimb(true);
+        }
+        s_isClimbing = true;
+      }
+
+      @Override
+      public SystemState nextState() {
+        if (DriverStation.isAutonomous() && s_L1AutonRequest) {
+          return L1;
+        }
+        if (s_firstFromTeleOp) {
+          s_firstFromTeleOp = false;
+          return DISMOUNT;
+        }
+        if (getInstance().m_L1Button.getAsBoolean()) {
+          return L1;
+        }
+        // if (getInstance().m_L2Button.getAsBoolean()) {
+        //     return L2;
+        // }
+        if (getInstance().m_stowButton.getAsBoolean()) {
+          return STOW;
+        }
+        return R2C;
+      }
+    },
+    L1 {
+      @Override
+      public void initialize() {
+        getInstance().m_climbMotor.setControl(Constants.ClimbConstants.L1_SET_POINT);
+        DriveSubsystem.wheelPushTower();
+      }
+
+      @Override
+      public void execute() {
+        DriveSubsystem.wheelPushTower();
+        s_isClimbing = true;
+      }
+
+      @Override
+      public SystemState nextState() {
+        if (DriverStation.isAutonomous() && s_L1AutonRequest) {
+          return L1;
+        }
+        if (s_firstFromTeleOp) {
+          s_firstFromTeleOp = false;
+          System.out.println("test1");
+          return DISMOUNT;
+        }
+        // if (getInstance().m_L2Button.getAsBoolean()) {
+        //     return L2;
+        // }
+        if (getInstance().m_stowButton.getAsBoolean()) {
+          return STOW;
+        }
+        if (getInstance().m_R2CButton.getAsBoolean()) {
+          return R2C;
+        }
+        return L1;
+      }
+    },
+    L2 {
+      @Override
+      public void initialize() {
+        getInstance().m_climbMotor.setControl(Constants.ClimbConstants.L2_SET_POINT);
+        DriveSubsystem.wheelPushTower();
+      }
+
+      @Override
+      public void execute() {
+        DriveSubsystem.wheelPushTower();
+        s_isClimbing = true;
+      }
+
+      @Override
+      public SystemState nextState() {
+        if (DriverStation.isAutonomous() && s_L1AutonRequest) {
+          return L1;
+        }
+        if (s_firstFromTeleOp) {
+          s_firstFromTeleOp = false;
+          return DISMOUNT;
+        }
+        if (getInstance().m_L1Button.getAsBoolean()) {
+          return L1;
+        }
+        if (getInstance().m_stowButton.getAsBoolean()) {
+          return STOW;
+        }
+        if (getInstance().m_R2CButton.getAsBoolean()) {
+          return R2C;
+        }
+        return STOW; // FAILSAFE return L2 is what is should be IF WE WANT
+      }
     }
+  }
 
-    private ClimbSubsystem() {
-        super(ClimbStates.START);
-        s_L1AutonRequest = false;
-        dioInput = new DigitalInput(Constants.ClimbConstants.CLIMB_HOMER_ID);
-        m_climbMotor = new TalonFX(Constants.ClimbConstants.CLIMB_MOTOR_ID);
-    
-        TalonFXConfiguration climbConfiguration = new TalonFXConfiguration();
+  private static ClimbSubsystem s_climbInstance;
+  private final TalonFX m_climbMotor;
+  private BooleanSupplier m_L1Button;
+  // Ready To Climb
+  private BooleanSupplier m_R2CButton;
+  private BooleanSupplier m_L2Button;
+  // stow
+  private BooleanSupplier m_stowButton;
+  private BooleanSupplier m_positiveVoltageButton;
+  private BooleanSupplier m_negativeVoltageButton;
+  private DigitalInput dioInput;
+  private static boolean s_firstFromTeleOp;
+  private static boolean s_awayFromTower;
+  private static boolean s_L1AutonRequest;
+  private static boolean s_isClimbing;
 
-        climbConfiguration
-            .CurrentLimits
-                .withStatorCurrentLimitEnable(true)
-                .withSupplyCurrentLimitEnable(true)
-                .withStatorCurrentLimit(80)
-                .withSupplyCurrentLimit(80)
-                .withSupplyCurrentLowerLimit(40);
-                
-        climbConfiguration
-            .Slot0
-                .withKP(2.5)
-                .withKD(0);
-        climbConfiguration
-            .MotorOutput
-                .NeutralMode = NeutralModeValue.Brake;
-        m_climbMotor.getConfigurator().apply(climbConfiguration);
-        m_climbMotor.setPosition(0);
+  public static ClimbSubsystem getInstance() {
+    if (s_climbInstance == null) {
+      s_climbInstance = new ClimbSubsystem();
     }
+    return s_climbInstance;
+  }
 
-    public void configureBindings (
-        BooleanSupplier L1Button,
-        BooleanSupplier R2CButton,
-        BooleanSupplier L2Button,
-        BooleanSupplier stowButton,
-        BooleanSupplier positiveVoltageButton,
-        BooleanSupplier negativeVoltageButton
-    ) {
-        m_L1Button = L1Button;
-        m_R2CButton = R2CButton;
-        m_L2Button = L2Button;
-        m_stowButton = stowButton;
-        m_positiveVoltageButton = positiveVoltageButton;
-        m_negativeVoltageButton = negativeVoltageButton;
-    }
+  private ClimbSubsystem() {
+    super(ClimbStates.START);
+    s_L1AutonRequest = false;
+    dioInput = new DigitalInput(Constants.ClimbConstants.CLIMB_HOMER_ID);
+    m_climbMotor = new TalonFX(Constants.ClimbConstants.CLIMB_MOTOR_ID);
 
-    public static void armFirstFromTeleOp(){
-        s_firstFromTeleOp = true;
-    }
+    TalonFXConfiguration climbConfiguration = new TalonFXConfiguration();
 
-    public static void autonStateRequester(boolean request)
-    {
-        s_L1AutonRequest = request;
-    }
+    climbConfiguration
+        .CurrentLimits
+        .withStatorCurrentLimitEnable(true)
+        .withSupplyCurrentLimitEnable(true)
+        .withStatorCurrentLimit(80)
+        .withSupplyCurrentLimit(80)
+        .withSupplyCurrentLowerLimit(40);
 
-    public Command Pit_Home_Climber()
-    {
-        return Commands.run(() -> {getInstance().m_climbMotor.setControl(new VoltageOut(-6));})
+    climbConfiguration.Slot0.withKP(2.5).withKD(0);
+    climbConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    m_climbMotor.getConfigurator().apply(climbConfiguration);
+    m_climbMotor.setPosition(0);
+
+    s_isClimbing = false;
+  }
+
+  public void configureBindings(
+      BooleanSupplier L1Button,
+      BooleanSupplier R2CButton,
+      BooleanSupplier L2Button,
+      BooleanSupplier stowButton,
+      BooleanSupplier positiveVoltageButton,
+      BooleanSupplier negativeVoltageButton) {
+    m_L1Button = L1Button;
+    m_R2CButton = R2CButton;
+    m_L2Button = L2Button;
+    m_stowButton = stowButton;
+    m_positiveVoltageButton = positiveVoltageButton;
+    m_negativeVoltageButton = negativeVoltageButton;
+  }
+
+  public static void armFirstFromTeleOp() {
+    s_firstFromTeleOp = true;
+  }
+
+  public static void autonStateRequester(boolean request) {
+    s_L1AutonRequest = request;
+  }
+
+  public Command Pit_Home_Climber() {
+    return Commands.run(
+            () -> {
+              getInstance().m_climbMotor.setControl(new VoltageOut(-6));
+            })
         .until(() -> !getInstance().dioInput.get())
         .andThen(() -> getInstance().m_climbMotor.setControl(new VoltageOut(0)));
-    }  
+  }
 
-    public Command Auto_Home_Climber()
-    {
-        return Commands.run(() -> {getInstance().m_climbMotor.setControl(new VoltageOut(-6));})
+  public Command Auto_Home_Climber() {
+    return Commands.run(
+            () -> {
+              getInstance().m_climbMotor.setControl(new VoltageOut(-6));
+            })
         .until(() -> !getInstance().dioInput.get())
-        .andThen(() -> getInstance().m_climbMotor.setControl(Constants.ClimbConstants.R2C_SET_POINT));
-    }  
+        .andThen(
+            () -> getInstance().m_climbMotor.setControl(Constants.ClimbConstants.R2C_SET_POINT));
+  }
 
-    @Override
-    public void periodic() {
+  public boolean getIsClimbing() {
+    return s_isClimbing;
+  }
 
-        // if (m_positiveVoltageButton.getAsBoolean())
-        // {
-        //     m_climbMotor.setControl(new VoltageOut(12)); 
-        //     testingControl = true;
-        // }
-        // else if (m_negativeVoltageButton.getAsBoolean())
-        // {
-        //     m_climbMotor.setControl(new VoltageOut(-12));
-        //     testingControl = true;
-        // }
-        // else if (testingControl)
-        // {
-        //     m_climbMotor.setControl(new VoltageOut(0));
-        //     testingControl = false;
-        // }
-        s_awayFromTower = DriveSubsystem.getInstance().awayFromTower();
-        Logger.recordOutput(getName() + "/buttons/L1", m_L1Button);
-        Logger.recordOutput(getName() + "/buttons/Back", m_stowButton);
-        Logger.recordOutput(getName() + "/buttons/L2", m_L2Button);
-        Logger.recordOutput(getName() + "/buttons/L2", m_R2CButton);
-        Logger.recordOutput(getName() + "/state", getState().toString());
-        Logger.recordOutput(getName() + "/currentPosition", m_climbMotor.getPosition().getValueAsDouble());
-        Logger.recordOutput(getName() + "/port9", dioInput.get());
-    }
+  @Override
+  public void periodic() {
 
+    // if (m_positiveVoltageButton.getAsBoolean())
+    // {
+    //     m_climbMotor.setControl(new VoltageOut(12));
+    //     testingControl = true;
+    // }
+    // else if (m_negativeVoltageButton.getAsBoolean())
+    // {
+    //     m_climbMotor.setControl(new VoltageOut(-12));
+    //     testingControl = true;
+    // }
+    // else if (testingControl)
+    // {
+    //     m_climbMotor.setControl(new VoltageOut(0));
+    //     testingControl = false;
+    // }
+    s_awayFromTower = DriveSubsystem.getInstance().awayFromTower();
+    Logger.recordOutput(getName() + "/buttons/L1", m_L1Button);
+    Logger.recordOutput(getName() + "/buttons/Back", m_stowButton);
+    Logger.recordOutput(getName() + "/buttons/L2", m_L2Button);
+    Logger.recordOutput(getName() + "/buttons/L2", m_R2CButton);
+    Logger.recordOutput(getName() + "/state", getState().toString());
+    Logger.recordOutput(
+        getName() + "/currentPosition", m_climbMotor.getPosition().getValueAsDouble());
+    Logger.recordOutput(getName() + "/port9", dioInput.get());
+  }
 }
