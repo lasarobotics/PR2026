@@ -90,11 +90,15 @@ public class FuelManager extends StateMachine {
 
       @Override
       public void execute() {
-        getInstance()
-            .setHopperPoint(
-                m_whichJiggle,
-                Constants.FuelManagerConstants.HOPPER_STOW_POINT,
-                Constants.FuelManagerConstants.HOPPER_DEPLOY_POINT);
+        if (getInstance().m_hopperIntervalCounter++
+            == Constants.FuelManagerConstants.HOPPER_JIGGLE_INTERVAL_LENGTH) {
+          getInstance().m_hopperIntervalCounter = 0;
+          getInstance()
+              .setHopperPoint(
+                  m_whichJiggle,
+                  Constants.FuelManagerConstants.HOPPER_STOW_POINT,
+                  Constants.FuelManagerConstants.HOPPER_DEPLOY_POINT);
+        }
       }
 
       @Override
@@ -140,11 +144,15 @@ public class FuelManager extends StateMachine {
 
       @Override
       public void execute() {
-        getInstance()
-            .setHopperPoint(
-                m_whichJiggle,
-                Constants.FuelManagerConstants.HOPPER_STOW_POINT,
-                Constants.FuelManagerConstants.HOPPER_DEPLOY_POINT);
+        if (getInstance().m_hopperIntervalCounter++
+            == Constants.FuelManagerConstants.HOPPER_JIGGLE_INTERVAL_LENGTH) {
+          getInstance().m_hopperIntervalCounter = 0;
+          getInstance()
+              .setHopperPoint(
+                  m_whichJiggle,
+                  Constants.FuelManagerConstants.HOPPER_STOW_POINT,
+                  Constants.FuelManagerConstants.HOPPER_DEPLOY_POINT);
+        }
       }
 
       @Override
@@ -223,11 +231,15 @@ public class FuelManager extends StateMachine {
         }
         getInstance().m_thumpIntervalCounter++;
 
-        getInstance()
-            .setHopperPoint(
-                m_whichJiggle,
-                Constants.FuelManagerConstants.HOPPER_STOW_POINT,
-                Constants.FuelManagerConstants.HOPPER_JIGGLE_POINT);
+        if (getInstance().m_hopperIntervalCounter++
+            == Constants.FuelManagerConstants.HOPPER_JIGGLE_INTERVAL_LENGTH) {
+          getInstance().m_hopperIntervalCounter = 0;
+          getInstance()
+              .setHopperPoint(
+                  m_whichJiggle,
+                  Constants.FuelManagerConstants.HOPPER_STOW_POINT,
+                  Constants.FuelManagerConstants.HOPPER_JIGGLE_POINT);
+        }
       }
 
       @Override
@@ -293,11 +305,15 @@ public class FuelManager extends StateMachine {
         }
         getInstance().m_thumpIntervalCounter++;
 
-        getInstance()
-            .setHopperPoint(
-                m_whichJiggle,
-                Constants.FuelManagerConstants.HOPPER_STOW_POINT,
-                Constants.FuelManagerConstants.HOPPER_JIGGLE_POINT);
+        if (getInstance().m_hopperIntervalCounter++
+            == Constants.FuelManagerConstants.HOPPER_JIGGLE_INTERVAL_LENGTH) {
+          getInstance().m_hopperIntervalCounter = 0;
+          getInstance()
+              .setHopperPoint(
+                  m_whichJiggle,
+                  Constants.FuelManagerConstants.HOPPER_STOW_POINT,
+                  Constants.FuelManagerConstants.HOPPER_JIGGLE_POINT);
+        }
       }
 
       @Override
@@ -332,10 +348,12 @@ public class FuelManager extends StateMachine {
   private static SystemState s_autonStateRequest;
   private int m_thumpIntervalCounter;
   private static boolean m_whichJiggle;
+  private int m_hopperIntervalCounter;
 
   private FuelManager() {
     super(FuelManagerStates.REST);
     m_thumpIntervalCounter = 0;
+    m_hopperIntervalCounter = 0;
     s_autonStateRequest = null;
     s_DriveSubsystemInstance = DriveSubsystem.getInstance();
     m_intakeMotor = new TalonFX(Constants.FuelManagerConstants.INTAKE_MOTOR_ID);

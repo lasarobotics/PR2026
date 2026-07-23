@@ -60,6 +60,7 @@ public final class Constants {
     public static final PositionVoltage HOPPER_STOW_POINT = new PositionVoltage(0); // TODO
     public static final PositionVoltage HOPPER_DEPLOY_POINT = new PositionVoltage(0); // TODO
     public static final PositionVoltage HOPPER_JIGGLE_POINT = new PositionVoltage(0); // TODO
+    public static final int HOPPER_JIGGLE_INTERVAL_LENGTH = 50;
     public static double SHOOT_MOTOR_SPEED = -72;
     public static double INTAKE_MOTOR_SPEED = -25;
     public static double INTAKE_UNCLOG_SPEED = 25;
