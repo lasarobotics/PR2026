@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.418002853067047,
-        "y": 5.788188302425108
+        "x": 3.4790352445268367,
+        "y": 5.793035454184323
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.418002853067048,
-        "y": 5.788188302425108
+        "x": 4.479035244526836,
+        "y": 5.793035454184323
       },
       "isLocked": false,
       "linkedName": "Left Start(Intake Heading)"
     },
     {
       "anchor": {
-        "x": 5.759150535300927,
-        "y": 5.54227076099537
+        "x": 6.01512949108404,
+        "y": 5.573746744791667
       },
       "prevControl": {
-        "x": 4.759150535300927,
-        "y": 5.54227076099537
+        "x": 5.01512949108404,
+        "y": 5.573746744791667
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 1.5,
-    "rotation": -55.07960223478688
+    "rotation": -135.66923032734564
   },
   "reversed": false,
   "folder": "Left Auto Paths",

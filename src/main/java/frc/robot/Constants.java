@@ -15,18 +15,13 @@ import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
-import org.apache.commons.math3.util.MathArrays.Position;
-import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
-
 import com.ctre.phoenix6.controls.PositionVoltage;
-
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.generated.TunerConstants;
 
 /**
@@ -43,32 +38,33 @@ public final class Constants {
   }
 
   public static class ClimbConstants {
-    public static final PositionVoltage START_SET_POINT = new PositionVoltage(0); 
+    public static final PositionVoltage START_SET_POINT = new PositionVoltage(0);
     public static final PositionVoltage R2C_SET_POINT = new PositionVoltage(330);
-    public static final PositionVoltage L1_SET_POINT = new PositionVoltage(85); 
+    public static final PositionVoltage L1_SET_POINT = new PositionVoltage(85);
     public static final PositionVoltage STOW_SET_POINT = new PositionVoltage(90);
     public static final PositionVoltage L2_SET_POINT = new PositionVoltage(-25); // TODO
-    public static final int CLIMB_MOTOR_ID = 40; 
+    public static final int CLIMB_MOTOR_ID = 40;
     public static final int CLIMB_HOMER_ID = 9;
-    public static final Translation2d CLIMB_POS = new Translation2d(4.7,0);
+    public static final Translation2d CLIMB_POS_LEFT = new Translation2d(4.7, 0);
+    public static final Translation2d CLIMB_POS_RIGHT = new Translation2d(4.7, 0);
   }
-  
+
   public static class FuelManagerConstants {
-    public static final int SHOOT_MOTOR_LEADER_ID = 30; 
-    public static final int SHOOT_MOTOR_FOLLOWER_ID = 31; 
-    public static final int INTAKE_MOTOR_ID = 33; 
-    public static final int MIDDLE_MOTOR_ID = 32; 
+    public static final int SHOOT_MOTOR_LEADER_ID = 30;
+    public static final int SHOOT_MOTOR_FOLLOWER_ID = 31;
+    public static final int INTAKE_MOTOR_ID = 33;
+    public static final int MIDDLE_MOTOR_ID = 32;
     public static final int BEAM_BREAK_ID = 8;
     public static final int AGITATION_MOTOR_ID = 34;
     public static final int HOPPER_MOTOR_ID = 0; // TODO
     public static final PositionVoltage HOPPER_STOW_POINT = new PositionVoltage(0); // TODO
     public static final PositionVoltage HOPPER_DEPLOY_POINT = new PositionVoltage(0); // TODO
     public static final PositionVoltage HOPPER_JIGGLE_POINT = new PositionVoltage(0); // TODO
-    public static double SHOOT_MOTOR_SPEED = -72; 
-    public static double INTAKE_MOTOR_SPEED = -25; 
+    public static double SHOOT_MOTOR_SPEED = -72;
+    public static double INTAKE_MOTOR_SPEED = -25;
     public static double INTAKE_UNCLOG_SPEED = 25;
-    public static double MIDDLE_MOTOR_INTAKE_SPEED = -110; 
-    public static double MIDDLE_MOTOR_SHOOT_SPEED = 30; 
+    public static double MIDDLE_MOTOR_INTAKE_SPEED = -110;
+    public static double MIDDLE_MOTOR_SHOOT_SPEED = 30;
     public static final int AGITATION_MOTOR_SPEED = -126;
     public static double SHOOTER_WITHIN_RANGE_COEFFICIENT = 0.02;
     public static final int THUMPER_INTERVAL_LENGTH = 50;
@@ -85,14 +81,13 @@ public final class Constants {
         RotationsPerSecondPerSecond.of(1); // TODO
     // measure
 
-        
-    public static final double STOW_DISTANCE_REQUIREMENT = 6.75; 
-    public static final double CENTER_XPOS = 8.25; 
+    public static final double STOW_DISTANCE_REQUIREMENT = 6.75;
+    public static final double CENTER_XPOS = 8.25;
 
     public static final double DEADBAND_SCALAR = 0.1;
     public static final double SLOW_SPEED_SCALAR = 0.1;
-    public static final double MID_SPEED_SCALAR = 0.5; 
-    public static final double FAST_SPEED_SCALAR = 0.75; 
+    public static final double MID_SPEED_SCALAR = 0.5;
+    public static final double FAST_SPEED_SCALAR = 0.75;
 
     public static final TrapezoidProfile.Constraints TURN_CONSTRAINTS =
         new TrapezoidProfile.Constraints(
@@ -104,9 +99,9 @@ public final class Constants {
             MAX_ACCELERATION.in(MetersPerSecondPerSecond) * 0.6);
 
     public static final TrapezoidProfile.Constraints TURN_CONSTRAINTS_SLOW =
-    new TrapezoidProfile.Constraints(
-        MAX_ANGULAR_RATE.in(RadiansPerSecond),
-        MAX_ANGULAR_ACCELERATION.in(RadiansPerSecondPerSecond));
+        new TrapezoidProfile.Constraints(
+            MAX_ANGULAR_RATE.in(RadiansPerSecond),
+            MAX_ANGULAR_ACCELERATION.in(RadiansPerSecondPerSecond));
     public static final TrapezoidProfile.Constraints DRIVE_CONSTRAINTS_SLOW =
         new TrapezoidProfile.Constraints(
             MAX_SPEED.in(MetersPerSecond) * 0.25,
@@ -126,10 +121,11 @@ public final class Constants {
     public static final double SINGLE_TAG_AMBIGUITY_CUTOFF = 0.5;
     public static final double SINGLE_TAG_DISTANCE_CUTOFF = 5;
 
-    public static final double FUEL_AIR_TIME = .9; //TODO
- }
-  public static class HubConstants{
-  public static final Translation2d BLUE_HUB_POS = new Translation2d(4.61,4.021);
-  public static final Translation2d RED_HUB_POS = new Translation2d(11.9,4.021);
- }
+    public static final double FUEL_AIR_TIME = .9; // TODO
+  }
+
+  public static class HubConstants {
+    public static final Translation2d BLUE_HUB_POS = new Translation2d(4.61, 4.021);
+    public static final Translation2d RED_HUB_POS = new Translation2d(11.9, 4.021);
+  }
 }
