@@ -1,14 +1,17 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Radians;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants;
 import frc.robot.subsystems.drive.DriveSubsystem;
@@ -33,13 +36,11 @@ public class FuelManager extends StateMachine {
         getInstance().m_middleMotor.set(0);
         getInstance().m_intakeMotor.set(0);
         getInstance().m_agitationMotor.set(0);
-        if (!ClimbSubsystem.getInstance().getIsClimbing()) {
-          getInstance()
-              .m_hopperMotor
-              .setControl(Constants.FuelManagerConstants.HOPPER_DEPLOY_POINT);
-        } else {
-          getInstance().m_hopperMotor.setControl(Constants.FuelManagerConstants.HOPPER_STOW_POINT);
-        }
+        getInstance()
+            .setHopperPoint(
+                m_whichJiggle,
+                Constants.FuelManagerConstants.HOPPER_DEPLOY_POINT,
+                Constants.FuelManagerConstants.HOPPER_DEPLOY_POINT);
       }
 
       @Override
@@ -86,19 +87,6 @@ public class FuelManager extends StateMachine {
                 getInstance()
                     .m_motorVelocityVoltage
                     .withVelocity(Constants.FuelManagerConstants.AGITATION_MOTOR_SPEED));
-      }
-
-      @Override
-      public void execute() {
-        if (getInstance().m_hopperIntervalCounter++
-            == Constants.FuelManagerConstants.HOPPER_JIGGLE_INTERVAL_LENGTH) {
-          getInstance().m_hopperIntervalCounter = 0;
-          getInstance()
-              .setHopperPoint(
-                  m_whichJiggle,
-                  Constants.FuelManagerConstants.HOPPER_STOW_POINT,
-                  Constants.FuelManagerConstants.HOPPER_DEPLOY_POINT);
-        }
       }
 
       @Override
@@ -150,7 +138,7 @@ public class FuelManager extends StateMachine {
           getInstance()
               .setHopperPoint(
                   m_whichJiggle,
-                  Constants.FuelManagerConstants.HOPPER_STOW_POINT,
+                  Constants.FuelManagerConstants.HOPPER_JIGGLE_POINT,
                   Constants.FuelManagerConstants.HOPPER_DEPLOY_POINT);
         }
       }
@@ -237,7 +225,7 @@ public class FuelManager extends StateMachine {
           getInstance()
               .setHopperPoint(
                   m_whichJiggle,
-                  Constants.FuelManagerConstants.HOPPER_STOW_POINT,
+                  Constants.FuelManagerConstants.HOPPER_DEPLOY_POINT,
                   Constants.FuelManagerConstants.HOPPER_JIGGLE_POINT);
         }
       }
@@ -311,7 +299,7 @@ public class FuelManager extends StateMachine {
           getInstance()
               .setHopperPoint(
                   m_whichJiggle,
-                  Constants.FuelManagerConstants.HOPPER_STOW_POINT,
+                  Constants.FuelManagerConstants.HOPPER_DEPLOY_POINT,
                   Constants.FuelManagerConstants.HOPPER_JIGGLE_POINT);
         }
       }
@@ -349,6 +337,7 @@ public class FuelManager extends StateMachine {
   private int m_thumpIntervalCounter;
   private static boolean m_whichJiggle;
   private int m_hopperIntervalCounter;
+  private MotionMagicVoltage m_hopperPositionVoltage;
 
   private FuelManager() {
     super(FuelManagerStates.REST);
@@ -387,7 +376,12 @@ public class FuelManager extends StateMachine {
     agitatorConfig.Slot0.withKP(0.6).withKV(0.1);
     m_agitationMotor.getConfigurator().apply(agitatorConfig);
 
+    TalonFXConfiguration hopperConfig = new TalonFXConfiguration();
+    hopperConfig.Slot0.withKP(.1);
+    hopperConfig.MotorOutput.withNeutralMode(NeutralModeValue.Coast);
+    m_hopperMotor.getConfigurator().apply(hopperConfig);
     m_whichJiggle = true;
+    m_hopperPositionVoltage = new MotionMagicVoltage(Radians.zero());
   }
 
   public static FuelManager getInstance() {
@@ -419,16 +413,20 @@ public class FuelManager extends StateMachine {
     m_unclogButton = unclogButton;
   }
 
-  public void setHopperPoint(
-      boolean whichJiggle, final PositionVoltage truePoint, final PositionVoltage falsePoint) {
-    if (ClimbSubsystem.getInstance().getIsClimbing()) return;
+  public void setHopperPoint(boolean whichJiggle, final double truePoint, final double falsePoint) {
+    if (ClimbSubsystem.getInstance().getIsClimbing()) {
+      getInstance()
+          .m_hopperMotor
+          .setControl(
+              getInstance()
+                  .m_hopperPositionVoltage
+                  .withPosition(Constants.FuelManagerConstants.HOPPER_STOW_POINT));
+    }
 
-    if (whichJiggle && !ClimbSubsystem.getInstance().getIsClimbing()) {
-      getInstance().m_hopperMotor.setControl(truePoint);
-    } else if (!ClimbSubsystem.getInstance().getIsClimbing()) {
-      getInstance().m_hopperMotor.setControl(falsePoint);
+    if (whichJiggle) {
+      getInstance().m_hopperMotor.setControl(m_hopperPositionVoltage.withPosition(truePoint));
     } else {
-      getInstance().m_hopperMotor.setControl(Constants.FuelManagerConstants.HOPPER_STOW_POINT);
+      getInstance().m_hopperMotor.setControl(m_hopperPositionVoltage.withPosition(falsePoint));
     }
     m_whichJiggle = !m_whichJiggle;
   }

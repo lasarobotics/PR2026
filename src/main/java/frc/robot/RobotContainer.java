@@ -4,30 +4,19 @@
 
 package frc.robot;
 
-import frc.robot.Constants.FuelManagerConstants;
-import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
-import frc.robot.subsystems.ClimbSubsystem;
-import frc.robot.subsystems.FuelManager;
-import frc.robot.subsystems.drive.DriveSubsystem;
-
-import org.lasarobotics.fsm.SystemState;
-import org.littletonrobotics.junction.Logger;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.FollowPathCommand;
-import com.pathplanner.lib.path.PathPlannerPath;
-
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.OperatorConstants;
+import frc.robot.subsystems.ClimbSubsystem;
+import frc.robot.subsystems.FuelManager;
+import frc.robot.subsystems.drive.DriveSubsystem;
+import org.littletonrobotics.junction.Logger;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -39,13 +28,14 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public final FuelManager FUEL_MANAGER = FuelManager.getInstance();
   public final ClimbSubsystem CLIMB_SUBSYSTEM = ClimbSubsystem.getInstance();
-  //private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+  // private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   public final DriveSubsystem DRIVE_SUBSYSTEM = DriveSubsystem.getInstance();
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController PRIMARY_CONTROLLER =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
   SendableChooser<Command> autoChooser;
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
@@ -71,16 +61,26 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    FUEL_MANAGER.configureBindings(PRIMARY_CONTROLLER.leftTrigger(),PRIMARY_CONTROLLER.rightBumper(), PRIMARY_CONTROLLER.leftBumper(), PRIMARY_CONTROLLER.rightTrigger());
-    CLIMB_SUBSYSTEM.configureBindings(PRIMARY_CONTROLLER.povUp(),PRIMARY_CONTROLLER.povLeft(),PRIMARY_CONTROLLER.povRight(), PRIMARY_CONTROLLER.povDown(),PRIMARY_CONTROLLER.x(), PRIMARY_CONTROLLER.b());
+    FUEL_MANAGER.configureBindings(
+        PRIMARY_CONTROLLER.leftTrigger(),
+        PRIMARY_CONTROLLER.rightBumper(),
+        PRIMARY_CONTROLLER.leftBumper(),
+        PRIMARY_CONTROLLER.rightTrigger());
+    CLIMB_SUBSYSTEM.configureBindings(
+        PRIMARY_CONTROLLER.povUp(),
+        PRIMARY_CONTROLLER.povLeft(),
+        PRIMARY_CONTROLLER.povRight(),
+        PRIMARY_CONTROLLER.povDown(),
+        PRIMARY_CONTROLLER.x(),
+        PRIMARY_CONTROLLER.b());
     DRIVE_SUBSYSTEM.configureBindings(
-      PRIMARY_CONTROLLER.a(),
-      PRIMARY_CONTROLLER.y(),
-      () -> PRIMARY_CONTROLLER.getLeftY(), // drive x
-      () -> PRIMARY_CONTROLLER.getLeftX(), // drive y
-      () -> PRIMARY_CONTROLLER.getRightX(),// rotate x
-      PRIMARY_CONTROLLER.start()); // reset pose
-    
+        PRIMARY_CONTROLLER.a(),
+        // PRIMARY_CONTROLLER.y(),
+        () -> PRIMARY_CONTROLLER.getLeftY(), // drive x
+        () -> PRIMARY_CONTROLLER.getLeftX(), // drive y
+        () -> PRIMARY_CONTROLLER.getRightX(), // rotate x
+        PRIMARY_CONTROLLER.start(), // reset pose
+        PRIMARY_CONTROLLER.y()); // full climb align
   }
 
   /**
@@ -88,27 +88,41 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    
+
     return autoChooser.getSelected();
   }
 
-  public Command L1_Climb()
-  {
-    return new InstantCommand(() -> {Logger.recordOutput("/command", "L1_Climb"); CLIMB_SUBSYSTEM.autonStateRequester(true);}); 
-  }  
-  public Command Start_Intake(){
-  return new InstantCommand(() -> {Logger.recordOutput("/command", "Start_Intake"); FUEL_MANAGER.autonStateRequester(FuelManager.FuelManagerStates.INTAKE);}); 
+  public Command L1_Climb() {
+    return new InstantCommand(
+        () -> {
+          Logger.recordOutput("/command", "L1_Climb");
+          CLIMB_SUBSYSTEM.autonStateRequester(true);
+        });
   }
 
-  public Command Fuel_Rest(){
-    return new InstantCommand(() -> {Logger.recordOutput("/command", "Fuel_Rest"); FUEL_MANAGER.autonStateRequester(FuelManager.FuelManagerStates.REST);});
+  public Command Start_Intake() {
+    return new InstantCommand(
+        () -> {
+          Logger.recordOutput("/command", "Start_Intake");
+          FUEL_MANAGER.autonStateRequester(FuelManager.FuelManagerStates.INTAKE);
+        });
   }
 
+  public Command Fuel_Rest() {
+    return new InstantCommand(
+        () -> {
+          Logger.recordOutput("/command", "Fuel_Rest");
+          FUEL_MANAGER.autonStateRequester(FuelManager.FuelManagerStates.REST);
+        });
+  }
 
-  public Command Start_Shoot(){
-    return new InstantCommand(() -> {Logger.recordOutput("/command", "Start_Shoot"); FUEL_MANAGER.autonStateRequester(FuelManager.FuelManagerStates.SHOOT);});
+  public Command Start_Shoot() {
+    return new InstantCommand(
+        () -> {
+          Logger.recordOutput("/command", "Start_Shoot");
+          FUEL_MANAGER.autonStateRequester(FuelManager.FuelManagerStates.SHOOT);
+        });
   }
 }

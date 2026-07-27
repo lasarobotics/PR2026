@@ -89,7 +89,7 @@ public class DriveSubsystem extends StateMachine {
           return AUTO_AIM;
         }
         if (s_isReadyToClimb) {
-          return CLIMB_ALIGN;
+          return FULL_CLIMB_ALIGN;
         }
         return DRIVER_CONTROL;
       }
@@ -209,7 +209,7 @@ public class DriveSubsystem extends StateMachine {
         if (DriverStation.isAutonomous()) {
           return AUTO;
         }
-        if (getInstance().m_climbAlignButton.getAsBoolean()) {
+        if (s_fullClimbAlignButton.getAsBoolean()) {
           return FULL_CLIMB_ALIGN;
         }
 
@@ -262,6 +262,7 @@ public class DriveSubsystem extends StateMachine {
   private static DoubleSupplier s_strafeRequest;
   private static DoubleSupplier s_rotateRequest;
   private BooleanSupplier m_resetPoseButton;
+  private static BooleanSupplier s_fullClimbAlignButton;
   private static SwerveRequest.FieldCentric s_autoDrive;
   private BooleanSupplier m_autoAimButton;
   private BooleanSupplier m_climbAlignButton;
@@ -555,17 +556,19 @@ public class DriveSubsystem extends StateMachine {
 
   public void configureBindings(
       BooleanSupplier autoAimButton,
-      BooleanSupplier climbAlignButton,
+      // BooleanSupplier climbAlignButton,
       DoubleSupplier strafeRequest,
       DoubleSupplier driveRequest,
       DoubleSupplier rotateRequest,
-      BooleanSupplier resetPoseButton) {
+      BooleanSupplier resetPoseButton,
+      BooleanSupplier fullClimbAlignButton) {
     m_autoAimButton = autoAimButton;
-    m_climbAlignButton = climbAlignButton;
+    // m_climbAlignButton = climbAlignButton;
     m_resetPoseButton = resetPoseButton;
     s_strafeRequest = strafeRequest;
     s_driveRequest = driveRequest;
     s_rotateRequest = rotateRequest;
+    s_fullClimbAlignButton = fullClimbAlignButton;
   }
 
   public Translation2d getClosestClimbPos() {

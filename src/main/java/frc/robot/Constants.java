@@ -56,10 +56,11 @@ public final class Constants {
     public static final int MIDDLE_MOTOR_ID = 32;
     public static final int BEAM_BREAK_ID = 8;
     public static final int AGITATION_MOTOR_ID = 34;
-    public static final int HOPPER_MOTOR_ID = 0; // TODO
-    public static final PositionVoltage HOPPER_STOW_POINT = new PositionVoltage(0); // TODO
-    public static final PositionVoltage HOPPER_DEPLOY_POINT = new PositionVoltage(0); // TODO
-    public static final PositionVoltage HOPPER_JIGGLE_POINT = new PositionVoltage(0); // TODO
+    public static final int HOPPER_MOTOR_ID = 35; // TODO SET IN CTRE
+    public static final double HOPPER_STOW_POINT = 0; // TODO
+    public static final double HOPPER_DEPLOY_POINT = 0; // TODO
+    public static final double HOPPER_JIGGLE_POINT = 0; // TODO
+    public static final double HOPPER_JIGGLE_SPEED = 1; // TODO TUNE
     public static final int HOPPER_JIGGLE_INTERVAL_LENGTH = 50;
     public static double SHOOT_MOTOR_SPEED = -72;
     public static double INTAKE_MOTOR_SPEED = -25;
