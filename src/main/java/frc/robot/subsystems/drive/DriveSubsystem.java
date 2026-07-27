@@ -88,7 +88,7 @@ public class DriveSubsystem extends StateMachine {
         if (getInstance().m_autoAimButton.getAsBoolean()) {
           return AUTO_AIM;
         }
-        if (s_isReadyToClimb) {
+        if (getInstance().s_fullClimbAlignButton.getAsBoolean()) {
           return FULL_CLIMB_ALIGN;
         }
         return DRIVER_CONTROL;
@@ -190,7 +190,7 @@ public class DriveSubsystem extends StateMachine {
               .goTo(
                   climbPos,
                   Constants.DriveConstants.MAX_SPEED
-                      .times(Constants.DriveConstants.SLOW_SPEED_SCALAR)
+                      .times(s_currentSpeedScalar)
                       .in(MetersPerSecond),
                   0.0,
                   0.0,
