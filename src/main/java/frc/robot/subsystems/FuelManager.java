@@ -353,7 +353,7 @@ public class FuelManager extends StateMachine {
     m_hopperMotor = new TalonFX(Constants.FuelManagerConstants.HOPPER_MOTOR_ID);
     m_shooterBeamBreak = new CANrange(Constants.FuelManagerConstants.BEAM_BREAK_ID);
     TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
-    getInstance().m_hopperMotor.setPosition(0);
+    m_hopperMotor.setPosition(0);
 
     shooterConfig.Slot0.withKP(999999999);
     shooterConfig.MotorOutput.withPeakForwardDutyCycle(0.0).withPeakReverseDutyCycle(-1.0);
@@ -421,6 +421,7 @@ public class FuelManager extends StateMachine {
               getInstance()
                   .m_hopperPositionVoltage
                   .withPosition(Constants.FuelManagerConstants.HOPPER_STOW_POINT));
+      return;
     }
 
     if (whichJiggle) {

@@ -88,7 +88,7 @@ public class DriveSubsystem extends StateMachine {
         if (getInstance().m_autoAimButton.getAsBoolean()) {
           return AUTO_AIM;
         }
-        if (getInstance().s_fullClimbAlignButton.getAsBoolean()) {
+        if (getInstance().m_fullClimbAlignButton.getAsBoolean()) {
           return FULL_CLIMB_ALIGN;
         }
         return DRIVER_CONTROL;
@@ -184,7 +184,10 @@ public class DriveSubsystem extends StateMachine {
         if (!s_isClimbing) {
           Translation2d climbTranslation = getInstance().getClosestClimbPos();
 
-          Pose2d climbPos = new Pose2d(climbTranslation, new Rotation2d(0));
+          double heading =
+              (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) ? 0.0 : Math.PI;
+
+          Pose2d climbPos = new Pose2d(climbTranslation, new Rotation2d(heading));
 
           getInstance()
               .goTo(
@@ -209,7 +212,7 @@ public class DriveSubsystem extends StateMachine {
         if (DriverStation.isAutonomous()) {
           return AUTO;
         }
-        if (s_fullClimbAlignButton.getAsBoolean()) {
+        if (getInstance().m_fullClimbAlignButton.getAsBoolean()) {
           return FULL_CLIMB_ALIGN;
         }
 
@@ -262,7 +265,7 @@ public class DriveSubsystem extends StateMachine {
   private static DoubleSupplier s_strafeRequest;
   private static DoubleSupplier s_rotateRequest;
   private BooleanSupplier m_resetPoseButton;
-  private static BooleanSupplier s_fullClimbAlignButton;
+  private BooleanSupplier m_fullClimbAlignButton;
   private static SwerveRequest.FieldCentric s_autoDrive;
   private BooleanSupplier m_autoAimButton;
   private BooleanSupplier m_climbAlignButton;
@@ -332,7 +335,7 @@ public class DriveSubsystem extends StateMachine {
     Logger.recordOutput(
         getName() + "/CurrentState", s_driveSubsystemInstance.getState().toString());
     Logger.recordOutput(getName() + "/HubPos", s_hubPos);
-    Logger.recordOutput(getName() + "/ClimbAlignButton", m_climbAlignButton);
+    Logger.recordOutput(getName() + "/ClimbAlignButton", m_fullClimbAlignButton);
     Logger.recordOutput(getName() + "/ResetPoseButton", m_resetPoseButton);
     Logger.recordOutput(getName() + "/DistanceToHub", getDistanceToHub());
     Logger.recordOutput(getName() + "/isReadyToClimb", s_isReadyToClimb);
@@ -568,7 +571,7 @@ public class DriveSubsystem extends StateMachine {
     s_strafeRequest = strafeRequest;
     s_driveRequest = driveRequest;
     s_rotateRequest = rotateRequest;
-    s_fullClimbAlignButton = fullClimbAlignButton;
+    m_fullClimbAlignButton = fullClimbAlignButton;
   }
 
   public Translation2d getClosestClimbPos() {
