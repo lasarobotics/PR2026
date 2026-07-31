@@ -616,4 +616,8 @@ public class DriveSubsystem extends StateMachine {
             .withVelocityY(MetersPerSecond.of(yControl))
             .withRotationalRate(rotationRate));
   }
+
+  public boolean getIsClimbing() {
+    return s_isClimbing;
+  }
 }

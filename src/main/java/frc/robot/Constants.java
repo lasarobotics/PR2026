@@ -45,8 +45,8 @@ public final class Constants {
     public static final PositionVoltage L2_SET_POINT = new PositionVoltage(-25); // TODO
     public static final int CLIMB_MOTOR_ID = 40;
     public static final int CLIMB_HOMER_ID = 9;
-    public static final Translation2d CLIMB_POS_LEFT = new Translation2d(4.7, 0);
-    public static final Translation2d CLIMB_POS_RIGHT = new Translation2d(4.7, 0);
+    public static final Translation2d CLIMB_POS_LEFT = new Translation2d(1.415, 4);
+    public static final Translation2d CLIMB_POS_RIGHT = new Translation2d(1.415, 3.172);
   }
 
   public static class FuelManagerConstants {
@@ -56,12 +56,11 @@ public final class Constants {
     public static final int MIDDLE_MOTOR_ID = 32;
     public static final int BEAM_BREAK_ID = 8;
     public static final int AGITATION_MOTOR_ID = 34;
-    public static final int HOPPER_MOTOR_ID = 35; // TODO SET IN CTRE
-    public static final double HOPPER_STOW_POINT = 0; // TODO
-    public static final double HOPPER_DEPLOY_POINT = 0; // TODO
-    public static final double HOPPER_JIGGLE_POINT = 0; // TODO
-    public static final double HOPPER_JIGGLE_SPEED = 1; // TODO TUNE
-    public static final int HOPPER_JIGGLE_INTERVAL_LENGTH = 50;
+    public static final int HOPPER_MOTOR_ID = 35;
+    public static final PositionVoltage HOPPER_STOW_POINT = new PositionVoltage(0);
+    public static final PositionVoltage HOPPER_DEPLOY_POINT = new PositionVoltage(1.7);
+    public static final PositionVoltage HOPPER_JIGGLE_POINT = new PositionVoltage(.7);
+    public static final int HOPPER_JIGGLE_INTERVAL_LENGTH = 20;
     public static double SHOOT_MOTOR_SPEED = -72;
     public static double INTAKE_MOTOR_SPEED = -25;
     public static double INTAKE_UNCLOG_SPEED = 25;
@@ -70,7 +69,7 @@ public final class Constants {
     public static final int AGITATION_MOTOR_SPEED = -126;
     public static double SHOOTER_WITHIN_RANGE_COEFFICIENT = 0.02;
     public static final int THUMPER_INTERVAL_LENGTH = 50;
-    public static final int THUMPER_TOTAL_LENGTH = 100;
+    public static final int THUMPER_TOTAL_LENGTH = THUMPER_INTERVAL_LENGTH*2;
   }
 
   public static class DriveConstants {

@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.Radians;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -377,8 +378,15 @@ public class FuelManager extends StateMachine {
     m_agitationMotor.getConfigurator().apply(agitatorConfig);
 
     TalonFXConfiguration hopperConfig = new TalonFXConfiguration();
-    hopperConfig.Slot0.withKP(.1);
+    hopperConfig.Slot0.withKP(10).withKD(.1);
     hopperConfig.MotorOutput.withNeutralMode(NeutralModeValue.Coast);
+    hopperConfig
+    .CurrentLimits
+        .withStatorCurrentLimitEnable(true)
+        .withSupplyCurrentLimitEnable(true)
+        .withStatorCurrentLimit(50)
+        .withSupplyCurrentLimit(30)
+        .withSupplyCurrentLowerLimit(40);
     m_hopperMotor.getConfigurator().apply(hopperConfig);
     m_whichJiggle = true;
     m_hopperPositionVoltage = new MotionMagicVoltage(Radians.zero());
@@ -413,21 +421,18 @@ public class FuelManager extends StateMachine {
     m_unclogButton = unclogButton;
   }
 
-  public void setHopperPoint(boolean whichJiggle, final double truePoint, final double falsePoint) {
-    if (ClimbSubsystem.getInstance().getIsClimbing()) {
+  public void setHopperPoint(boolean whichJiggle, final PositionVoltage truePoint, final PositionVoltage falsePoint) {
+    if (DriveSubsystem.getInstance().getIsClimbing()) {
       getInstance()
           .m_hopperMotor
-          .setControl(
-              getInstance()
-                  .m_hopperPositionVoltage
-                  .withPosition(Constants.FuelManagerConstants.HOPPER_STOW_POINT));
+          .setControl(Constants.FuelManagerConstants.HOPPER_STOW_POINT);
       return;
     }
 
     if (whichJiggle) {
-      getInstance().m_hopperMotor.setControl(m_hopperPositionVoltage.withPosition(truePoint));
+      getInstance().m_hopperMotor.setControl(truePoint);
     } else {
-      getInstance().m_hopperMotor.setControl(m_hopperPositionVoltage.withPosition(falsePoint));
+      getInstance().m_hopperMotor.setControl(falsePoint);
     }
     m_whichJiggle = !m_whichJiggle;
   }
@@ -446,7 +451,7 @@ public class FuelManager extends StateMachine {
     Logger.recordOutput(getName() + "/Desired Shooter Speed", getInstance().m_shootSpeed);
     Logger.recordOutput(
         getName() + "/BeamBreak", getInstance().m_shooterBeamBreak.getIsDetected().getValue());
-
+    Logger.recordOutput(getName() + "/HopperPosition", getInstance().m_hopperMotor.getPosition().getValueAsDouble());
     // Distance from Hub: x:2.4, y:1.55, Speed:-74.5
     // Distance from Hub: x:0.2, y:-1.82, Speed: 67
     // Distance from Hub: x:-1.83, y:-3.24, Speed: -87.5
