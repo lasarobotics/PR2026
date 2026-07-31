@@ -381,7 +381,7 @@ public class FuelManager extends StateMachine {
     hopperConfig.Slot0.withKP(10).withKD(.1);
     hopperConfig.MotorOutput.withNeutralMode(NeutralModeValue.Coast);
     hopperConfig
-    .CurrentLimits
+        .CurrentLimits
         .withStatorCurrentLimitEnable(true)
         .withSupplyCurrentLimitEnable(true)
         .withStatorCurrentLimit(50)
@@ -421,11 +421,10 @@ public class FuelManager extends StateMachine {
     m_unclogButton = unclogButton;
   }
 
-  public void setHopperPoint(boolean whichJiggle, final PositionVoltage truePoint, final PositionVoltage falsePoint) {
-    if (DriveSubsystem.getInstance().getIsClimbing()) {
-      getInstance()
-          .m_hopperMotor
-          .setControl(Constants.FuelManagerConstants.HOPPER_STOW_POINT);
+  public void setHopperPoint(
+      boolean whichJiggle, final PositionVoltage truePoint, final PositionVoltage falsePoint) {
+    if (ClimbSubsystem.getInstance().getIsClimbing()) {
+      getInstance().m_hopperMotor.setControl(Constants.FuelManagerConstants.HOPPER_STOW_POINT);
       return;
     }
 
@@ -451,7 +450,9 @@ public class FuelManager extends StateMachine {
     Logger.recordOutput(getName() + "/Desired Shooter Speed", getInstance().m_shootSpeed);
     Logger.recordOutput(
         getName() + "/BeamBreak", getInstance().m_shooterBeamBreak.getIsDetected().getValue());
-    Logger.recordOutput(getName() + "/HopperPosition", getInstance().m_hopperMotor.getPosition().getValueAsDouble());
+    Logger.recordOutput(
+        getName() + "/HopperPosition",
+        getInstance().m_hopperMotor.getPosition().getValueAsDouble());
     // Distance from Hub: x:2.4, y:1.55, Speed:-74.5
     // Distance from Hub: x:0.2, y:-1.82, Speed: 67
     // Distance from Hub: x:-1.83, y:-3.24, Speed: -87.5

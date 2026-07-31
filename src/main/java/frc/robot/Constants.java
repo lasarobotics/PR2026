@@ -59,7 +59,7 @@ public final class Constants {
     public static final int HOPPER_MOTOR_ID = 35;
     public static final PositionVoltage HOPPER_STOW_POINT = new PositionVoltage(0);
     public static final PositionVoltage HOPPER_DEPLOY_POINT = new PositionVoltage(1.7);
-    public static final PositionVoltage HOPPER_JIGGLE_POINT = new PositionVoltage(.7);
+    public static final PositionVoltage HOPPER_JIGGLE_POINT = new PositionVoltage(.85);
     public static final int HOPPER_JIGGLE_INTERVAL_LENGTH = 20;
     public static double SHOOT_MOTOR_SPEED = -72;
     public static double INTAKE_MOTOR_SPEED = -25;
@@ -69,7 +69,7 @@ public final class Constants {
     public static final int AGITATION_MOTOR_SPEED = -126;
     public static double SHOOTER_WITHIN_RANGE_COEFFICIENT = 0.02;
     public static final int THUMPER_INTERVAL_LENGTH = 50;
-    public static final int THUMPER_TOTAL_LENGTH = THUMPER_INTERVAL_LENGTH*2;
+    public static final int THUMPER_TOTAL_LENGTH = THUMPER_INTERVAL_LENGTH * 2;
   }
 
   public static class DriveConstants {
@@ -123,6 +123,9 @@ public final class Constants {
     public static final double SINGLE_TAG_DISTANCE_CUTOFF = 5;
 
     public static final double FUEL_AIR_TIME = .9; // TODO
+
+    public static final double FIELD_LENGTH = 16.540988;
+    public static final double FIELD_WIDTH = 8.069326;
   }
 
   public static class HubConstants {

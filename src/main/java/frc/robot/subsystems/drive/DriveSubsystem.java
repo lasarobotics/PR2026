@@ -180,7 +180,13 @@ public class DriveSubsystem extends StateMachine {
     },
     FULL_CLIMB_ALIGN {
       @Override
-      public void execute() { // TODO remove if not used, at least remove the keybind
+      public void initialize() {
+        getInstance().m_rotationPIDController.reset();
+        getInstance().m_translationPIDController.reset();
+      }
+
+      @Override
+      public void execute() {
         if (!s_isClimbing) {
           Translation2d climbTranslation = getInstance().getClosestClimbPos();
 
@@ -196,7 +202,7 @@ public class DriveSubsystem extends StateMachine {
                       .times(s_currentSpeedScalar)
                       .in(MetersPerSecond),
                   0.0,
-                  0.0,
+                  heading,
                   3.0);
 
           // double pidInput =
@@ -574,13 +580,25 @@ public class DriveSubsystem extends StateMachine {
     m_fullClimbAlignButton = fullClimbAlignButton;
   }
 
+  public Translation2d getClimbPosAlliance(Translation2d climbPos) {
+    if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) {
+      return climbPos;
+    }
+    return new Translation2d(
+        Constants.DriveConstants.FIELD_LENGTH - climbPos.getX(),
+        Constants.DriveConstants.FIELD_WIDTH - climbPos.getY());
+  }
+
   public Translation2d getClosestClimbPos() {
     Translation2d robotTranslation = s_drivetrain.getState().Pose.getTranslation();
+    Translation2d leftPos =
+        getInstance().getClimbPosAlliance(Constants.ClimbConstants.CLIMB_POS_LEFT);
+    Translation2d rightPos =
+        getInstance().getClimbPosAlliance(Constants.ClimbConstants.CLIMB_POS_RIGHT);
 
-    return (robotTranslation.getDistance(Constants.ClimbConstants.CLIMB_POS_LEFT)
-            > robotTranslation.getDistance(Constants.ClimbConstants.CLIMB_POS_RIGHT))
-        ? Constants.ClimbConstants.CLIMB_POS_RIGHT
-        : Constants.ClimbConstants.CLIMB_POS_LEFT;
+    return (robotTranslation.getDistance(leftPos) > robotTranslation.getDistance(rightPos))
+        ? rightPos
+        : leftPos;
   }
 
   public void goTo(
