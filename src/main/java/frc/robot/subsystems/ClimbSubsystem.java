@@ -69,6 +69,7 @@ public class ClimbSubsystem extends StateMachine {
         DriveSubsystem.postClimbZero();
         DriveSubsystem.isReadyToClimb(false);
         s_isClimbing = false;
+        getInstance().m_isExtended = false;
       }
 
       @Override
@@ -99,6 +100,7 @@ public class ClimbSubsystem extends StateMachine {
         DriveSubsystem.postClimbZero();
         DriveSubsystem.isReadyToClimb(false);
         s_isClimbing = false;
+        getInstance().m_isExtended = true;
       }
 
       @Override
@@ -122,6 +124,7 @@ public class ClimbSubsystem extends StateMachine {
           DriveSubsystem.isReadyToClimb(true);
         }
         s_isClimbing = true;
+        getInstance().m_isExtended = true;
       }
 
       @Override
@@ -156,6 +159,7 @@ public class ClimbSubsystem extends StateMachine {
       public void execute() {
         DriveSubsystem.wheelPushTower();
         s_isClimbing = true;
+        getInstance().m_isExtended = true;
       }
 
       @Override
@@ -231,6 +235,7 @@ public class ClimbSubsystem extends StateMachine {
   private static boolean s_awayFromTower;
   private static boolean s_L1AutonRequest;
   private static boolean s_isClimbing;
+  private boolean m_isExtended;
 
   public static ClimbSubsystem getInstance() {
     if (s_climbInstance == null) {
@@ -242,6 +247,7 @@ public class ClimbSubsystem extends StateMachine {
   private ClimbSubsystem() {
     super(ClimbStates.START);
     s_L1AutonRequest = false;
+    m_isExtended = false;
     dioInput = new DigitalInput(Constants.ClimbConstants.CLIMB_HOMER_ID);
     m_climbMotor = new TalonFX(Constants.ClimbConstants.CLIMB_MOTOR_ID);
 
@@ -307,6 +313,10 @@ public class ClimbSubsystem extends StateMachine {
 
   public boolean getIsClimbing() {
     return s_isClimbing;
+  }
+
+  public boolean getIsExtended() {
+    return (getInstance().m_isExtended || getInstance().m_climbMotor.getPosition().getValueAsDouble() >= 100);
   }
 
   @Override

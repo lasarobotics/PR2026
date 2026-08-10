@@ -37,6 +37,10 @@ public class FuelManager extends StateMachine {
         getInstance().m_middleMotor.set(0);
         getInstance().m_intakeMotor.set(0);
         getInstance().m_agitationMotor.set(0);
+      }
+
+      @Override
+      public void execute() {
         getInstance()
             .setHopperPoint(
                 m_whichJiggle,
@@ -49,6 +53,8 @@ public class FuelManager extends StateMachine {
         if (DriverStation.isAutonomous() && s_autonStateRequest != null) {
           return s_autonStateRequest;
         }
+        if (getInstance().m_hopperStowButton.getAsBoolean() && getInstance().m_hopperStowDebounceCounter == 0)
+          getInstance().m_shouldStow = !getInstance().m_shouldStow;
         if (getInstance().m_unclogButton.getAsBoolean()
             || getInstance().m_shooterBeamBreak.getIsDetected().getValue()) {
           return UNCLOG;
@@ -91,10 +97,21 @@ public class FuelManager extends StateMachine {
       }
 
       @Override
+      public void execute() {
+        getInstance()
+            .setHopperPoint(
+                m_whichJiggle,
+                Constants.FuelManagerConstants.HOPPER_DEPLOY_POINT,
+                Constants.FuelManagerConstants.HOPPER_DEPLOY_POINT);  
+      }
+
+      @Override
       public SystemState nextState() {
         if (DriverStation.isAutonomous() && s_autonStateRequest != null) {
           return s_autonStateRequest;
         }
+        if (getInstance().m_hopperStowButton.getAsBoolean() && getInstance().m_hopperStowDebounceCounter == 0)
+          getInstance().m_shouldStow = !getInstance().m_shouldStow;
         if (getInstance().m_unclogButton.getAsBoolean()
             || getInstance().m_shooterBeamBreak.getIsDetected().getValue()) {
           return UNCLOG;
@@ -133,6 +150,11 @@ public class FuelManager extends StateMachine {
 
       @Override
       public void execute() {
+        getInstance()
+            .setHopperPoint(
+                m_whichJiggle,
+                Constants.FuelManagerConstants.HOPPER_DEPLOY_POINT,
+                Constants.FuelManagerConstants.HOPPER_DEPLOY_POINT);
         if (getInstance().m_hopperIntervalCounter++
             == Constants.FuelManagerConstants.HOPPER_JIGGLE_INTERVAL_LENGTH) {
           getInstance().m_hopperIntervalCounter = 0;
@@ -149,6 +171,8 @@ public class FuelManager extends StateMachine {
         if (DriverStation.isAutonomous() && s_autonStateRequest != null) {
           return s_autonStateRequest;
         }
+        if (getInstance().m_hopperStowButton.getAsBoolean() && getInstance().m_hopperStowDebounceCounter == 0)
+          getInstance().m_shouldStow = !getInstance().m_shouldStow;
         if (getInstance().m_unclogButton.getAsBoolean()
             || getInstance().m_shooterBeamBreak.getIsDetected().getValue()) {
           return UNCLOG;
@@ -236,6 +260,8 @@ public class FuelManager extends StateMachine {
         if (DriverStation.isAutonomous() && s_autonStateRequest != null) {
           return s_autonStateRequest;
         }
+        if (getInstance().m_hopperStowButton.getAsBoolean() && getInstance().m_hopperStowDebounceCounter == 0)
+          getInstance().m_shouldStow = !getInstance().m_shouldStow;
         if (getInstance().m_shootButton.getAsBoolean()) {
           return SHOOT;
         }
@@ -310,6 +336,8 @@ public class FuelManager extends StateMachine {
         if (DriverStation.isAutonomous() && s_autonStateRequest != null) {
           return s_autonStateRequest;
         }
+        if (getInstance().m_hopperStowButton.getAsBoolean() && getInstance().m_hopperStowDebounceCounter == 0 && getInstance().m_hopperStowDebounceCounter == 0)
+          getInstance().m_shouldStow = !getInstance().m_shouldStow;
         if (getInstance().m_staticShootButton.getAsBoolean()) {
           return STATIC_SHOOT;
         }
@@ -331,6 +359,7 @@ public class FuelManager extends StateMachine {
   private BooleanSupplier m_shootButton;
   private BooleanSupplier m_staticShootButton;
   private BooleanSupplier m_unclogButton;
+  private BooleanSupplier m_hopperStowButton;
   private VelocityDutyCycle m_shooterVelocityDutyCycle;
   private VelocityVoltage m_motorVelocityVoltage;
   private double m_shootSpeed;
@@ -338,13 +367,17 @@ public class FuelManager extends StateMachine {
   private int m_thumpIntervalCounter;
   private static boolean m_whichJiggle;
   private int m_hopperIntervalCounter;
+  private int m_hopperStowDebounceCounter;
   private MotionMagicVoltage m_hopperPositionVoltage;
+  private boolean m_shouldStow;
 
   private FuelManager() {
     super(FuelManagerStates.REST);
     m_thumpIntervalCounter = 0;
     m_hopperIntervalCounter = 0;
+    m_shouldStow = false;
     s_autonStateRequest = null;
+    m_hopperStowDebounceCounter = 0;
     s_DriveSubsystemInstance = DriveSubsystem.getInstance();
     m_intakeMotor = new TalonFX(Constants.FuelManagerConstants.INTAKE_MOTOR_ID);
     m_shootMotorLeader = new TalonFX(Constants.FuelManagerConstants.SHOOT_MOTOR_LEADER_ID);
@@ -403,7 +436,7 @@ public class FuelManager extends StateMachine {
     double aValue = 1.85;
     double bValue = -18.2;
     double cValue = -34.1;
-    return (aValue * Math.pow(totalDistance, 2)) + (bValue * totalDistance) + cValue;
+    return 1.035 * ((aValue * Math.pow(totalDistance, 2)) + (bValue * totalDistance) + cValue);
   }
 
   public static void autonStateRequester(SystemState request) {
@@ -414,16 +447,22 @@ public class FuelManager extends StateMachine {
       BooleanSupplier intakeButton,
       BooleanSupplier shootButton,
       BooleanSupplier staticShootButton,
-      BooleanSupplier unclogButton) {
+      BooleanSupplier unclogButton,
+      BooleanSupplier hopperStowButton) {
     m_intakeButton = intakeButton;
     m_shootButton = shootButton;
     m_staticShootButton = staticShootButton;
     m_unclogButton = unclogButton;
+    m_hopperStowButton = hopperStowButton;
   }
 
   public void setHopperPoint(
       boolean whichJiggle, final PositionVoltage truePoint, final PositionVoltage falsePoint) {
-    if (ClimbSubsystem.getInstance().getIsClimbing()) {
+    ++getInstance().m_hopperStowDebounceCounter;
+    if (getInstance().m_hopperStowDebounceCounter >= Constants.FuelManagerConstants.HOPPER_STOW_DEBOUNCE) {
+      getInstance().m_hopperStowDebounceCounter = 0;
+    }
+    if (ClimbSubsystem.getInstance().getIsExtended() || ClimbSubsystem.getInstance().getIsClimbing() || getInstance().m_shouldStow) {
       getInstance().m_hopperMotor.setControl(Constants.FuelManagerConstants.HOPPER_STOW_POINT);
       return;
     }

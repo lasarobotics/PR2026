@@ -65,13 +65,14 @@ public class RobotContainer {
         PRIMARY_CONTROLLER.leftTrigger(),
         PRIMARY_CONTROLLER.rightBumper(),
         PRIMARY_CONTROLLER.leftBumper(),
-        PRIMARY_CONTROLLER.rightTrigger());
+        PRIMARY_CONTROLLER.rightTrigger(),
+        PRIMARY_CONTROLLER.x());
     CLIMB_SUBSYSTEM.configureBindings(
         PRIMARY_CONTROLLER.povUp(),
         PRIMARY_CONTROLLER.povLeft(),
         PRIMARY_CONTROLLER.povRight(),
         PRIMARY_CONTROLLER.povDown(),
-        PRIMARY_CONTROLLER.x(),
+        PRIMARY_CONTROLLER.b(),
         PRIMARY_CONTROLLER.b());
     DRIVE_SUBSYSTEM.configureBindings(
         PRIMARY_CONTROLLER.a(),
